@@ -12,6 +12,13 @@ Ces variables doivent être définies avant de démarrer le backend (via `.env`,
 
 Le fichier [`config/loadEnv.js`](config/loadEnv.js) charge automatiquement un `.env` à la racine du projet **puis** `backend/.env` si présents. Les valeurs déjà définies dans l'environnement ne sont jamais écrasées.
 
+Vous pouvez préparer un `.env` minimal pour le backend en copiant l'exemple fourni :
+
+```bash
+cp backend/.env.example backend/.env
+# Éditez MONGO_URI / JWT_SECRET si besoin
+```
+
 ## Exemple de configuration PM2
 
 Un exemple prêt à remplir est fourni dans [`ecosystem.config.example.js`](ecosystem.config.example.js). Copiez-le puis éditez les valeurs :
@@ -27,6 +34,13 @@ Lancement ou redémarrage du backend avec PM2 (charge les variables définies da
 pm2 start ecosystem.config.js --env production
 # ou pour prendre en compte des modifications d'env
 pm2 restart ecosystem.config.js --update-env
+```
+
+Pour un déploiement très rapide où seuls le port, Mongo et le secret JWT sont nécessaires, vous pouvez également écrire directement le `.env` du backend puis demander à PM2 de recharger l'environnement :
+
+```bash
+printf "NODE_ENV=production\nPORT=3000\nMONGO_URI=mongodb://127.0.0.1:27017/kziik\nJWT_SECRET=change-moi\n" > /var/www/kziik/backend/.env
+pm2 restart kziik-backend --update-env
 ```
 
 Vérification des logs (la connexion Mongo doit afficher `✔ Database connected`) :
