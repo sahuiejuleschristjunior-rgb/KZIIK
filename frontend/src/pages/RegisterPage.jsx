@@ -97,14 +97,35 @@ export default function RegisterPage() {
         body: JSON.stringify(dataToSend),
       });
 
+      const contentType = (res.headers.get("content-type") || "").toLowerCase();
       let data = {};
-      try {
-        data = await res.json();
-      } catch {}
+      let rawText = "";
+
+      if (contentType.includes("application/json")) {
+        try {
+          data = await res.json();
+        } catch (err) {
+          console.error("register > parse json error", err);
+        }
+      } else {
+        try {
+          rawText = await res.text();
+        } catch (err) {
+          console.error("register > read text error", err);
+        }
+      }
 
       if (!res.ok) {
-        setError(data.error || "Erreur serveur");
-        setLoading(false);
+        const isGatewayIssue = res.status === 502 || res.status === 503;
+        const fallbackText = rawText?.trim();
+        const parsedMessage = data.error || data.message;
+
+        setError(
+          parsedMessage ||
+            (isGatewayIssue
+              ? "Service momentanément indisponible. Merci de réessayer dans quelques instants."
+              : fallbackText || "Erreur serveur")
+        );
         return;
       }
 
@@ -113,9 +134,9 @@ export default function RegisterPage() {
     } catch (err) {
       console.error(err);
       setError("Erreur réseau — vérifiez votre connexion");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (
