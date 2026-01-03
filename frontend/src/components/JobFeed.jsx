@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getImageUrl } from "../utils/imageUtils";
 import "../styles/JobFeed.css";
+import { API_URL } from "../api/config";
 
 const DEFAULT_CITY_OPTIONS = ["Abidjan", "Cocody", "Plateau"];
 const DEFAULT_MODE_OPTIONS = ["Remote", "Hybride", "Présentiel"];
@@ -17,7 +18,6 @@ export default function JobFeed({ jobsMenuOpen = false, setJobsMenuOpen }) {
   const [modeFilter, setModeFilter] = useState("");
 
   const token = localStorage.getItem("token");
-  const API_URL = import.meta.env.VITE_API_URL; // https://api.kziik.com/api
   const navigate = useNavigate();
   const searchAbortRef = useRef(null);
 

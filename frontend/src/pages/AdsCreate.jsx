@@ -5,8 +5,7 @@ import "../styles/ads.css";
 import { getImageUrl } from "../utils/imageUtils";
 import { buildPaymentLink, loadLocalCampaigns, upsertLocalCampaign } from "../utils/adsStorage";
 import TextClamp from "../components/TextClamp";
-
-const API_URL = import.meta.env.VITE_API_URL || "https://api.kziik.com/api";
+import { API_URL } from "../api/config";
 const POSTS_PER_PAGE = 5;
 const AGE_MIN_LIMIT = 13;
 const AGE_MAX_LIMIT = 65;

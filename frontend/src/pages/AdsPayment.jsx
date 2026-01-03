@@ -3,8 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../styles/ads.css";
 import { buildPaymentLink, loadLocalCampaigns } from "../utils/adsStorage";
 import apiFetch from "../utils/apiFetch";
-
-const API_URL = import.meta.env.VITE_API_URL || "https://api.kziik.com/api";
+import { API_URL } from "../api/config";
 
 export default function AdsPayment() {
   const { campaignId } = useParams();

@@ -1,9 +1,7 @@
+import { API_URL } from "../api/config";
 // /frontend/src/utils/imageUtils.js
 
-const API_BASE = (import.meta.env.VITE_API_URL || "https://api.kziik.com/api").replace(
-  /\/api\/?$/,
-  ""
-);
+const API_BASE = API_URL.replace(/\/api\/?$/, "");
 
 /* ============================================================
     CONSTRUIT UNE URL D’IMAGE PROPRE ET FIABLE

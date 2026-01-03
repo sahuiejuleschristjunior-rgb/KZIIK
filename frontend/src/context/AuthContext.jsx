@@ -1,10 +1,5 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { API_URL } from "../api/config";
 
 const AuthContext = createContext(null);
 
@@ -46,7 +41,7 @@ export function AuthProvider({ children }) {
       if (!silent) setLoading(true);
 
       try {
-        const res = await fetch(import.meta.env.VITE_API_URL + "/auth/me", {
+        const res = await fetch(API_URL + "/auth/me", {
           headers: { Authorization: "Bearer " + jwt },
         });
 

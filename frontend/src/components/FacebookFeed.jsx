@@ -477,8 +477,7 @@ export default function FacebookFeed() {
   useEffect(() => {
     if (!token) return;
 
-    const SOCKET_URL =
-      import.meta.env.VITE_SOCKET_URL || "https://kziik.com";
+    const SOCKET_URL = API_URL.replace(/\/api\/?$/, "") || "/";
 
     const s = io(SOCKET_URL, {
       auth: { token },

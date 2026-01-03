@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import "../styles/reels.css";
 import { getImageUrl } from "../utils/imageUtils";
+import { API_URL } from "../api/config";
 
 export default function ReelsPage() {
-  const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
   const location = useLocation();
 

@@ -1,6 +1,7 @@
 // src/pages/PostPage.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { API_URL } from "../api/config";
 import Post from "../components/Post";
 import CommentSection from "../components/CommentSection";
 import "../styles/postpage.css";
@@ -33,7 +34,7 @@ export default function PostPage() {
   const loadPost = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/posts/${id}`, {
+      const res = await fetch(`${API_URL}/posts/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -61,7 +62,7 @@ export default function PostPage() {
 
   const handleLike = async () => {
     try {
-      const res = await fetch(`/api/posts/${id}/like`, {
+      const res = await fetch(`${API_URL}/posts/${id}/like`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -89,7 +90,7 @@ export default function PostPage() {
 
   const handleComment = async (text) => {
     try {
-      const res = await fetch(`/api/posts/${id}/comment`, {
+      const res = await fetch(`${API_URL}/posts/${id}/comment`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -107,7 +108,7 @@ export default function PostPage() {
 
   const handleReply = async (cid, text) => {
     try {
-      const res = await fetch(`/api/posts/${id}/comment/${cid}/reply`, {
+      const res = await fetch(`${API_URL}/posts/${id}/comment/${cid}/reply`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -126,7 +127,7 @@ export default function PostPage() {
   const handleDeleteComment = async (commentId) => {
     try {
       const res = await fetch(
-        `/api/posts/${id}/comment/${commentId}`,
+        `${API_URL}/posts/${id}/comment/${commentId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -143,7 +144,7 @@ export default function PostPage() {
   const handleDeleteReply = async (commentId, replyId) => {
     try {
       const res = await fetch(
-        `/api/posts/${id}/comment/${commentId}/reply/${replyId}`,
+        `${API_URL}/posts/${id}/comment/${commentId}/reply/${replyId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -161,7 +162,7 @@ export default function PostPage() {
     if (!confirm("Supprimer le post ?")) return;
 
     try {
-      const res = await fetch(`/api/posts/${id}`, {
+      const res = await fetch(`${API_URL}/posts/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

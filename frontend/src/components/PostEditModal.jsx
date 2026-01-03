@@ -1,8 +1,7 @@
+import { API_URL } from "../api/config";
 // src/components/PostEditModal.jsx
 import React, { useState } from "react";
 import "../styles/post-edit-modal.css";
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 /* Fonction pour corriger les URL */
 const fixUrl = (path) => {

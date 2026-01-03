@@ -1,3 +1,4 @@
+import { API_URL } from "../api/config";
 // CommentsModal.jsx
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -84,9 +85,10 @@ export default function CommentsModal({
 }) {
   const nav = useNavigate();
   const token = propToken || (typeof window !== "undefined" && localStorage.getItem("token"));
-  const API_URL = propApiUrl || import.meta.env.VITE_API_URL || "";
+  const resolvedApiUrl = propApiUrl || API_URL || "";
   const commentBasePath = targetType === "page" ? "posts" : "posts";
-  const buildPostUrl = (postId, suffix = "") => `${API_URL}/${commentBasePath}/${postId}${suffix}`;
+  const buildPostUrl = (postId, suffix = "") =>
+    `${resolvedApiUrl}/${commentBasePath}/${postId}${suffix}`;
   const resolvedUserId =
     propUserId ||
     (() => {

@@ -1,6 +1,7 @@
 // src/context/SocketContext.jsx
 import { createContext, useContext, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
+import { API_URL } from "../api/config";
 
 const SocketContext = createContext(null);
 
@@ -11,7 +12,7 @@ export function SocketProvider({ children }) {
     const token = localStorage.getItem("token");
     if (!token) return undefined;
 
-    const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+    const SOCKET_URL = API_URL.replace(/\/api\/?$/, "") || "/";
 
     const socket = io(SOCKET_URL, {
       auth: { token },

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import "../styles/otp.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { API_URL } from "../api/config";
 
 export default function VerifyOtpRegister() {
   const nav = useNavigate();
@@ -80,7 +81,7 @@ export default function VerifyOtpRegister() {
       setTimer(60);
 
       const res = await fetch(
-        import.meta.env.VITE_API_URL + "/auth/resend-register-otp",
+        API_URL + "/auth/resend-register-otp",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -122,7 +123,7 @@ export default function VerifyOtpRegister() {
 
     try {
       const res = await fetch(
-        import.meta.env.VITE_API_URL + "/auth/verify-register",
+        API_URL + "/auth/verify-register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

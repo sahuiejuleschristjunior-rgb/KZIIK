@@ -1,12 +1,13 @@
 // src/pages/FeedPage.jsx
 import { useEffect, useState, useRef } from "react";
+import { API_URL } from "../api/config";
 import { useNavigate } from "react-router-dom";
 import LeftMenu from "../components/LeftMenu";
 import CreatePostModal from "../components/CreatePostModal";
 import "../styles/menus.css";
 import "../styles/stories.css";
 
-const API_BASE = "";
+const API_BASE = API_URL;
 const MEDIA_BASE = "https://kziik.com"; // "" => même origine. Sinon: "https://kziik.com"
 
 // -----------------------------------------------------
@@ -221,7 +222,7 @@ export default function FeedPage() {
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/posts`, {
+      const res = await fetch(`${API_BASE}/posts`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
@@ -295,7 +296,7 @@ export default function FeedPage() {
   const handleDeletePost = async (postId) => {
     if (!confirm("Confirmer suppression de la publication ?")) return;
     try {
-      const res = await fetch(`${API_BASE}/api/posts/${postId}`, {
+      const res = await fetch(`${API_BASE}/posts/${postId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}`
       });
@@ -316,7 +317,7 @@ export default function FeedPage() {
   // ========================================================================
   const handleLike = async (postId) => {
     try {
-      const res = await fetch(`${API_BASE}/api/posts/${postId}/like`, {
+      const res = await fetch(`${API_BASE}/posts/${postId}/like`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`
       });
@@ -355,8 +356,8 @@ export default function FeedPage() {
     if (!text || !text.trim()) return;
     try {
       const url = parentCommentId
-        ? `${API_BASE}/api/posts/${postId}/comment/${parentCommentId}/reply`
-        : `${API_BASE}/api/posts/${postId}/comment`;
+        ? `${API_BASE}/posts/${postId}/comment/${parentCommentId}/reply`
+        : `${API_BASE}/posts/${postId}/comment`;
 
       const res = await fetch(url, {
         method: "POST",

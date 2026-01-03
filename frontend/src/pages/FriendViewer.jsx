@@ -3,8 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import FacebookLayout from "./FacebookLayout";
 import { useAuth } from "../context/AuthContext";
 import "../styles/friend-viewer.css";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../api/config";
 
 const resolveAvatar = (user) => {
   if (!user) return "/default-avatar.png";

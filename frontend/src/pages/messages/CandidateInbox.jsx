@@ -4,8 +4,7 @@ import CandidateLayout from "../../layouts/CandidateLayout";
 import { fetchJobChatConversations } from "../../api/jobChatApi";
 import "../../styles/job-chat.css";
 import { useNotifications } from "../../context/NotificationContext";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../../api/config";
 const getId = (value) => (typeof value === "object" ? value?._id : value);
 const loadErrorMessage = "Impossible de charger vos conversations";
 

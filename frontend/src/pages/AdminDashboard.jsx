@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../api/config";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function AdminDashboard() {
       return;
     }
 
-    fetch("/api/admin/stats", {
+    fetch(`${API_URL}/admin/stats`, {
       headers: {
         Authorization: `Bearer ${token}`
       },

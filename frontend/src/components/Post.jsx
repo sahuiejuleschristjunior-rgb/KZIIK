@@ -1,3 +1,4 @@
+import { API_URL } from "../api/config";
 // src/components/Post.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,7 @@ import MediaRenderer from "./MediaRenderer";
 import { getHiddenPostIds, rememberHiddenPost } from "../utils/hiddenPosts";
 import TextClamp from "./TextClamp";
 
-const API_BASE = import.meta.env.VITE_API_URL || "https://api.kziik.com/api";
+const API_BASE = API_URL;
 const API_HOST = API_BASE.replace(/\/api\/?$/, "");
 
 const fixUrl = (path) => {

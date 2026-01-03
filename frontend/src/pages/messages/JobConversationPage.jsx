@@ -2,10 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
 import { sendMessagePayload } from "../../api/messagesApi";
-import {
-  fetchConversationMessages,
-  fetchJobConversation,
-} from "../../api/jobChatApi";
+import { API_URL } from "../../api/config";
+import { fetchConversationMessages, fetchJobConversation } from "../../api/jobChatApi";
 import MessageList from "../../components/jobchat/MessageList";
 import MessageInput from "../../components/jobchat/MessageInput";
 import CandidateLayout from "../../layouts/CandidateLayout";
@@ -13,8 +11,6 @@ import RecruiterLayout from "../../layouts/RecruiterLayout";
 import "../../styles/job-chat.css";
 import { useActiveConversation } from "../../context/ActiveConversationContext";
 import { useNotifications } from "../../context/NotificationContext";
-
-const API_URL = import.meta.env.VITE_API_URL;
 const loadErrorMessage = "Impossible de charger vos conversations";
 
 const ensureJsonResponse = async (res) => {

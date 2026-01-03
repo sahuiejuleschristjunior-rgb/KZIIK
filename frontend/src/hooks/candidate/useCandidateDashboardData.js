@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { API_URL } from "../../api/config";
 
 export default function useCandidateDashboardData() {
   const [user, setUser] = useState(null);
@@ -9,8 +10,6 @@ export default function useCandidateDashboardData() {
   const [loadingSaved, setLoadingSaved] = useState(true);
   const [loadingReco, setLoadingReco] = useState(true);
   const [error, setError] = useState(null);
-
-  const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
 
   useEffect(() => {

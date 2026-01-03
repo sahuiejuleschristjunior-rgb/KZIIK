@@ -1,3 +1,4 @@
+import { API_URL } from "../api/config";
 // src/pages/FeedPage.jsx
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -16,7 +17,7 @@ import "../styles/stories.css";
 import "../styles/comments.css";
 import "../styles/notifications.css";
 
-const API_BASE = import.meta.env.VITE_API_URL;
+const API_BASE = API_URL;
 
 /* ========================================================= */
 /* STORIES MOCK */
@@ -242,7 +243,7 @@ export default function FeedPage() {
     if (isInitialLoad && !loading) setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE}/api/posts`, {
+      const res = await fetch(`${API_BASE}/posts`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -348,7 +349,7 @@ export default function FeedPage() {
 
       allFiles.forEach((file) => fd.append("files", file));
 
-      const res = await fetch(`${API_BASE}/api/posts`, {
+      const res = await fetch(`${API_BASE}/posts`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -373,7 +374,7 @@ export default function FeedPage() {
     if (!confirm("Confirmer suppression ?")) return;
 
     try {
-      const res = await fetch(`${API_BASE}/api/posts/${postId}`, {
+      const res = await fetch(`${API_BASE}/posts/${postId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -392,7 +393,7 @@ export default function FeedPage() {
 
   const handleLike = async (postId) => {
     try {
-      const res = await fetch(`${API_BASE}/api/posts/${postId}/like`, {
+      const res = await fetch(`${API_BASE}/posts/${postId}/like`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -447,8 +448,8 @@ export default function FeedPage() {
 
     try {
       const url = parent
-        ? `${API_BASE}/api/posts/${postId}/comment/${parent}/reply`
-        : `${API_BASE}/api/posts/${postId}/comment`;
+        ? `${API_BASE}/posts/${postId}/comment/${parent}/reply`
+        : `${API_BASE}/posts/${postId}/comment`;
 
       const res = await fetch(url, {
         method: "POST",
@@ -472,7 +473,7 @@ export default function FeedPage() {
   const handleDeleteComment = async (commentId, postId) => {
     try {
       const res = await fetch(
-        `${API_BASE}/api/posts/${postId}/comment/${commentId}`,
+        `${API_BASE}/posts/${postId}/comment/${commentId}`,
         {
           method: "DELETE",
           headers: {
@@ -494,7 +495,7 @@ export default function FeedPage() {
   const handleDeleteReply = async (commentId, replyId, postId) => {
     try {
       const res = await fetch(
-        `${API_BASE}/api/posts/${postId}/comment/${commentId}/reply/${replyId}`,
+        `${API_BASE}/posts/${postId}/comment/${commentId}/reply/${replyId}`,
         {
           method: "DELETE",
           headers: {
