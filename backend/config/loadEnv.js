@@ -54,4 +54,10 @@ module.exports = () => {
 
   loadEnvFile(rootEnvPath);
   loadEnvFile(backendEnvPath);
+
+  // 🔐 Garantit qu'un secret JWT est toujours présent pour éviter les erreurs runtime
+  if (!process.env.JWT_SECRET) {
+    process.env.JWT_SECRET = "change_this_secret_now";
+    console.warn("[config/loadEnv] JWT_SECRET manquant, utilisation d'une valeur par défaut.");
+  }
 };
