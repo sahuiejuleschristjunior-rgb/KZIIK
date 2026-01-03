@@ -5,88 +5,100 @@ const path = require("path");
 /* ============================================================
    UTILITAIRES DE CONFIGURATION SMTP
 ============================================================ */
+const DEFAULT_SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+
+const getBaseSmtpConfig = () => ({
+  host: process.env.SMTP_HOST,
+  port: DEFAULT_SMTP_PORT,
+  secure: String(process.env.SMTP_SECURE ?? "true").toLowerCase() === "true",
+});
+
+const getCredentials = (fromType) => {
+  const fallbackUser = process.env.SMTP_USER;
+  const fallbackPass = process.env.SMTP_PASS;
+
+  if (fromType === "inscription") {
+    return {
+      user: process.env.SMTP_USER_INSCRIPTION || fallbackUser,
+      pass: process.env.SMTP_PASS_INSCRIPTION || fallbackPass,
+      from:
+        process.env.FROM_EMAIL_INSCRIPTION ||
+        process.env.SMTP_FROM_INSCRIPTION ||
+        process.env.SMTP_USER_INSCRIPTION ||
+        fallbackUser,
+    };
+  }
+
+  return {
+    user: process.env.SMTP_USER_NO_REPLY || fallbackUser,
+    pass: process.env.SMTP_PASS_NO_REPLY || fallbackPass,
+    from:
+      process.env.FROM_EMAIL_NO_REPLY ||
+      process.env.SMTP_FROM_NO_REPLY ||
+      process.env.SMTP_USER_NO_REPLY ||
+      fallbackUser,
+  };
+};
+
 const hasCredentials = (user, pass) => Boolean((user || "").trim() && (pass || "").trim());
 
 const isSmtpConfigured = (fromType) => {
-  const user =
-    fromType === "inscription"
-      ? process.env.SMTP_USER_INSCRIPTION
-      : process.env.SMTP_USER_NO_REPLY;
-
-  const pass =
-    fromType === "inscription"
-      ? process.env.SMTP_PASS_INSCRIPTION
-      : process.env.SMTP_PASS_NO_REPLY;
+  const credentials = getCredentials(fromType);
+  const baseConfig = getBaseSmtpConfig();
 
   return (
-    Boolean(process.env.SMTP_HOST) &&
-    Boolean(process.env.SMTP_PORT) &&
-    hasCredentials(user, pass) &&
-    Boolean(
-      fromType === "inscription"
-        ? process.env.FROM_EMAIL_INSCRIPTION
-        : process.env.FROM_EMAIL_NO_REPLY
-    )
+    Boolean(baseConfig.host) &&
+    Boolean(baseConfig.port) &&
+    hasCredentials(credentials.user, credentials.pass) &&
+    Boolean(credentials.from)
   );
 };
 
-const buildTransporter = () =>
-  nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
-    secure: String(process.env.SMTP_SECURE).toLowerCase() === "true",
-    auth: {
-      user: process.env.SMTP_USER_INSCRIPTION,
-      pass: process.env.SMTP_PASS_INSCRIPTION,
-    },
-  });
+const buildTransporter = (fromType) => {
+  const baseConfig = getBaseSmtpConfig();
+  const credentials = getCredentials(fromType);
 
-const buildNoReplyTransporter = () =>
-  nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
-    secure: String(process.env.SMTP_SECURE).toLowerCase() === "true",
+  return nodemailer.createTransport({
+    ...baseConfig,
     auth: {
-      user: process.env.SMTP_USER_NO_REPLY,
-      pass: process.env.SMTP_PASS_NO_REPLY,
+      user: credentials.user,
+      pass: credentials.pass,
     },
   });
+};
 
 /* ============================================================
    1. TRANSPORT SMTP POUR INSCRIPTION
 ============================================================ */
-const transporterInscription = buildTransporter();
+const transporterInscription = buildTransporter("inscription");
 
 /* ============================================================
    2. TRANSPORT SMTP POUR NO-REPLY
 ============================================================ */
-const transporterNoReply = buildNoReplyTransporter();
+const transporterNoReply = buildTransporter("noreply");
 
 /* ============================================================
    3. VÉRIFICATION SMTP SÉCURISÉE (NE PLANTE PLUS LE SERVEUR)
 ============================================================ */
-(async () => {
-  try {
-    if (isSmtpConfigured("inscription")) {
-      await transporterInscription.verify();
-      console.log("✔ SMTP INSCRIPTION CONNECTED");
-    } else {
-      console.warn("⚠️ SMTP inscription non configuré. Envoi d'email désactivé.");
-    }
-  } catch (err) {
-    console.error("❌ SMTP INSCRIPTION ERROR:", err.message);
+const verifyTransporter = async (type, transporter) => {
+  if (!isSmtpConfigured(type)) {
+    console.warn(
+      `⚠️ SMTP ${type} non configuré. Envoi d'email désactivé pour ce profil.`
+    );
+    return;
   }
 
   try {
-    if (isSmtpConfigured("noreply")) {
-      await transporterNoReply.verify();
-      console.log("✔ SMTP NO-REPLY CONNECTED");
-    } else {
-      console.warn("⚠️ SMTP no-reply non configuré. Envoi d'email désactivé.");
-    }
+    await transporter.verify();
+    console.log(`SMTP READY (${type})`);
   } catch (err) {
-    console.error("❌ SMTP NO-REPLY ERROR:", err.message);
+    console.error(`❌ SMTP ${type} ERROR:`, err.message);
   }
+};
+
+(async () => {
+  await verifyTransporter("inscription", transporterInscription);
+  await verifyTransporter("noreply", transporterNoReply);
 })();
 
 /* ============================================================
@@ -103,15 +115,10 @@ exports.sendTemplateEmail = async (
   try {
     // Choix du transport SMTP
     const transporter =
-      fromType === "inscription"
-        ? transporterInscription
-        : transporterNoReply;
+      fromType === "inscription" ? transporterInscription : transporterNoReply;
 
     // Adresse expéditeur
-    const from =
-      fromType === "inscription"
-        ? process.env.FROM_EMAIL_INSCRIPTION
-        : process.env.FROM_EMAIL_NO_REPLY;
+    const { from } = getCredentials(fromType);
 
     if (!isSmtpConfigured(fromType)) {
       console.warn(
