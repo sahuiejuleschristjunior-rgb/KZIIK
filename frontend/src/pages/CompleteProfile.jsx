@@ -111,6 +111,14 @@ export default function CompleteProfile() {
     };
   }, [form, hasCustomAvatar, hasCustomCover]);
 
+  const coverLabel = coverPreview
+    ? "Modifier la photo de couverture"
+    : "Ajouter une photo de couverture";
+
+  const locationPreview = [form.city.trim(), form.country.trim()]
+    .filter(Boolean)
+    .join(", ");
+
   const isFormValid =
     hasCustomAvatar &&
     hasCustomCover &&
@@ -236,11 +244,13 @@ export default function CompleteProfile() {
   return (
     <div className="complete-profile">
       <div className="complete-profile__hero">
-        <div>
+        <div className="complete-profile__intro">
+          <p className="complete-profile__eyebrow">Profil public</p>
           <h1>Complétez votre profil</h1>
           <p>
             Ajoutez vos informations essentielles pour accéder au fil d'actualité et
-            profiter pleinement d'KZIIK.
+            profiter pleinement d'KZIIK. Les photos et les détails ci-dessous seront
+            visibles sur votre page, comme sur Facebook.
           </p>
         </div>
         <div className="complete-profile__progress">
@@ -261,7 +271,7 @@ export default function CompleteProfile() {
       <form className="complete-profile__card" onSubmit={handleSubmit}>
         {error && <div className="complete-profile__error">{error}</div>}
 
-        <div className="complete-profile__media">
+        <div className="complete-profile__profile-preview">
           <div className="complete-profile__cover">
             {coverPreview ? (
               <img src={coverPreview} alt="Aperçu couverture" />
@@ -270,88 +280,113 @@ export default function CompleteProfile() {
                 Ajoutez une photo de couverture
               </div>
             )}
-            <label className="complete-profile__upload">
-              Photo de couverture
+            <label className="complete-profile__cover-action">
+              📷 {coverLabel}
               <input type="file" accept="image/*" onChange={handleCoverChange} />
             </label>
           </div>
 
-          <div className="complete-profile__avatar">
+          <div className="complete-profile__profile-bar">
             <div className="complete-profile__avatar-frame">
               {avatarPreview ? (
                 <img src={avatarPreview} alt="Aperçu avatar" />
               ) : (
                 <span>🙂</span>
               )}
+              <label className="complete-profile__avatar-action">
+                📸 Modifier
+                <input type="file" accept="image/*" onChange={handleAvatarChange} />
+              </label>
             </div>
-            <label className="complete-profile__upload">
-              Photo de profil
-              <input type="file" accept="image/*" onChange={handleAvatarChange} />
-            </label>
+
+            <div className="complete-profile__identity">
+              <p className="complete-profile__name-preview">
+                {form.name.trim() || "Nom Prénom"}
+              </p>
+              <p className="complete-profile__location-preview">
+                {locationPreview || "Ville, Pays"}
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="complete-profile__fields">
-          <label>
-            Nom complet
-            <input
-              name="name"
-              type="text"
-              placeholder="Votre prénom et nom"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
-          </label>
+        <div className="complete-profile__sections">
+          <div className="complete-profile__section">
+            <div className="complete-profile__section-header">
+              <h3>Infos principales</h3>
+              <p>Ces informations apparaîtront sur votre profil public.</p>
+            </div>
+            <div className="complete-profile__fields">
+              <label>
+                Nom complet
+                <input
+                  name="name"
+                  type="text"
+                  placeholder="Votre prénom et nom"
+                  value={form.name}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
 
-          <label>
-            Bio / Description
-            <textarea
-              name="bio"
-              placeholder="Quelques mots pour vous présenter"
-              value={form.bio}
-              onChange={handleChange}
-              rows={4}
-              required
-            />
-          </label>
+              <label>
+                Bio / Description
+                <textarea
+                  name="bio"
+                  placeholder="Quelques mots pour vous présenter"
+                  value={form.bio}
+                  onChange={handleChange}
+                  rows={4}
+                  required
+                />
+              </label>
 
-          <div className="complete-profile__grid">
-            <label>
-              Ville
-              <input
-                name="city"
-                type="text"
-                placeholder="Votre ville"
-                value={form.city}
-                onChange={handleChange}
-                required
-              />
-            </label>
+              <div className="complete-profile__grid">
+                <label>
+                  Ville
+                  <input
+                    name="city"
+                    type="text"
+                    placeholder="Votre ville"
+                    value={form.city}
+                    onChange={handleChange}
+                    required
+                  />
+                </label>
 
-            <label>
-              Pays
-              <input
-                name="country"
-                type="text"
-                placeholder="Votre pays"
-                value={form.country}
-                onChange={handleChange}
-                required
-              />
-            </label>
+                <label>
+                  Pays
+                  <input
+                    name="country"
+                    type="text"
+                    placeholder="Votre pays"
+                    value={form.country}
+                    onChange={handleChange}
+                    required
+                  />
+                </label>
+              </div>
+            </div>
           </div>
 
-          <label>
-            Téléphone (optionnel)
-            <input
-              name="phone"
-              type="tel"
-              placeholder="+33 6 00 00 00 00"
-              value={form.phone}
-              onChange={handleChange}
-            />
-          </label>
+          <div className="complete-profile__section">
+            <div className="complete-profile__section-header">
+              <h3>Coordonnées</h3>
+              <p>Partagez un numéro pour être contacté facilement.</p>
+            </div>
+            <div className="complete-profile__fields">
+              <label>
+                Téléphone (optionnel)
+                <input
+                  name="phone"
+                  type="tel"
+                  placeholder="+33 6 00 00 00 00"
+                  value={form.phone}
+                  onChange={handleChange}
+                />
+              </label>
+            </div>
+          </div>
         </div>
 
         <button
