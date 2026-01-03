@@ -108,3 +108,26 @@ sudo nginx -t && sudo systemctl reload nginx
 - Inscription : `curl -i -X POST http://127.0.0.1:3000/api/auth/register -H 'Content-Type: application/json' -d '{"email":"test@example.com","password":"secret"}'`
 
 En production derrière Nginx, les mêmes requêtes doivent répondre sans `502`.
+
+## Installation MongoDB sur Ubuntu 24.04 (production)
+
+MongoDB n'est pas inclus par défaut dans l'image Ubuntu Noble. Les commandes suivantes ajoutent le dépôt officiel 7.0, installent le serveur et lancent le service.
+
+```bash
+curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+
+# Démarrage + activation système (si systemd est disponible)
+sudo systemctl enable --now mongod
+
+# Alternative en environnement sans systemd (container) :
+sudo mongod --config /etc/mongod.conf --fork --logpath /var/log/mongodb/mongod.log
+
+# Vérifier la connexion
+mongosh --eval "db.runCommand({ ping: 1 })"
+```
+
+Si vous êtes derrière un proxy HTTPS, vérifiez que les variables `http_proxy`/`https_proxy` sont bien définies et que le proxy autorise l'accès à `archive.ubuntu.com` et `repo.mongodb.org`; sinon `apt-get update` peut retourner un `403 Forbidden`.
