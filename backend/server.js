@@ -1,7 +1,8 @@
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 require("./config/loadEnv")();
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 const http = require("http");
 
 // DB
@@ -34,6 +35,9 @@ const server = http.createServer(app);
 
 // 🔒 PORT FIXE (PRODUCTION SAFE)
 const PORT = process.env.PORT || 3000;
+const envFilePath = path.join(__dirname, ".env");
+
+const getMongoUri = () => (process.env.MONGO_URI || "").trim();
 
 let serverStarted = false;
 
@@ -124,10 +128,12 @@ function dumpRoutesSafe() {
    START SERVER
 ============================================================ */
 const validateEnv = () => {
-  if (!process.env.MONGO_URI) {
+  const mongoUri = getMongoUri();
+
+  if (!mongoUri) {
     console.error("❌ DB ERROR : MONGO_URI not set in env");
     console.error(
-      "Ajoutez MONGO_URI dans le .env (racine ou backend/.env) ou chargez la variable via PM2 --update-env."
+      `Ajoutez MONGO_URI dans ${envFilePath} ou exportez-la via l'environnement PM2 (pm2 start ecosystem.config.js --update-env).`
     );
     process.exit(1);
   }
@@ -154,7 +160,7 @@ const connectWithRetry = async () => {
     console.error("❌ DB ERROR :", err);
 
     // En cas de variable manquante, on sort immédiatement pour éviter une boucle infinie
-    if (String(err.message || "").includes("MONGO_URI")) {
+    if (err && (err.code === "MONGO_URI_MISSING" || String(err.message || "").includes("MONGO_URI"))) {
       process.exit(1);
     }
 
