@@ -61,29 +61,35 @@ app.use("/uploads", express.static(uploadsPath));
 app.use("/api/uploads", express.static(uploadsPath));
 
 /* ============================================================
-   ROUTES API
+   ROUTES API (TOUTES sous /api)
 ============================================================ */
 
-app.use("/api/auth", authRoutes);
-app.use("/api/posts", postRoutes);
-app.use("/api/stories", storyRoutes);
-app.use("/api/upload", uploadRoutes);
-app.use("/api/notifications", notificationRoutes);
-app.use("/api/messages", messageRoutes);
-app.use("/api/search", searchRoutes);
-app.use("/api/social", socialRoutes);
-app.use("/api/ads", adsRoutes);
+// Regroupe toutes les routes sous le préfixe /api
+const apiRouter = express.Router();
+
+// Exemple obligatoire : /api/auth/register
+apiRouter.use("/auth", authRoutes);
+
+apiRouter.use("/posts", postRoutes);
+apiRouter.use("/stories", storyRoutes);
+apiRouter.use("/upload", uploadRoutes);
+apiRouter.use("/notifications", notificationRoutes);
+apiRouter.use("/messages", messageRoutes);
+apiRouter.use("/search", searchRoutes);
+apiRouter.use("/social", socialRoutes);
+apiRouter.use("/ads", adsRoutes);
 
 // ⭐ PAGES
-app.use("/api/pages", pagesRoutes);
-app.use("/api/page-posts", pagePostsRoutes);
+apiRouter.use("/pages", pagesRoutes);
+apiRouter.use("/page-posts", pagePostsRoutes);
 
-/* ============================================================
-   HEALTH CHECK
-============================================================ */
-app.get("/api/health", (req, res) => {
+// Santé API
+apiRouter.get("/health", (req, res) => {
   res.json({ ok: true });
 });
+
+// Monte toutes les routes d'API sous le préfixe /api
+app.use("/api", apiRouter);
 
 /* ============================================================
    SOCKET.IO
