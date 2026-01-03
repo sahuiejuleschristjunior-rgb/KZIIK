@@ -33,7 +33,7 @@ const app = express();
 const server = http.createServer(app);
 
 // 🔒 PORT FIXE (PRODUCTION SAFE)
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = process.env.PORT || 3000;
 
 /* ============================================================
    CORS
@@ -116,7 +116,7 @@ function dumpRoutesSafe() {
    START SERVER
 ============================================================ */
 server.listen(PORT, "0.0.0.0", () => {
-  console.log("✔ Backend running on port", PORT);
+  console.log(`KZIIK backend running on port ${PORT}`);
 
   // 🔍 active seulement si besoin
   // dumpRoutesSafe();
