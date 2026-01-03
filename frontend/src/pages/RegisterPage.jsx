@@ -97,13 +97,34 @@ export default function RegisterPage() {
         body: JSON.stringify(dataToSend),
       });
 
+      const contentType = res.headers.get("content-type") || "";
       let data = {};
-      try {
-        data = await res.json();
-      } catch {}
+      let rawText = "";
+
+      if (contentType.includes("application/json")) {
+        try {
+          data = await res.json();
+        } catch (err) {
+          console.error("register > parse json error", err);
+        }
+      } else {
+        try {
+          rawText = await res.text();
+        } catch (err) {
+          console.error("register > read text error", err);
+        }
+      }
 
       if (!res.ok) {
-        setError(data.error || "Erreur serveur");
+        const isGatewayIssue = res.status === 502 || res.status === 503;
+        const fallbackText = rawText?.trim();
+
+        setError(
+          data.error ||
+            (isGatewayIssue
+              ? "Service momentanément indisponible. Merci de réessayer dans quelques instants."
+              : fallbackText || "Erreur serveur")
+        );
         setLoading(false);
         return;
       }
