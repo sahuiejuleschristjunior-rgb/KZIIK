@@ -44,6 +44,14 @@ const loadEnvFile = (filePath) => {
 };
 
 module.exports = () => {
-  const envPath = path.join(__dirname, "..", ".env");
-  loadEnvFile(envPath);
+  // Autorise un fichier .env à la racine du projet (ex: /var/www/kziik/.env)
+  // puis un fichier spécifique au dossier backend (backend/.env). Le premier
+  // fichier trouvé ne bloque pas le second : les valeurs déjà définies ne sont
+  // pas écrasées, ce qui permet de définir un socle commun à la racine et de
+  // surcharger au besoin côté backend.
+  const rootEnvPath = path.join(__dirname, "..", "..", ".env");
+  const backendEnvPath = path.join(__dirname, "..", ".env");
+
+  loadEnvFile(rootEnvPath);
+  loadEnvFile(backendEnvPath);
 };
