@@ -3,6 +3,12 @@ const nodemailer = require("nodemailer");
 const smtpHost = process.env.SMTP_HOST;
 const smtpPort = Number(process.env.SMTP_PORT || 465);
 const smtpSecure = String(process.env.SMTP_SECURE ?? "true").toLowerCase() === "true";
+const smtpUser = process.env.SMTP_USER || process.env.SMTP_USERNAME;
+const smtpPass = process.env.SMTP_PASSWORD || process.env.SMTP_PASS;
+
+const defaultFrom =
+  process.env.SMTP_DEFAULT_FROM ||
+  (smtpUser ? `KZIIK <${smtpUser}>` : "KZIIK <no-reply@kziik.com>");
 
 function createTransporter({ host, port, secure, user, pass }) {
   if (!host || !port || !user || !pass) return null;
@@ -15,60 +21,30 @@ function createTransporter({ host, port, secure, user, pass }) {
   });
 }
 
-const credentials = {
-  inscription: {
-    user: process.env.SMTP_INSCRIPTION_EMAIL || process.env.SMTP_USER_INSCRIPTION,
-    pass:
-      process.env.SMTP_INSCRIPTION_PASSWORD || process.env.SMTP_PASS_INSCRIPTION,
-  },
-  noreply: {
-    user: process.env.SMTP_NOREPLY_EMAIL || process.env.SMTP_USER_NO_REPLY,
-    pass: process.env.SMTP_NOREPLY_PASSWORD || process.env.SMTP_PASS_NO_REPLY,
-  },
-};
+const transporter = createTransporter({
+  host: smtpHost,
+  port: smtpPort,
+  secure: smtpSecure,
+  user: smtpUser,
+  pass: smtpPass,
+});
 
-const hasStringValue = (value) => Boolean(value && `${value}`.trim());
-
-const buildTransporter = (type) => {
-  const { user, pass } = credentials[type] || {};
-
-  if (!hasStringValue(smtpHost) || !smtpPort || !hasStringValue(user) || !hasStringValue(pass)) {
-    return null;
-  }
-
-  return createTransporter({ host: smtpHost, port: smtpPort, secure: smtpSecure, user, pass });
-};
-
-const inscriptionTransporter = buildTransporter("inscription");
-const noreplyTransporter = buildTransporter("noreply");
-
-const logStatus = async (type, transporter) => {
+(async () => {
   if (!transporter) {
-    console.warn(`⚠️ SMTP ${type} non configuré. Envoi d'email désactivé.`);
+    console.error("❌ SMTP error: configuration incomplète (host/port/user/pass)");
     return;
   }
 
   try {
     await transporter.verify();
-    console.log(`✔ SMTP ${type} prêt`);
+    console.log("✔ SMTP ready");
   } catch (err) {
-    console.error(`❌ SMTP ${type} ERROR:`, err.message || err);
+    console.error("❌ SMTP error:", err?.message || err);
   }
-};
-
-(async () => {
-  await logStatus("inscription", inscriptionTransporter);
-  await logStatus("noreply", noreplyTransporter);
 })();
-
-const getFromAddress = (type) => {
-  const { user } = credentials[type] || {};
-  return hasStringValue(user) ? user : null;
-};
 
 module.exports = {
   createTransporter,
-  inscriptionTransporter,
-  noreplyTransporter,
-  getFromAddress,
+  transporter,
+  defaultFrom,
 };

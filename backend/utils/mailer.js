@@ -1,10 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const {
-  inscriptionTransporter,
-  noreplyTransporter,
-  getFromAddress,
-} = require("../config/smtp");
+const { transporter, defaultFrom } = require("../config/smtp");
 
 /* ============================================================
    ENVOI D’UN EMAIL HTML AVEC TEMPLATE
@@ -15,16 +11,12 @@ exports.sendTemplateEmail = async (
   to,
   subject,
   variables = {},
-  fromType = "noreply" // "inscription" OU "noreply"
+  from = defaultFrom
 ) => {
   try {
-    const transporter =
-      fromType === "inscription" ? inscriptionTransporter : noreplyTransporter;
-    const from = getFromAddress(fromType);
-
     if (!transporter || !from) {
       console.warn(
-        `⚠️ SMTP (${fromType}) non configuré : email '${subject}' vers ${to} ignoré.`
+        `⚠️ SMTP non configuré : email '${subject}' vers ${to} ignoré.`
       );
       return { success: false, skipped: true };
     }
@@ -48,7 +40,6 @@ exports.sendTemplateEmail = async (
       subject,
       from,
       template: templateName,
-      fromType,
     });
 
     const info = await transporter.sendMail({
