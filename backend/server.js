@@ -35,6 +35,8 @@ const server = http.createServer(app);
 // 🔒 PORT FIXE (PRODUCTION SAFE)
 const PORT = process.env.PORT || 3000;
 
+let serverStarted = false;
+
 /* ============================================================
    CORS
 ============================================================ */
@@ -121,24 +123,47 @@ function dumpRoutesSafe() {
 /* ============================================================
    START SERVER
 ============================================================ */
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`KZIIK backend running on port ${PORT}`);
+const validateEnv = () => {
+  if (!process.env.MONGO_URI) {
+    console.error("❌ DB ERROR : MONGO_URI not set in env");
+    console.error(
+      "Ajoutez MONGO_URI dans le .env (racine ou backend/.env) ou chargez la variable via PM2 --update-env."
+    );
+    process.exit(1);
+  }
+};
 
-  // 🔍 active seulement si besoin
-  // dumpRoutesSafe();
-});
+const startServer = () => {
+  if (serverStarted) return;
+
+  server.listen(PORT, "0.0.0.0", () => {
+    serverStarted = true;
+    console.log(`KZIIK backend running on port ${PORT}`);
+
+    // 🔍 active seulement si besoin
+    // dumpRoutesSafe();
+  });
+};
 
 const connectWithRetry = async () => {
   try {
     await db.connect();
     console.log("✔ Database connected");
+    startServer();
   } catch (err) {
     console.error("❌ DB ERROR :", err);
+
+    // En cas de variable manquante, on sort immédiatement pour éviter une boucle infinie
+    if (String(err.message || "").includes("MONGO_URI")) {
+      process.exit(1);
+    }
+
     console.log("⏳ Retrying database connection in 5s...");
     setTimeout(connectWithRetry, 5000);
   }
 };
 
+validateEnv();
 connectWithRetry();
 
   
