@@ -43,6 +43,30 @@ printf "NODE_ENV=production\nPORT=3000\nMONGO_URI=mongodb://127.0.0.1:27017/kzii
 pm2 restart kziik-backend --update-env
 ```
 
+Si vous utilisez le SMTP Hostinger, vous pouvez préparer un `.env` complet directement dans `/var/www/kziik/backend/.env` avant de redémarrer PM2 :
+
+```bash
+cat > /var/www/kziik/backend/.env <<'EOF'
+NODE_ENV=production
+PORT=3000
+
+# MongoDB (à adapter si besoin)
+MONGO_URI=mongodb://127.0.0.1:27017/kziik
+
+# SMTP Hostinger
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_SECURE=true
+
+SMTP_INSCRIPTION_EMAIL=inscription@kziik.com
+SMTP_INSCRIPTION_PASSWORD=@SUCCESS7a
+
+SMTP_NOREPLY_EMAIL=no-reply@kziik.com
+SMTP_NOREPLY_PASSWORD=@SUCCESS7a
+EOF
+pm2 restart kziik-backend --update-env
+```
+
 Vérification des logs (la connexion Mongo doit afficher `✔ Database connected`) :
 
 ```bash
