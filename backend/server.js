@@ -1,5 +1,5 @@
+require("dotenv").config({ path: __dirname + "/.env" });
 const path = require("path");
-require("dotenv").config({ path: path.join(__dirname, ".env") });
 require("./config/loadEnv")();
 const express = require("express");
 const cors = require("cors");
@@ -137,6 +137,8 @@ const validateEnv = () => {
     );
     process.exit(1);
   }
+
+  console.log(`✅ MONGO_URI détectée via ${envFilePath}`);
 };
 
 const startServer = () => {
