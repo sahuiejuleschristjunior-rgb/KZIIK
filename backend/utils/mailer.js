@@ -3,45 +3,87 @@ const fs = require("fs");
 const path = require("path");
 
 /* ============================================================
+   UTILITAIRES DE CONFIGURATION SMTP
+============================================================ */
+const hasCredentials = (user, pass) => Boolean((user || "").trim() && (pass || "").trim());
+
+const isSmtpConfigured = (fromType) => {
+  const user =
+    fromType === "inscription"
+      ? process.env.SMTP_USER_INSCRIPTION
+      : process.env.SMTP_USER_NO_REPLY;
+
+  const pass =
+    fromType === "inscription"
+      ? process.env.SMTP_PASS_INSCRIPTION
+      : process.env.SMTP_PASS_NO_REPLY;
+
+  return (
+    Boolean(process.env.SMTP_HOST) &&
+    Boolean(process.env.SMTP_PORT) &&
+    hasCredentials(user, pass) &&
+    Boolean(
+      fromType === "inscription"
+        ? process.env.FROM_EMAIL_INSCRIPTION
+        : process.env.FROM_EMAIL_NO_REPLY
+    )
+  );
+};
+
+const buildTransporter = () =>
+  nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: String(process.env.SMTP_SECURE).toLowerCase() === "true",
+    auth: {
+      user: process.env.SMTP_USER_INSCRIPTION,
+      pass: process.env.SMTP_PASS_INSCRIPTION,
+    },
+  });
+
+const buildNoReplyTransporter = () =>
+  nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: String(process.env.SMTP_SECURE).toLowerCase() === "true",
+    auth: {
+      user: process.env.SMTP_USER_NO_REPLY,
+      pass: process.env.SMTP_PASS_NO_REPLY,
+    },
+  });
+
+/* ============================================================
    1. TRANSPORT SMTP POUR INSCRIPTION
 ============================================================ */
-const transporterInscription = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: String(process.env.SMTP_SECURE).toLowerCase() === "true",
-  auth: {
-    user: process.env.SMTP_USER_INSCRIPTION,
-    pass: process.env.SMTP_PASS_INSCRIPTION,
-  },
-});
+const transporterInscription = buildTransporter();
 
 /* ============================================================
    2. TRANSPORT SMTP POUR NO-REPLY
 ============================================================ */
-const transporterNoReply = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: String(process.env.SMTP_SECURE).toLowerCase() === "true",
-  auth: {
-    user: process.env.SMTP_USER_NO_REPLY,
-    pass: process.env.SMTP_PASS_NO_REPLY,
-  },
-});
+const transporterNoReply = buildNoReplyTransporter();
 
 /* ============================================================
    3. VÉRIFICATION SMTP SÉCURISÉE (NE PLANTE PLUS LE SERVEUR)
 ============================================================ */
 (async () => {
   try {
-    await transporterInscription.verify();
-    console.log("✔ SMTP INSCRIPTION CONNECTED");
+    if (isSmtpConfigured("inscription")) {
+      await transporterInscription.verify();
+      console.log("✔ SMTP INSCRIPTION CONNECTED");
+    } else {
+      console.warn("⚠️ SMTP inscription non configuré. Envoi d'email désactivé.");
+    }
   } catch (err) {
     console.error("❌ SMTP INSCRIPTION ERROR:", err.message);
   }
 
   try {
-    await transporterNoReply.verify();
-    console.log("✔ SMTP NO-REPLY CONNECTED");
+    if (isSmtpConfigured("noreply")) {
+      await transporterNoReply.verify();
+      console.log("✔ SMTP NO-REPLY CONNECTED");
+    } else {
+      console.warn("⚠️ SMTP no-reply non configuré. Envoi d'email désactivé.");
+    }
   } catch (err) {
     console.error("❌ SMTP NO-REPLY ERROR:", err.message);
   }
@@ -70,6 +112,13 @@ exports.sendTemplateEmail = async (
       fromType === "inscription"
         ? process.env.FROM_EMAIL_INSCRIPTION
         : process.env.FROM_EMAIL_NO_REPLY;
+
+    if (!isSmtpConfigured(fromType)) {
+      console.warn(
+        `⚠️ SMTP (${fromType}) non configuré : email '${subject}' vers ${to} ignoré.`
+      );
+      return { success: false, skipped: true };
+    }
 
     console.log("SMTP_LOG", { to, subject });
 
@@ -104,11 +153,10 @@ exports.sendTemplateEmail = async (
     });
 
     console.log("EMAIL SENT OK", { to, subject, messageId: info?.messageId || null });
-    return info;
-
+    return { success: true, info };
   } catch (err) {
     console.error("EMAIL ERROR", err.message || err);
-    // On renvoie l’erreur pour que le contrôleur puisse réagir
-    throw err;
+    // Ne plus bloquer l'API si le SMTP est HS : on log et on continue
+    return { success: false, error: err.message || String(err) };
   }
 };
