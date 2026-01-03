@@ -1,0 +1,191 @@
+/* Neutralisation totale du template Vite */
+
+#root {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: initial !important;
+}
+
+.logo,
+.card,
+.read-the-docs {
+  display: none !important;
+}
+
+.avatar-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: none;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Pages (pages publiques) */
+.page-shell {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+}
+
+.page-shell-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.page-form label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.page-form input,
+.page-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.page-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.page-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  background: #fafafa;
+}
+
+.page-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: #ececec;
+  flex-shrink: 0;
+}
+
+.page-card-title {
+  font-weight: 700;
+}
+
+.page-card-sub {
+  color: #666;
+  font-size: 14px;
+}
+
+.page-cover {
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 12px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-header-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.page-meta {
+  display: flex;
+  gap: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.page-bio {
+  margin-top: 6px;
+  color: #444;
+}
+
+.page-post-creator textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.page-posts .page-post-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #fafafa;
+}
+
+.page-post-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.page-post-author {
+  font-weight: 700;
+}
+
+.page-post-text {
+  margin: 6px 0;
+}
+
+.page-post-media img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.btn-primary {
+  padding: 10px 14px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.empty {
+  color: #666;
+  padding: 10px 0;
+}
+
+.error-text {
+  color: #b91c1c;
+  margin-bottom: 8px;
+}

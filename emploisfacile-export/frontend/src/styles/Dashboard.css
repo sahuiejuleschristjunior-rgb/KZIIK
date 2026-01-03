@@ -1,0 +1,593 @@
+/* ------------------------------------------------------------
+   GLOBAL THEME — Meta Business Style
+------------------------------------------------------------- */
+:root{
+  --bg:#0f1720;
+  --panel:#0b1220;
+  --muted:#9aa4b2;
+  --text:#e6eef4;
+  --accent:#1877f2;
+  --accent-red:#e11d48;
+  --glass:rgba(255,255,255,0.06);
+}
+
+.recruiter-dashboard{
+  background:linear-gradient(180deg,#050816 0%, #020617 100%);
+  min-height:100vh;
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto;
+  padding:20px;
+  padding-top:110px; /* header fixe */
+}
+
+/* ------------------------------------------------------------
+   HEADER FIXE
+------------------------------------------------------------- */
+.rd-header{
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:200;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:12px 20px;
+  background:rgba(15,23,42,0.9);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(148,163,184,0.3);
+}
+
+.rd-header-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.rd-burger{
+  display:none;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.4);
+  background:transparent;
+  color:var(--text);
+  font-size:18px;
+  cursor:pointer;
+}
+
+.rd-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.rd-logo{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:#020617;
+  border:1px solid rgba(148,163,184,0.4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-size:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.7);
+}
+
+.rd-brand-text{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.rd-brand-title{
+  font-size:14px;
+  font-weight:700;
+}
+
+.rd-brand-sub{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.rd-header-right{
+  display:flex;
+  align-items:center;
+}
+
+/* bouton rouge nouvelle offre */
+.rd-btn{
+  background:var(--accent-red);
+  padding:9px 16px;
+  border-radius:999px;
+  border:none;
+  color:#fff;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:0.15s ease-in-out;
+}
+
+.rd-btn::before{
+  content:"+";
+  font-size:18px;
+  font-weight:900;
+}
+
+.rd-btn:hover{
+  background:#be123c;
+}
+
+/* ------------------------------------------------------------
+   SHELL AVEC SIDEBAR + MAIN
+------------------------------------------------------------- */
+.rd-shell{
+  display:flex;
+  gap:18px;
+  max-width:1400px;
+  margin:0 auto;
+}
+
+/* Sidebar */
+.rd-sidebar{
+  width:230px;
+  background:rgba(15,23,42,0.95);
+  border-radius:18px;
+  border:1px solid rgba(148,163,184,0.25);
+  padding:16px 14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.rd-sidebar-section{
+  margin-bottom:10px;
+}
+
+.rd-sidebar-section-bottom{
+  margin-top:20px;
+  border-top:1px solid rgba(148,163,184,0.25);
+  padding-top:12px;
+}
+
+.rd-sidebar-title{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+
+.rd-menu-item{
+  padding:8px 10px;
+  border-radius:10px;
+  font-size:14px;
+  color:var(--muted);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.rd-menu-item:hover{
+  background:rgba(30,64,175,0.3);
+  color:#fff;
+}
+
+.rd-menu-item--active{
+  background:rgba(37,99,235,0.9);
+  color:#fff;
+}
+
+/* Main */
+.rd-main{
+  flex:1;
+}
+
+/* ------------------------------------------------------------
+   GRID PRINCIPALE INTERNE
+------------------------------------------------------------- */
+.rd-container{
+  display:grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap:18px;
+}
+
+/* Colonne gauche */
+.rd-center{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+/* Colonne droite (formulaire) */
+.rd-right{
+  position:sticky;
+  top:110px;
+  align-self:flex-start;
+}
+
+/* Cards génériques */
+.rd-card{
+  background:rgba(15,23,42,0.95);
+  border-radius:18px;
+  border:1px solid rgba(148,163,184,0.35);
+  padding:18px;
+}
+
+.rd-card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+/* ------------------------------------------------------------
+   KPIs
+------------------------------------------------------------- */
+.rd-kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:10px;
+}
+
+.rd-kpi{
+  border-radius:14px;
+  padding:14px 12px;
+  background:radial-gradient(circle at top left, rgba(56,189,248,0.25), transparent 55%);
+  border:1px solid rgba(148,163,184,0.45);
+}
+
+.rd-kpi:nth-child(2){
+  background:radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 55%);
+}
+
+.rd-kpi:nth-child(3){
+  background:radial-gradient(circle at top left, rgba(248,113,113,0.25), transparent 55%);
+}
+
+.rd-kpi .num{
+  font-size:22px;
+  font-weight:800;
+}
+
+.rd-kpi .label{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+/* ------------------------------------------------------------
+   ANALYTICS
+------------------------------------------------------------- */
+.rd-analytics{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.rd-chip{
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.5);
+  font-size:11px;
+  color:var(--muted);
+}
+
+.rd-analytics-grid{
+  display:grid;
+  grid-template-columns: minmax(0,1.4fr) minmax(0,1fr);
+  gap:14px;
+}
+
+.rd-analytics-chart{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.rd-bar-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.rd-bar{
+  height:10px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#38bdf8,#6366f1);
+}
+
+.rd-analytics-side{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.rd-analytics-stat{
+  background:rgba(15,23,42,0.8);
+  border-radius:12px;
+  border:1px solid rgba(148,163,184,0.4);
+  padding:10px;
+}
+
+.rd-analytics-stat .label{
+  font-size:11px;
+  color:var(--muted);
+}
+
+.rd-analytics-stat .value{
+  font-size:18px;
+  font-weight:700;
+  margin-top:2px;
+}
+
+.rd-analytics-stat .hint{
+  font-size:11px;
+  color:#4ade80;
+  margin-top:2px;
+}
+
+/* ------------------------------------------------------------
+   KANBAN
+------------------------------------------------------------- */
+.rd-kanban{
+  display:flex;
+  gap:10px;
+}
+
+.rd-kanban-col{
+  flex:1;
+  border-radius:14px;
+  background:rgba(15,23,42,0.9);
+  border:1px dashed rgba(148,163,184,0.4);
+  padding:10px;
+}
+
+.rd-kanban-title{
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:8px;
+}
+
+.rd-kanban-item{
+  background:rgba(15,23,42,0.9);
+  border-radius:10px;
+  border:1px solid rgba(148,163,184,0.4);
+  font-size:12px;
+  padding:8px;
+}
+
+/* ------------------------------------------------------------
+   LISTE DES OFFRES
+------------------------------------------------------------- */
+.job-list-dashboard{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.job-item{
+  border-radius:12px;
+  border:1px solid rgba(148,163,184,0.35);
+  padding:10px 12px;
+}
+
+.job-item-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.job-item-header h4{
+  font-size:14px;
+  margin:0;
+}
+
+.job-pill{
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(59,130,246,0.2);
+  border:1px solid rgba(59,130,246,0.7);
+}
+
+.job-meta{
+  margin-top:4px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.job-date{
+  font-size:11px;
+  color:var(--muted);
+}
+
+.app-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.app-item{
+  border:1px solid rgba(148,163,184,0.35);
+  border-radius:14px;
+  padding:12px;
+  background:rgba(15,23,42,0.9);
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.app-main{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.app-avatar{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  overflow:hidden;
+  border:2px solid rgba(59,130,246,0.35);
+  background:linear-gradient(135deg, rgba(59,130,246,0.25), rgba(59,130,246,0.05));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.app-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.app-avatar-fallback{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#e2e8f0;
+  font-weight:700;
+}
+
+.app-info{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.app-name-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.app-name{
+  font-weight:700;
+}
+
+.app-email{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.app-meta{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.app-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.job-stats{
+  margin-top:6px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.view-link{
+  color:var(--accent);
+  font-weight:600;
+}
+
+/* ------------------------------------------------------------
+   FORMULAIRE (COLONNE DROITE)
+------------------------------------------------------------- */
+.rd-form-card{
+  /* rien de spécial, on laisse PostJobForm gérer ses champs */
+}
+
+/* ------------------------------------------------------------
+   STATES
+------------------------------------------------------------- */
+.empty-state{
+  margin-top:8px;
+  padding:10px;
+  border-radius:12px;
+  border:1px dashed rgba(148,163,184,0.5);
+  font-size:13px;
+  color:var(--muted);
+}
+
+.loader{
+  padding:10px;
+  font-size:13px;
+  color:var(--accent);
+}
+
+.error-message{
+  padding:10px;
+  border-radius:10px;
+  background:#3b0d0d;
+  border:1px solid #fecaca;
+  color:#fecaca;
+  font-size:13px;
+}
+
+/* ------------------------------------------------------------
+   RESPONSIVE
+------------------------------------------------------------- */
+@media(max-width:1024px){
+  .rd-container{
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.2fr);
+  }
+}
+
+@media(max-width:900px){
+  .recruiter-dashboard{
+    padding:16px;
+    padding-top:100px;
+  }
+
+  .rd-shell{
+    flex-direction:column;
+  }
+
+  .rd-sidebar{
+    position:absolute;
+    top:68px;
+    left:16px;
+    right:16px;
+    transform:translateY(-120%);
+    opacity:0;
+    pointer-events:none;
+    transition:0.2s ease-out;
+  }
+
+  .rd-sidebar.rd-sidebar--open{
+    transform:translateY(0);
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .rd-burger{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .rd-container{
+    grid-template-columns:1fr;
+  }
+
+  .rd-right{
+    position:static;
+  }
+}

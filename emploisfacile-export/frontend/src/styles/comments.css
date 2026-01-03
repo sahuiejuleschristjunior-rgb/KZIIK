@@ -1,0 +1,232 @@
+/* ===== COMMENTAIRES — STYLE FACEBOOK DARK ===== */
+
+.comment-section {
+  margin-top: 15px;
+  width: 100%;
+  color: white;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* INPUT COMMENTAIRE */
+.comment-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.comment-input {
+  flex: 1;
+  padding: 10px;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 20px;
+  color: white;
+  font-size: 14px;
+}
+
+.comment-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.comment-send-btn {
+  background: #2563eb;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.comment-send-btn:hover {
+  background: #1d4ed8;
+}
+
+/* HEARTBEAT LOADER */
+.heartbeat {
+  width: 14px;
+  height: 14px;
+  background: #3b82f6;
+  border-radius: 50%;
+  animation: heartPulse .6s infinite;
+}
+
+@keyframes heartPulse {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* COMMENTAIRES LISTE */
+.comment-item {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 10px;
+}
+
+.comment-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #333;
+  flex-shrink: 0;
+}
+
+/* CONTENU */
+.comment-content {
+  background: #1a1a1a;
+  padding: 10px 14px;
+  border-radius: 12px;
+  width: 100%;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.comment-date {
+  font-size: 11px;
+  color: #8d8d8d;
+}
+
+/* TEXTE */
+.comment-text {
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* BOUTON LIKE COMMENTAIRE */
+.comment-like-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  margin-top: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.comment-like-btn:hover {
+  text-decoration: underline;
+}
+
+/* MENU CONTEXTUEL (3 points) */
+.comment-menu {
+  position: relative;
+}
+
+.comment-menu-btn {
+  background: none;
+  border: none;
+  color: #bbb;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 0 4px;
+}
+
+.comment-menu-btn:hover {
+  color: white;
+}
+
+.comment-menu-popup {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 22px;
+  right: 0;
+  background: #202020;
+  border-radius: 6px;
+  border: 1px solid #333;
+  overflow: hidden;
+}
+
+.comment-menu:hover .comment-menu-popup {
+  display: flex;
+}
+
+.comment-menu-popup button {
+  padding: 8px 12px;
+  background: #202020;
+  border: none;
+  text-align: left;
+  width: 120px;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+}
+
+.comment-menu-popup button:hover {
+  background: #333;
+}
+
+.delete-btn {
+  color: #ef4444 !important;
+}
+
+/* REPLIES */
+.reply-list {
+  margin-top: 10px;
+  padding-left: 45px; /* indentation style Facebook */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reply-item {
+  display: flex;
+  gap: 10px;
+}
+
+.reply-avatar {
+  width: 26px;
+  height: 26px;
+  background: #333;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.reply-content {
+  background: #111;
+  padding: 8px 12px;
+  border-radius: 10px;
+  width: 100%;
+}
+
+/* ANIMATION (fade + slide-in) */
+.comment-enter {
+  opacity: 0;
+  transform: translateY(6px);
+  animation: commentIn .25s forwards ease-out;
+}
+
+@keyframes commentIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Supprime le fond bleu derrière les commentaires */
+.feed-post-card .comment-section,
+.feed-post-card .comment-item,
+.feed-post-card .reply-item,
+.feed-post-card .reply-list,
+.feed-post-card .comment-input-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Supprime les arrondis parasites */
+.feed-post-card .comment-section,
+.feed-post-card .comment-item,
+.feed-post-card .reply-item {
+  border-radius: 0 !important;
+}
+/* Éteint tout fond entre médias et commentaires */
+.feed-post-card {
+  background: #000 !important;
+  box-shadow: none !important;
+}

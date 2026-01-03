@@ -1,0 +1,37 @@
+:root{
+  --bg:#0c0f15;
+  --text:#ffffff;
+  --muted: #9da7b3;
+  --card:#131820;
+  --accent:#ffffff;
+}
+
+/* Layout */
+html,body,#root{height:100%;margin:0;}
+body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+
+.ef-root{min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;}
+.ef-main{padding:28px;flex:1;display:flex;flex-direction:column;align-items:center;gap:32px;}
+
+/* Hero */
+.ef-hero{max-width:980px;text-align:center;padding:30px 12px;}
+.ef-title{font-size:40px;line-height:1.05;margin:8px 0;font-weight:900;}
+.ef-sub{color:var(--muted);max-width:720px;margin:12px auto 20px;font-size:16px;}
+
+/* Buttons */
+.ef-ctas{display:flex;gap:12px;justify-content:center;margin-top:12px;}
+.ef-btn{padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:800;display:inline-block;}
+.ef-outline{background:transparent;color:var(--accent);border:2px solid var(--accent);}
+.ef-primary{background:var(--accent);color:#000;border:2px solid var(--accent);}
+
+/* Stats */
+.ef-stats{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;width:100%;padding:10px 12px;}
+.ef-stat{background:var(--card);padding:18px;border-radius:14px;min-width:140px;text-align:center;border:1px solid rgba(255,255,255,0.06);}
+.ef-stat-value{font-weight:900;font-size:20px;margin-bottom:6px;}
+.ef-stat-label{color:var(--muted);font-size:13px;}
+
+/* Responsive */
+@media(min-width:900px){
+  .ef-title{font-size:52px;}
+  .ef-stats{gap:40px;}
+}

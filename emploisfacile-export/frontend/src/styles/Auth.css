@@ -1,0 +1,162 @@
+:root{
+  --bg:#000;
+  --card:#0b0b0b;
+  --text:#fff;
+  --muted:#9a9a9a;
+  --input-bg:#111;
+  --input-border:#222;
+  --primary:#fff;
+}
+
+/* GLOBAL AUTH */
+.auth-wrap{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:var(--bg);
+  padding:30px;
+}
+
+.auth-card{
+  width:100%;
+  max-width:390px;               /* ⬅️ LÉGÈREMENT PLUS GRAND */
+  background:var(--card);
+  padding:32px 26px;
+  border-radius:24px;
+  box-shadow:0 0 40px rgba(0,0,0,0.45);
+}
+
+/* TITRES */
+.auth-title{
+  color:var(--text);
+  font-size:28px;                /* ⬅️ PLUS GRAND */
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.auth-sub{
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:20px;
+}
+
+/* ROLE SWITCH */
+.role-switch{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:22px;
+}
+
+.role-btn{
+  width:48%;
+  padding:10px 0;               /* ⬅️ PLUS GRAND */
+  border-radius:25px;
+  background:transparent;
+  border:2px solid #555;
+  color:#aaa;
+  font-size:13px;
+  font-weight:600;
+  transition:.3s;
+}
+.role-btn.active{
+  background:var(--primary);
+  color:#000;
+  border-color:var(--primary);
+}
+
+/* INPUTS — légèrement plus grands */
+.input{
+  width:92%;                     /* ⬅️ PLUS LARGE */
+  padding:12px 14px;             /* ⬅️ PLUS GRAND */
+  background:var(--input-bg);
+  border:1px solid var(--input-border);
+  border-radius:14px;            /* ⬅️ ARRONDI PLUS GRAND */
+  margin:10px auto;              
+  font-size:15px;                /* ⬅️ PLUS GRAND */
+  color:white;
+  display:block;
+}
+.input::placeholder{ color:#777; }
+
+/* BOUTON SUBMIT */
+.primary-btn{
+  width:92%;
+  padding:14px 16px;             /* ⬅️ PLUS GRAND */
+  background:var(--primary);
+  border:none;
+  border-radius:30px;
+  font-size:17px;                /* ⬅️ PLUS GRAND */
+  font-weight:700;
+  color:#000;
+  cursor:pointer;
+  margin:12px auto 18px auto;
+  display:block;
+  transition:.2s;
+}
+.primary-btn:hover{
+  transform:scale(1.03);
+}
+
+/* LINKS */
+.link-muted{
+  text-align:center;
+  margin-top:10px;
+  color:var(--muted);
+  font-size:13px;
+}
+.small-link{
+  color:#a4b8ff;
+  font-weight:600;
+  text-decoration:none;
+}
+
+/* OTP */
+.otp-row{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:22px 0;
+}
+
+.otp-input{
+  width:44px;                    /* ⬅️ PLUS GRAND */
+  height:44px;
+  background:#111;
+  color:white;
+  font-size:19px;                /* ⬅️ PLUS GRAND */
+  font-weight:700;
+  text-align:center;
+  border-radius:12px;
+  border:1px solid #222;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+
+  .auth-card{
+    max-width:90%;
+    padding:26px 18px;
+  }
+
+  .auth-title{ font-size:26px; }
+
+  .input{
+    width:94%;
+    padding:12px;
+    border-radius:13px;
+    font-size:15px;
+  }
+
+  .primary-btn{
+    width:94%;
+    padding:14px;
+    font-size:17px;
+  }
+
+  .otp-input{
+    width:42px;
+    height:42px;
+    font-size:18px;
+  }
+}

@@ -1,0 +1,227 @@
+/***************************************************
+   CREATE POST — BAR + MODAL
+****************************************************/
+
+:root {
+  --fb-bg: #18191a;
+  --fb-card: #242526;
+  --fb-hover: #3a3b3c;
+  --fb-border: #3d3d3d;
+  --fb-text: #e4e6eb;
+  --fb-text-light: #b0b3b8;
+  --fb-primary: #4599ff;
+}
+
+/***************************************************
+   BAR — "Exprimez-vous..."
+****************************************************/
+.fb-create-bar {
+  background: var(--fb-card);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid var(--fb-border);
+}
+
+.fb-create-bar:hover {
+  background: var(--fb-hover);
+}
+
+.fb-create-bar-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fb-text);
+  font-size: 20px;
+}
+
+.fb-create-bar-input {
+  background: var(--fb-hover);
+  flex: 1;
+  height: 42px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  color: var(--fb-text-light);
+  font-size: 15px;
+}
+
+/***************************************************
+   MODAL BACKDROP
+****************************************************/
+.fb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.70);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+  backdrop-filter: blur(2px);
+}
+
+/***************************************************
+   MODAL BOX
+****************************************************/
+.fb-modal {
+  width: 95%;
+  max-width: 500px;
+  background: var(--fb-card);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--fb-border);
+  animation: popup 0.2s ease;
+}
+
+@keyframes popup {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/***************************************************
+   MODAL HEADER
+****************************************************/
+.fb-modal-header {
+  padding: 14px 16px;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--fb-text);
+  border-bottom: 1px solid var(--fb-border);
+  position: relative;
+}
+
+.fb-modal-close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background: var(--fb-hover);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--fb-text);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+
+.fb-modal-close:hover {
+  background: #4b4c4d;
+}
+
+/***************************************************
+   TEXTAREA
+****************************************************/
+.fb-modal-textarea {
+  width: 100%;
+  height: 120px;
+  background: transparent;
+  border: none;
+  padding: 16px;
+  color: var(--fb-text);
+  font-size: 16px;
+  resize: none;
+  outline: none;
+}
+
+/***************************************************
+   PREVIEW GRID (Images & Vidéos)
+****************************************************/
+.fb-preview-zone-modal {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+  padding: 12px;
+}
+
+.fb-preview-item {
+  width: 100%;
+  height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-preview-item img,
+.fb-preview-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/***************************************************
+   FILE BUTTON
+****************************************************/
+.fb-modal-file-btn {
+  display: block;
+  width: calc(100% - 24px);
+  margin: 12px auto 0 auto;
+  padding: 12px;
+  background: var(--fb-hover);
+  border-radius: 10px;
+  text-align: center;
+  color: var(--fb-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.fb-modal-file-btn:hover {
+  background: #4b4c4d;
+}
+
+/***************************************************
+   ERROR MESSAGE
+****************************************************/
+.fb-create-error {
+  color: #ff5b5b;
+  background: rgba(255, 90, 90, 0.15);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin: 10px;
+  font-size: 14px;
+}
+
+/***************************************************
+   SUBMIT BUTTON
+****************************************************/
+.fb-modal-submit {
+  width: calc(100% - 24px);
+  margin: 16px auto;
+  padding: 12px;
+  background: var(--fb-primary);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.fb-modal-submit:disabled {
+  background: #3a6cbc;
+  opacity: 0.5;
+}
+
+.fb-modal-submit:hover:not(:disabled) {
+  background: #1f7dff;
+}

@@ -1,0 +1,1065 @@
+/* ======================= */
+/* GLOBAL                  */
+/* ======================= */
+
+body, html {
+  background: #757474 !important;
+  color: white;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    sans-serif;
+}
+
+.feed-wrapper {
+  min-height: 100vh;
+  background: #969393;
+}
+
+/* ======================= */
+/* NAVBAR MOBILE           */
+/* ======================= */
+
+.mobile-navbar {
+  height: 65px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000 !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.nav-btn-round,
+.nav-title-pill,
+.nav-btn-pill {
+  background: #111 !important;
+  color: white !important;
+  border: none !important;
+}
+
+.nav-btn-round {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 22px;
+}
+
+.nav-title-pill {
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.nav-btn-pill {
+  padding: 10px 15px;
+  border-radius: 25px;
+  font-size: 15px;
+}
+
+/* ======================= */
+/* MENU MOBILE OVERLAY     */
+/* ======================= */
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: flex-start;
+  z-index: 998;
+}
+
+.menu-panel {
+  width: 260px;
+  background: #111;
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: 0 0 25px rgba(0,0,0,0.7);
+}
+
+/* ======================= */
+/* DESKTOP LAYOUT          */
+/* ======================= */
+
+.desktop-layout {
+  display: none;
+}
+
+@media (min-width: 950px) {
+  .desktop-layout {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    align-items: flex-start;
+  }
+
+  .mobile-navbar,
+  .mobile-bottom-bar {
+    display: none;
+  }
+}
+
+/* ======================= */
+/* LEFT MENU RECTANGLE     */
+/* ======================= */
+
+.desktop-left {
+  width: 260px;
+  padding-left: 20px;
+  padding-right: 15px;
+  align-self: flex-start;
+}
+
+.left-box {
+  background: #111;
+  width: 230px;
+  padding: 20px 15px;
+  border-radius: 15px;
+  border: 1px solid #1f1f1f;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: sticky;
+  top: 110px;
+}
+
+.left-item {
+  padding: 10px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #000;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.left-item:hover {
+  background: #1a1a1a;
+}
+
+.left-item i {
+  font-size: 20px;
+}
+
+/* ======================= */
+/* FEED CENTER DESKTOP     */
+/* ======================= */
+
+.desktop-center {
+  flex: 1;
+  padding-top: 110px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.feed-posts {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* ======================= */
+/* RIGHT MENU — FIX ALIGN  */
+/* ======================= */
+
+.desktop-right {
+  width: 260px;
+  margin-left: 15px;
+  padding-right: 20px;
+
+  /* ALIGNEMENT PARFAIT */
+  position: sticky;
+  top: 110px;
+  height: calc(100vh - 110px);
+  overflow-y: auto;            /* SCROLL ACTIVÉ */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ======================= */
+/* RIGHT MENU BOX          */
+/* ======================= */
+
+.right-menu-box {
+  width: 100%;
+  background: #0d0f14;
+  border-radius: 18px;
+  padding: 18px 16px;
+  border: 1px solid #1a1d23;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.55);
+  color: white;
+}
+
+.right-section h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.right-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.right-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #222;
+  background-size: cover !important;
+}
+
+.right-info {
+  flex: 1;
+}
+
+.right-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.right-meta {
+  font-size: 11px;
+  color: #888;
+  margin: 0;
+}
+
+.right-btn-follow {
+  background: #111;
+  color: white;
+  border: 1px solid #222;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.right-btn-follow:hover {
+  background: #1a1a1a;
+}
+
+/* ======================= */
+/* PUBLICITÉS EN HAUT      */
+/* ======================= */
+
+.ad-box {
+  width: 100%;
+  background: #121212;
+  border-radius: 18px;
+  padding: 15px;
+  border: 1px solid #1f1f1f;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.55);
+  text-align: center;
+  font-size: 14px;
+  color: #ddd;
+}
+
+/* ======================= */
+/* MOBILE FEED             */
+/* ======================= */
+
+.feed-main-mobile {
+  margin-top: 75px;
+  margin-bottom: 75px;
+  padding: 0 12px 12px;
+  height: calc(100vh - 150px);
+  overflow-y: auto;
+}
+
+/* ======================= */
+/* BOTTOM BAR MOBILE       */
+/* ======================= */
+
+.mobile-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #000;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 999;
+}
+
+.bottom-plus-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  color: white;
+  font-size: 28px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottom-input-wrapper {
+  flex: 1;
+  background: #1a1a1a;
+  border-radius: 25px;
+  padding-left: 12px;
+  padding-right: 5px;
+  display: flex;
+  align-items: center;
+  transition: .25s;
+}
+
+.bottom-input-wrapper.expanded {
+  transform: scale(1.05);
+}
+
+.bottom-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: white;
+  color: black;
+  border: none;
+}
+
+/* ======================= */
+/* STORY BAR / FEED        */
+/* ======================= */
+
+.stories-bar {
+  width: 100%;
+  max-width: 760px;
+  padding: 20px 10px;
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+}
+
+.stories-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.story-item {
+  text-align: center;
+}
+/* ======================= */
+/* BOUTON CREATE POST DESKTOP */
+/* ======================= */
+
+.desktop-create-post-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background: #111;
+  color: white;
+  border: 1px solid #222;
+
+  padding: 10px 16px;
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.desktop-create-post-btn:hover {
+  background: #1a1a1a;
+}
+
+.desktop-create-post-btn .material-icons {
+  font-size: 20px;
+}
+/* ----- BOUTON PUBLIER (HEADER DESKTOP) ----- */
+.publish-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background: #111;                 /* fond sombre */
+  color: white;
+  padding: 10px 18px;               /* taille correcte */
+  border-radius: 999px;             /* pill arrondi */
+  border: 1px solid #222;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition: 0.15s ease;
+}
+
+/* Icône */
+.publish-btn .material-icons {
+  font-size: 20px;
+}
+
+/* Hover */
+.publish-btn:hover {
+  background: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+/* Press */
+.publish-btn:active {
+  transform: translateY(0);
+}
+
+/* On masque en mobile */
+@media (max-width: 950px) {
+  .publish-btn {
+    display: none !important;
+  }
+}
+/* ======== FIX DU MENU DROIT QUI CACHE LA PUB ======== */
+
+.right-menu-box {
+  width: 260px;
+  background: #0b0b0b;
+  border: 1px solid #1f1f1f;
+  border-radius: 16px;
+  padding: 18px;
+  position: sticky;
+  top: 110px;
+  max-height: calc(100vh - 130px); /* 💥 Permet la PUB de rester visible */
+  overflow-y: auto;                /* 💥 Active le scroll interne */
+  box-shadow: 0 8px 35px rgba(0,0,0,0.45);
+}
+
+/* Scroll propre */
+.right-menu-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.right-menu-box::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+
+.right-menu-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Les blocs internes respectent maintenant l'espace */
+.right-box {
+  background: #111;
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px solid #222;
+  margin-bottom: 18px;
+}
+
+.right-box h3 {
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 700;
+}
+/* ======== FIX TAILLE STANDARD DES IMAGES : 1080 x 1350 ======== */
+
+.media-slider > div {
+  width: 100%;
+  max-width: 1080px;
+  height: 1350px;                /* Hauteur fixe */
+  background: #000;              /* Fond noir */
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-slider img,
+.media-slider video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;             /* Remplir le cadre sans déformer */
+  object-position: center;
+  display: block;
+}
+/* ======== MEDIA SLIDER PREMIUM STYLE INSTAGRAM ======== */
+
+.media-slider-wrapper {
+  width: 100%;
+  max-width: 1080px;
+  margin: 10px auto 0;
+}
+
+.media-slider {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #000;
+}
+
+.media-slider-inner {
+  display: flex;
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.media-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  aspect-ratio: 4 / 5;              /* ≃ 1080 x 1350 */
+  max-height: 1350px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-content {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Flèches desktop */
+.media-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.media-nav:hover {
+  background: rgba(31, 41, 55, 0.95);
+}
+
+.media-nav-prev {
+  left: 10px;
+}
+
+.media-nav-next {
+  right: 10px;
+}
+
+/* Points de pagination */
+.media-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.media-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  border: none;
+  background: #4b5563;
+  padding: 0;
+  cursor: pointer;
+}
+
+.media-dot.active {
+  width: 16px;
+  background: #e5e7eb;
+}
+
+/* Sur mobile : on enlève les flèches, swipe seulement */
+@media (max-width: 950px) {
+  .media-nav {
+    display: none;
+  }
+}
+/* ======== MEDIA FEED — FORMAT 1080 x 1350 (4:5) ======== */
+
+.media-slider {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px 0;
+}
+
+.media-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.media-frame {
+  width: 100%;
+  max-width: 1080px;      /* résolution max */
+  aspect-ratio: 4 / 5;     /* 1080 x 1350 */
+  background: #504e4e;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-content {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;        /* remplit la zone sans déformer */
+  object-position: center;
+  display: block;
+}
+
+/* ====== BARRE D’ACTION STYLE FACEBOOK ====== */
+
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid #5c5a5a;
+  border-bottom: 1px solid #575555;
+  margin-top: 10px;
+}
+
+.post-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #aaa;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: 0.15s ease;
+  user-select: none;
+}
+
+.post-action-btn:hover {
+  background: #444343;
+  color: white;
+}
+
+.post-action-btn i {
+  font-size: 20px;
+  opacity: 0.9;
+}
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 12px;
+  padding: 10px 0;
+  border-top: 1px solid #525151;
+  border-bottom: 1px solid #555555;
+}
+
+.post-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: #ddd;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: 0.25s ease;
+}
+
+.post-action-btn:hover {
+  background: #555454;
+}
+
+.post-action-btn i {
+  font-size: 22px !important;
+  color: #bbb;
+}
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  margin-top: 12px;
+  border-top: 1px solid #222;
+  border-bottom: 1px solid #222;
+}
+
+.post-action-btn {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: .25s ease;
+}
+
+.post-action-btn:hover {
+  background: #1a1a1a;
+}
+
+.post-action-btn svg {
+  stroke: #d3d3d3;
+  transition: .2s ease;
+}
+
+.post-action-btn:hover svg {
+  stroke: white;
+}
+/* ====================================================== */
+/* =============  POST ACTIONS (LIKE/COMMENT/SHARE) ===== */
+/* ====================================================== */
+
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0 5px;
+  border-top: 1px solid #747171;
+  border-bottom: 1px solid #575656;
+  margin-top: 10px;
+}
+
+.post-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+
+  background: #111;
+  border: 1px solid #494949;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.post-action-btn:hover {
+  background: #1a1a1a;
+  transform: scale(1.09);
+}
+
+.post-action-btn svg {
+  stroke: #d3d3d3;
+}
+
+/* ====================================================== */
+/* ======================= HEADER ======================== */
+/* ====================================================== */
+
+.feed-post-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.feed-post-avatar {
+  width: 48px;
+  height: 48px;
+  background: #1a1a1a;
+  border-radius: 50%;
+}
+
+/* Auteur + date */
+.feed-post-author {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.feed-post-meta {
+  font-size: 12px;
+  color: #888;
+}
+
+.dot {
+  margin: 0 4px;
+}
+
+/* ====================================================== */
+/* ======================= POST MENU ===================== */
+/* ====================================================== */
+
+.post-menu {
+  position: relative;
+}
+
+.post-menu-btn {
+  background: #6b6a6a;
+  color: #cfcfcf;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+
+  font-size: 22px;
+  line-height: 19px;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.post-menu-btn:hover {
+  background: #6d6c6c;
+}
+
+/* Popup */
+.post-menu-popup {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 38px;
+
+  background: #646363;
+  border: 1px solid #727070;
+  border-radius: 12px;
+
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  padding: 8px 0;
+  z-index: 999;
+}
+
+.post-menu:hover .post-menu-popup {
+  display: block;
+}
+
+.post-menu-popup button {
+  width: 200px;
+  background: transparent;
+  color: #eee;
+  border: none;
+  padding: 10px 14px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.post-menu-popup button:hover {
+  background: #616060;
+}
+
+/* ====================================================== */
+/* ======================= COMMENT AIRES ================= */
+/* ====================================================== */
+
+.comment-section {
+  margin-top: 12px;
+}
+
+.comment-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #111;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid #222;
+}
+
+.comment-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  outline: none;
+  font-size: 14px;
+}
+
+.comment-send-btn {
+  background: #fff;
+  color: black;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ====================================================== */
+/* ======================= POP ANIMATION ================= */
+/* ====================================================== */
+
+.comment-enter {
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ====================================================== */
+/* =============  COMMENT ITEM / REPLIES  ================ */
+/* ====================================================== */
+
+.comment-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: #0d0d0d;
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+.comment-avatar {
+  width: 34px;
+  height: 34px;
+  background: #1c1c1c;
+  border-radius: 50%;
+}
+
+.comment-content {
+  flex: 1;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-text {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.reply-list {
+  margin-left: 25px;
+  margin-top: 8px;
+}
+
+/* ====================================================== */
+/* ======================= REPLY ========================= */
+/* ====================================================== */
+
+.reply-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  background: #111;
+  border-radius: 10px;
+  margin-top: 6px;
+}
+
+.reply-avatar {
+  width: 30px;
+  height: 30px;
+  background: #1a1a1a;
+  border-radius: 50%;
+}
+
+/* ====================================================== */
+/* ======================= LIKE COMMENT ================== */
+/* ====================================================== */
+
+.comment-like-btn {
+  background: transparent;
+  border: none;
+  color: #aaa;
+  margin-top: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.comment-like-btn:hover {
+  color: white;
+}
+/* ========================= */
+/* FACEBOOK ACTION BAR PRO   */
+/* ========================= */
+
+.fb-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  border-top: 1px solid #1f1f1f;
+  border-bottom: 1px solid #1f1f1f;
+  margin-top: 12px;
+}
+
+.fb-action-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #111;
+  border: 1px solid #222;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.fb-action-btn:hover {
+  background: #1a1a1a;
+  transform: scale(1.06);
+}
+
+.fb-action-btn i {
+  font-size: 20px;
+  color: #e3e3e3;
+}
+
+/* =============== */
+/* MENU ⋯ FACEBOOK */
+/* =============== */
+
+.menu-container {
+  position: relative;
+}
+
+.fb-menu-popup {
+  position: absolute;
+  right: 0;
+  top: 55px;
+
+  background: #0d0d0d;
+  border: 1px solid #222;
+  border-radius: 10px;
+
+  width: 160px;
+  padding: 6px 0;
+  display: none;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+  z-index: 99;
+}
+
+.menu-container:hover .fb-menu-popup {
+  display: block;
+}
+
+.fb-menu-popup button {
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  color: #ddd;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.fb-menu-popup button:hover {
+  background: #1a1a1a;
+}
+

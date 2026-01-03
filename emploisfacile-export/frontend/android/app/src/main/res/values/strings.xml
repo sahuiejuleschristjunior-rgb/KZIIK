@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">EmploisFacile</string>
+    <string name="title_activity_main">EmploisFacile</string>
+    <string name="package_name">org.emploisfacile.app</string>
+    <string name="custom_url_scheme">org.emploisfacile.app</string>
+</resources>

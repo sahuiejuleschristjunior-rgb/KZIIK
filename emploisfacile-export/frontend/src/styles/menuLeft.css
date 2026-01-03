@@ -1,0 +1,62 @@
+/* ===================================== */
+/*   🚀 MENU GAUCHE - VERSION DESKTOP    */
+/* ===================================== */
+
+/* Cacher le menu en mobile/tablette */
+@media (max-width: 950px) {
+  .left-menu-box {
+    display: none !important;
+  }
+}
+
+/* Bloc principal du menu gauche */
+.left-menu-box {
+  background: #0e0e0e;
+  width: 240px;
+  padding: 18px 15px;
+  border-radius: 16px;
+  border: 1px solid #1b1b1b;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+
+  /* Rendre le menu fixe dans la colonne gauche */
+  position: sticky;
+  top: 95px; /* Aligné parfaitement sous le header desktop */
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Items */
+.left-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px;
+  background: #111;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.left-item:hover {
+  background: #1c1c1c;
+}
+
+/* Icones */
+.left-icon {
+  font-size: 26px;
+  display: inline-block;
+  background: linear-gradient(135deg, #ff6b6b, #ffd166, #5ddcff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Texte */
+.left-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #e8e8e8;
+}

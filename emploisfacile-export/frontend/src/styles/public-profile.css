@@ -1,0 +1,241 @@
+/* ================================
+   PUBLIC PROFILE PAGE
+================================ */
+.public-profile {
+  width: 100%;
+  max-width: 790px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+  color: #fff;
+}
+
+/* ================================
+   COVER PHOTO
+================================ */
+.pp-cover {
+  width: 100%;
+  height: 230px;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat;
+  border-bottom: 2px solid #333;
+  border-radius: 0 0 12px 12px;
+}
+
+/* ================================
+   PROFILE HEADER
+================================ */
+.pp-header {
+  margin-top: -60px;
+  padding: 0 16px;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  position: relative;
+}
+
+/* Avatar */
+.pp-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background-size: cover !important;
+  background-position: center !important;
+  border: 4px solid #18191a;
+  box-shadow: 0 0 0 3px #242526;
+}
+
+/* User info */
+.pp-info {
+  flex: 1;
+  padding-bottom: 10px;
+}
+
+.pp-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pp-name-row h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Online / Offline circle */
+.pp-status {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+}
+
+.pp-status.online {
+  background: #31c850;
+}
+
+.pp-status.offline {
+  background: #777;
+}
+
+/* Role */
+.pp-role {
+  font-size: 15px;
+  color: #b0b3b8;
+}
+
+/* Company if recruiter */
+.pp-company {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #ddd;
+}
+
+/* ================================
+   MESSAGE BUTTON
+================================ */
+.pp-message-btn {
+  background: #1877f2;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: background 0.2s;
+}
+
+.pp-message-btn:hover {
+  background: #166fe0;
+}
+
+/* ================================
+   POSTS SECTION
+================================ */
+.pp-posts {
+  padding: 20px;
+  background: #242526;
+  margin-top: 24px;
+  border-radius: 16px;
+  border: 1px solid #3a3b3c;
+}
+
+/* Titre */
+.pp-posts h3 {
+  margin-bottom: 18px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Aucun post */
+.pp-no-post {
+  text-align: center;
+  padding: 24px;
+  color: #9b9b9b;
+  font-size: 15px;
+}
+
+/* ================================
+   POST CARD
+================================ */
+.pp-post-card {
+  background: #3a3b3c;
+  padding: 16px;
+  border-radius: 18px; /* 🔥 PLUS ARRONDI */
+  margin-bottom: 18px; /* 🔥 ESPACEMENT */
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+/* Effet hover subtil */
+.pp-post-card:hover {
+  background: #4a4b4d;
+  transform: translateY(-2px);
+}
+
+/* ================================
+   POST TEXT
+================================ */
+.pp-post-text {
+  font-size: 15px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  color: #e4e6eb;
+}
+
+/* ================================
+   POST MEDIA
+================================ */
+.pp-post-image {
+  width: 100%;
+  border-radius: 14px; /* 🔥 Arrondi image */
+  margin-top: 10px;
+  object-fit: cover;
+}
+
+
+/* ================================
+   LOADING + ERROR
+================================ */
+.pp-loading,
+.pp-error {
+  padding: 40px;
+  text-align: center;
+  font-size: 16px;
+  color: #ccc;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 600px) {
+  .pp-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .pp-info {
+    padding-bottom: 0;
+  }
+  .pp-message-btn {
+    width: 100%;
+  }
+  .public-profile {
+    max-width: none;
+    margin: 0;
+    padding-bottom: 60px;
+  }
+  .pp-posts {
+    background: transparent;
+    border: none;
+    padding: 0 0 70px;
+    margin: 16px 0 0;
+    border-radius: 0;
+  }
+  .pp-post-card {
+    border-radius: 0;
+    margin: 0 0 10px;
+  }
+}
+
+.pp-media-wrapper {
+  margin-top: 10px;
+}
+
+.pp-post-image {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.pp-post-video {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.pp-post-audio {
+  width: 100%;
+  margin-top: 10px;
+}

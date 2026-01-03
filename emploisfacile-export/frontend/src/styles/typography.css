@@ -1,0 +1,56 @@
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+.post-text,
+.comment-text,
+.feed-text,
+.text-content,
+.fb-post-text,
+.feed-post-text,
+.ads-post-text,
+.cm-post-text,
+.cm-comment-text,
+.cm-reply-text {
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+
+@media (min-width: 1024px) {
+  .post-text,
+  .comment-text,
+  .feed-text,
+  .text-content,
+  .fb-post-text,
+  .feed-post-text,
+  .ads-post-text,
+  .cm-post-text,
+  .cm-comment-text,
+  .cm-reply-text {
+    font-size: 16px;
+  }
+}
+
+.clamp-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.clamp-text.expanded {
+  -webkit-line-clamp: unset;
+}
+
+.text-clamp-toggle,
+.fb-see-more-btn {
+  border: none;
+  background: none;
+  color: #4599ff;
+  font-size: inherit;
+  margin-left: 4px;
+  padding: 0;
+  cursor: pointer;
+}

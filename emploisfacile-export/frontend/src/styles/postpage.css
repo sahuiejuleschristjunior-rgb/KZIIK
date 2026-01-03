@@ -1,0 +1,73 @@
+/* =================================
+   STYLES DE LA PAGE POST INDIVIDUEL (PostPage.jsx)
+   ================================= */
+
+.postpage-wrapper {
+  color: #e4e6eb; /* Texte clair */
+  min-height: 100vh;
+  /* Fond correspondant au reste du layout */
+  background: #18191a; 
+  /* Le header est fixe, donc on décale le contenu */
+  padding-top: 65px; 
+}
+
+/* HEADER FIXE */
+.postpage-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* Hauteur ajustée pour correspondre au header du layout (65px pour le décalage) */
+  height: 65px; 
+  width: 100%;
+  /* Couleur de fond correspondant au header du layout */
+  background: #242526;
+  border-bottom: 1px solid #3a3b3c;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  z-index: 900;
+}
+
+/* BOUTON RETOUR */
+.back-btn {
+  background: none;
+  border: none;
+  color: #e4e6eb; /* Couleur claire */
+  font-size: 17px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.1s;
+}
+
+.back-btn:hover {
+    background: #3a3b3c; /* Effet de survol cohérent */
+}
+
+/* CONTENEUR CENTRAL */
+.postpage-center {
+  /* Aligné avec la largeur maximale de la colonne centrale du layout */
+  max-width: 600px;
+  margin: 0 auto;
+  /* Le composant Post.jsx a déjà un padding interne de 12px */
+  padding: 0;
+}
+
+/* ÉTATS DE CHARGEMENT/ERREUR */
+.postpage-loading,
+.postpage-error {
+  /* Couleur ajustée pour être visible sur fond sombre */
+  color: #b0b3b8; 
+  text-align: center;
+  /* Décalage réduit car le header est déjà géré par padding-top */
+  margin-top: 20px; 
+  font-size: 18px;
+}
+
+/* RESPONSIVE pour les petits écrans */
+@media (max-width: 680px) {
+    .postpage-center {
+        /* Permettre au contenu de prendre toute la largeur sur mobile */
+        padding: 0 5px; 
+    }
+}

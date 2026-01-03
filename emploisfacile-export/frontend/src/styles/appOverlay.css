@@ -1,0 +1,78 @@
+.app-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(24, 25, 26, 0.92);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlayFadeIn .25s ease-out;
+}
+
+.overlay-card {
+  width: min(420px, 92vw);
+  text-align: center;
+  color: #e4e6eb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.overlay-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #1877f2, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 800;
+  margin: 0 auto 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.4);
+}
+
+.overlay-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.overlay-subtitle {
+  font-size: 13px;
+  color: #b0b3b8;
+  margin-bottom: 16px;
+}
+
+.overlay-progress {
+  height: 2px;
+  width: 100%;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.10);
+  overflow: hidden;
+  margin: 0 auto 10px;
+}
+
+.overlay-bar {
+  height: 100%;
+  width: 45%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(24,119,242,0.95), rgba(59,130,246,0.95));
+  animation: overlaySlide 1.2s ease-in-out infinite;
+}
+
+.overlay-hint {
+  font-size: 12px;
+  color: rgba(176,179,184,0.95);
+}
+
+@keyframes overlaySlide {
+  0% { transform: translateX(-70%); opacity: .65; }
+  50% { transform: translateX(40%); opacity: 1; }
+  100% { transform: translateX(160%); opacity: .65; }
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

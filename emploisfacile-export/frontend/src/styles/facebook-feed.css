@@ -1,0 +1,4887 @@
+
+:root { --fb-bg-card: #1c1e21; }
+/* ================================
+   WRAPPER GLOBAL DU FEED
+================================ */
+.fb-feed {
+  padding: 12px 8px 80px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ================================
+   ÉTATS
+================================ */
+.fb-loader,
+.fb-empty {
+  color: #ccc;
+  text-align: center;
+  padding: 16px;
+  font-size: 14px;
+}
+
+/* ================================
+   CARTE DU POST (sans arrondis)
+================================ */
+.fb-post {
+  background: var(--fb-bg-card);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+  color: #f5f5f5;
+  border: 1px solid #3a3b3c;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* HEADER */
+.fb-post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.fb-post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #3a3b3c;
+  margin-right: 8px;
+}
+
+.fb-post-user {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.fb-post-author {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fb-post-meta {
+  font-size: 11px;
+  color: #b0b3b8;
+  margin-top: 1px;
+}
+
+.fb-post-menu-btn {
+  border: none;
+  background: transparent;
+  color: #b0b3b8;
+  font-size: 20px;
+  padding: 4px;
+}
+
+/* TEXTE DU POST — police augmentée */
+.fb-post-text {
+  font-size: 16px; /* augmenté */
+  line-height: 1.5;
+  margin-bottom: 8px;
+  white-space: pre-wrap;
+}
+
+.fb-see-more-btn {
+  border: none;
+  background: none;
+  color: #4599ff;
+  font-size: 14px; /* cohérent avec la taille du texte */
+  margin-left: 4px;
+}
+
+/* MÉDIAS */
+.fb-media {
+  width: 100%;
+  background: #000;
+}
+
+.fb-facebook-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  background: #000;
+}
+
+.fb-media img,
+.fb-media video {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  background: #000;
+}
+
+.fb-feed .fb-post-media-wrapper {
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+.fb-feed .fb-post-media-video {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #000;
+  overflow: hidden;
+  position: relative;
+  display: block;
+  line-height: 0;
+  border-radius: 0;
+}
+
+.fb-feed .fb-post-media-video .media-renderer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  line-height: 0;
+  border-radius: 0;
+}
+
+.fb-feed .fb-post-video.media-element,
+.fb-feed .fb-post-media-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #000;
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+.fb-feed .fb-post-media-video .media-element,
+.fb-feed .fb-post-media-video .media-skeleton {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fbVideoWrap {
+  width: 100%;
+  max-width: 100%;
+  background: #000;
+  overflow: hidden;
+  position: relative;
+  line-height: 0;
+}
+
+.fbVideoWrap .media-renderer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.fbVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.fb-post-media-wrapper {
+  margin: 4px -10px 0;
+}
+
+.fb-post-media-wrapper--video {
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+.fb-post-media-wrapper--video .fb-post-media,
+.fb-post-media-wrapper--video .fb-post-media-video,
+.fb-post-media-wrapper--video .fbVideoWrap {
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  display: block;
+  border-radius: 0;
+}
+
+.fb-post-media-wrapper--video video {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.fb-post-media {
+  width: 100%;
+  max-width: 100%;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+/* images/vidéos sans arrondis */
+.fb-post-image,
+.fb-post-video {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 0; /* supprimé */
+  background: #000;
+}
+
+/* Supprime les arrondis uniquement sur les vidéos dans les cartes du feed */
+.fb-feed .fb-post-card .fb-post-media video,
+.fb-feed .fb-post-card video.fb-post-video,
+.fb-feed .fb-post-card .fb-post-media-video video {
+  border-radius: 0;
+}
+
+/* ================================
+   STATS
+================================ */
+.fb-post-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 6px;
+  margin-top: 6px;
+  border-top: 1px solid #3a3b3c;
+  font-size: 12px;
+  color: #b0b3b8;
+}
+
+.fb-post-stats-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fb-reactions-bubble {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #2374e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.fb-post-stats-right {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.fb-post-stats-text {
+  white-space: nowrap;
+}
+
+/* ================================
+   ACTIONS
+================================ */
+.fb-post-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #3a3b3c;
+}
+
+.fb-post-action-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #e4e6eb;
+  font-size: 13px;
+  padding: 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.fb-post-action-btn:active {
+  background: #3a3b3c;
+  border-radius: 8px;
+}
+
+.fb-action-icon {
+  font-size: 15px;
+}
+
+/* ================================
+   COMMENTAIRES APERÇU
+================================ */
+.fb-comments-preview {
+  margin-top: 6px;
+}
+
+.fb-comment {
+  display: flex;
+  margin-top: 4px;
+}
+
+.fb-comment-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #3a3b3c;
+  margin-right: 6px;
+}
+
+.fb-comment-body {
+  flex: 1;
+}
+
+.fb-comment-bubble {
+  background: #3a3b3c;
+  border-radius: 16px;
+  padding: 6px 10px;
+  display: inline-block;
+}
+
+.fb-comment-author {
+  font-size: 13px;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.fb-comment-text {
+  font-size: 13px;
+}
+
+.fb-comment-meta {
+  font-size: 11px;
+  color: #b0b3b8;
+  margin-left: 4px;
+  margin-top: 2px;
+}
+
+/* ================================
+   ZONE NOUVEAU COMMENTAIRE
+================================ */
+.fb-comment-input-row {
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.fb-comment-input-wrapper {
+  flex: 1;
+  background: #3a3b3c;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.fb-comment-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e4e6eb;
+  font-size: 13px;
+  width: 100%;
+}
+
+.fb-comment-input::placeholder {
+  color: #b0b3b8;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (min-width: 768px) {
+  .fb-feed {
+    padding-top: 16px;
+  }
+}
+
+/* ========================================= */
+/*     FULLSCREEN FACEBOOK POST – NO LIMIT   */
+/* ========================================= */
+/* Réintroduit les marges et bordures pour éviter le rendu plein écran collé aux bords */
+.fb-feed {
+  padding: 12px 8px 80px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 680px;
+}
+
+.fb-post-card {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 16px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #1c1e21;
+  border: 1px solid #3a3b3c;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 900px) {
+  .fb-center-column {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+
+.fb-create-post-box {
+  background: #1b1b1d;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #343434;
+}
+
+.fb-create-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fb-create-avatar {
+  width: 42px;
+  height: 42px;
+  background: #555;
+  border-radius: 50%;
+}
+
+.fb-create-post-header input {
+  flex: 1;
+  background: #2a2a2c;
+  border: none;
+  padding: 12px;
+  border-radius: 25px;
+  color: white;
+}
+
+.fb-create-post-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.fb-create-btn {
+  background: #2d2d30;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.fb-create-btn-send {
+  background: #111 !important;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+/* ============================
+   PREVIEW IMAGES AVANT POST
+============================ */
+.fb-preview-zone {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fb-preview-item {
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.fb-preview-img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.fb-create-btn,
+.fb-create-btn-send {
+  background: #111;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 25px;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  width: 120px;
+}
+
+.fb-create-btn-send {
+  margin-left: auto;
+}
+
+.fb-modal-file-btn {
+  background: #111;
+  color: #fff;
+  padding: 10px 14px;
+  margin-top: 10px;
+  border-radius: 25px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.fb-modal-submit {
+  margin-top: 20px;
+  background: #111;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 25px;
+  width: 100%;
+}
+
+.fb-create-post-box {
+  background: #1b1b1d;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #343434;
+}
+
+.fb-create-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fb-create-avatar {
+  width: 42px;
+  height: 42px;
+  background: #555;
+  border-radius: 50%;
+}
+
+.fb-create-post-header input {
+  flex: 1;
+  background: #2a2a2c;
+  border: none;
+  padding: 12px;
+  border-radius: 25px;
+  color: white;
+}
+
+.fb-create-post-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.fb-create-btn {
+  background: #2d2d30;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.fb-create-btn-send {
+  background: #111 !important;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+/* ============================
+   PREVIEW IMAGES AVANT POST
+============================ */
+.fb-preview-zone {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fb-preview-item {
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.fb-preview-img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+/* ============================================================
+   SKELETON LOADER FACEBOOK – DARK MODE
+============================================================ */
+.skeleton-post {
+  padding: 12px 10px;
+  border-radius: 14px;
+  background: #18191a;
+  margin-bottom: 14px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Base du skeleton */
+.skeleton {
+  background: #3a3b3c;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animation shimmer */
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150px;
+  width: 150px;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -150px; }
+  100% { left: 100%; }
+}
+
+/* Avatar */
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+}
+
+/* Petits textes */
+.skeleton-header-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeleton-line {
+  height: 10px;
+  width: 100%;
+}
+
+.skeleton-line.short { width: 60%; }
+.skeleton-line.xshort { width: 30%; }
+.skeleton-line.long { width: 80%; }
+
+/* Image */
+.skeleton-media {
+  margin-top: 10px;
+  width: 100%;
+  height: 250px;
+  border-radius: 12px;
+}
+
+/* Trois points */
+.skeleton-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+}
+
+/* Actions */
+.skeleton-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.skeleton-action {
+  width: 30%;
+  height: 26px;
+  border-radius: 8px;
+}
+/* ===========================================
+   SKELETON GLOBAL
+=========================================== */
+
+.skeleton-line {
+  background: linear-gradient(
+    90deg,
+    #2e2e2e 0%,
+    #3a3a3a 50%,
+    #2e2e2e 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.2s infinite ease-in-out;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.fb-skeleton-post {
+  overflow: hidden;
+}
+
+/* Avatar skeleton */
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  background: #3a3b3c;
+  border-radius: 999px;
+  animation: skeleton-loading 1.2s infinite ease-in-out;
+}
+
+.skeleton-avatar-sm {
+  width: 30px;
+  height: 30px;
+  background: #3a3b3c;
+  border-radius: 999px;
+  animation: skeleton-loading 1.2s infinite ease-in-out;
+}
+
+/* Media */
+.skeleton-media {
+  width: 100%;
+  height: 220px;
+  background: #3a3b3c;
+  border-radius: 10px;
+  animation: skeleton-loading 1.2s infinite ease-in-out;
+}
+
+/* Skeleton actions */
+.skeleton-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.skeleton-btn {
+  width: 30%;
+  height: 34px;
+  background: #3a3b3c;
+  border-radius: 8px;
+  animation: skeleton-loading 1.2s infinite ease-in-out;
+}
+.fb-reply {
+  margin-left: 45px;
+  margin-top: 6px;
+}
+
+.fb-reply-bubble {
+  background: #1f1f1f;
+  padding: 7px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  display: inline-block;
+}
+
+.fb-reply-author {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.fb-reply-input-row {
+  margin-left: 45px;
+  margin-top: 6px;
+}
+
+.fb-reply-input {
+  width: 85%;
+  padding: 8px 12px;
+  border-radius: 18px;
+  background: #262626;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+}
+
+.fb-reply-btn {
+  font-size: 13px;
+  opacity: 0.6;
+  margin-left: 12px;
+  margin-top: 2px;
+}
+
+.fb-see-more-replies {
+  margin-left: 45px;
+  margin-top: 4px;
+  font-size: 13px;
+  background: none;
+  border: none;
+  color: #999;
+}
+.fb-comments-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.fb-comments-modal {
+  background: #000;
+  color: #fff;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  animation: fb-modal-in 0.18s ease-out;
+}
+
+/* Mobile plein écran */
+@media (max-width: 768px) {
+  .fb-comments-modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+}
+
+@keyframes fb-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fb-comments-modal-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.fb-comments-modal-title {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.fb-comments-modal-close {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.fb-comments-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 12px 70px;
+}
+
+.fb-modal-comment-block {
+  margin-bottom: 12px;
+}
+
+.fb-comments-modal-input-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 10px;
+  border-top: 1px solid #222;
+  background: #000;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.fb-comments-modal-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 18px;
+  border: none;
+  outline: none;
+  background: #161616;
+  color: #fff;
+  font-size: 14px;
+}
+
+.fb-comments-modal-send {
+  border: none;
+  background: #1877f2;
+  color: #fff;
+  border-radius: 18px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+/* ============================================================
+   MODAL COMMENTAIRES – VERSION FACEBOOK
+   À AJOUTER SOUS TON CSS ACTUEL
+============================================================ */
+
+/* BACKDROP AVEC POSITIONNEMENT FACEBOOK */
+.fb-comments-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* En haut, comme Facebook */
+  padding-top: 60px; /* Marge sous le header du feed */
+}
+
+/* MODAL FACEBOOK (DESKTOP) */
+.fb-comments-modal {
+  background: #1c1e21;
+  color: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh; /* Empêche de dépasser le header */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  animation: fb-modal-in 0.18s ease-out;
+}
+
+/* ANIMATION d’apparition */
+@keyframes fb-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* HEADER DU MODAL */
+.fb-comments-modal-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #2f2f2f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: #242526;
+}
+
+.fb-comments-modal-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.fb-comments-modal-close {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* BODY AVEC SCROLL INTERNE */
+.fb-comments-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px 70px;
+}
+
+/* INPUT BAR FIXÉ À LA BASE DU MODAL */
+.fb-comments-modal-input-bar {
+  position: sticky;
+  bottom: 0;
+  padding: 10px 14px;
+  border-top: 1px solid #2f2f2f;
+  background: #242526;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.fb-comments-modal-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 18px;
+  border: none;
+  outline: none;
+  background: #161616;
+  color: #fff;
+  font-size: 14px;
+}
+
+.fb-comments-modal-send {
+  border: none;
+  background: #1877f2;
+  color: #fff;
+  border-radius: 18px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* ============================================================
+   MOBILE — VERSION FULLSCREEN FACEBOOK
+============================================================ */
+@media (max-width: 768px) {
+
+  /* Le backdrop ne crée plus d’espace */
+  .fb-comments-modal-backdrop {
+    padding-top: 0;
+    align-items: flex-start;
+  }
+
+  /* Modal plein écran */
+  .fb-comments-modal {
+    max-width: 100%;
+    width: 100%;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  /* Header mobile */
+  .fb-comments-modal-header {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  /* Espace clavier mobile */
+  .fb-comments-modal-body {
+    padding-bottom: 90px;
+  }
+}
+/* ============================================================
+   PATCH FINAL – MODAL FACEBOOK MOBILE & DESKTOP
+   PRIORITÉ MAXIMALE POUR ÉCRASER TES ANCIENNES RÈGLES
+=========================================================== */
+
+/* BACKDROP AVEC BLUR (MOBILE + DESKTOP) */
+.fb-comments-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,0.55) !important;
+  backdrop-filter: blur(8px) !important;   /* effet flou */
+  -webkit-backdrop-filter: blur(8px) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  padding-top: 70px !important; /* espace sous ton header */
+  z-index: 9999 !important;
+}
+
+/* MODAL — CENTRÉ PROPREMENT */
+.fb-comments-modal {
+  background: #1c1e21 !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  max-height: 78vh !important; /* PAS FULLSCREEN */
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  animation: fb-modal-in 0.2s ease-out !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5) !important;
+  margin-bottom: 70px !important; /* espace pour le bottom-menu */
+}
+
+@keyframes fb-modal-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* HEADER – TITRE + BOUTON FERMER */
+.fb-comments-modal-header {
+  background: #242526 !important;
+  padding: 14px 16px !important;
+  border-bottom: 1px solid #333 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: relative !important;
+}
+
+.fb-comments-modal-title {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+}
+
+.fb-comments-modal-close {
+  position: absolute !important;
+  left: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: none !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: 20px !important;
+  cursor: pointer !important;
+  z-index: 2 !important;
+}
+
+/* BODY AVEC SCROLL INTERNE */
+.fb-comments-modal-body {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 12px 14px 80px !important;
+}
+
+/* INPUT BAR FIXÉE EN BAS DU MODAL */
+.fb-comments-modal-input-bar {
+  position: sticky !important;
+  bottom: 0 !important;
+  background: #242526 !important;
+  border-top: 1px solid #333 !important;
+  padding: 12px 14px !important;
+  display: flex !important;
+  gap: 10px !important;
+}
+
+/* INPUT STYLE */
+.fb-comments-modal-input {
+  flex: 1 !important;
+  padding: 10px 14px !important;
+  border-radius: 20px !important;
+  background: #161616 !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: 14px !important;
+}
+
+/* BOUTON ENVOYER */
+.fb-comments-modal-send {
+  background: #1877f2 !important;
+  color: white !important;
+  border-radius: 20px !important;
+  padding: 8px 14px !important;
+  border: none !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+}
+
+/* ============================================================
+   MOBILE FIX — MODAL ENTRE HEADER & MENU BAS
+=========================================================== */
+@media (max-width: 768px) {
+
+  /* Backdrop full mobile blur */
+  .fb-comments-modal-backdrop {
+    padding-top: 60px !important; /* espace header */
+    padding-bottom: 60px !important; /* espace bottom menu */
+    align-items: flex-start !important;
+  }
+
+  /* Modal hauteur contrôlée, PAS fullscreen */
+  .fb-comments-modal {
+    width: 95% !important;
+    max-width: 95% !important;
+    max-height: calc(100vh - 140px) !important; /* entre header + bottom */
+    border-radius: 16px !important;
+  }
+
+  /* Input bar visible même avec clavier */
+  .fb-comments-modal-body {
+    padding-bottom: 90px !important;
+  }
+
+  /* Close visible */
+  .fb-comments-modal-close {
+    font-size: 22px !important;
+  }
+}
+/* ======================================================
+   INDENTATION DES COMMENTAIRES – STYLE FACEBOOK
+====================================================== */
+
+/* Commentaire parent */
+.fb-comment {
+  margin-left: 0 !important;
+}
+
+/* Groupe de réponses à un commentaire */
+.fb-replies-group {
+  margin-left: 42px !important;  /* indentation */
+  padding-left: 6px !important;
+  border-left: 1px solid rgba(255,255,255,0.08) !important; /* ligne Facebook */
+}
+
+/* Chaque réponse */
+.fb-reply {
+  margin-top: 6px !important;
+  display: flex !important;
+}
+
+/* Bulle des réponses */
+.fb-reply-bubble {
+  background: #1f1f1f !important;
+  padding: 7px 10px !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  display: inline-block !important;
+}
+/* ================================================
+   FIX INDENTATION LONG COMMENTAIRE – STYLE FACEBOOK
+================================================ */
+
+/* Commentaire parent : limite la largeur */
+.fb-comment-bubble {
+  max-width: 85% !important;   /* empêche la bulle de prendre toute la largeur */
+  word-break: break-word !important;
+}
+
+/* Réponses : largeur réduite encore plus */
+.fb-replies-group .fb-reply-bubble {
+  max-width: 85% !important;
+  word-break: break-word !important;
+}
+
+/* Groupe de réponses : indentation fixe */
+.fb-replies-group {
+  margin-left: 40px !important;
+  padding-left: 6px !important;
+  border-left: 1px solid rgba(255,255,255,0.12) !important; 
+}
+
+/* Chaque réponse */
+.fb-reply {
+  margin-top: 6px !important;
+  display: flex !important;
+}
+
+/* Empêche les réponses d'être trop larges sur mobile */
+@media (max-width: 480px) {
+  .fb-comment-bubble {
+    max-width: 90% !important;
+  }
+
+  .fb-replies-group .fb-reply-bubble {
+    max-width: 88% !important;
+  }
+}
+/* ======================================================
+   OPTION 1 – STYLE FACEBOOK POUR LES COMMENTAIRES
+   Gestion des longs commentaires + indentation propre
+====================================================== */
+
+/* Bulle des commentaires PARENTS */
+.fb-comment-bubble {
+  max-width: 85% !important;          /* limite la largeur */
+  word-break: break-word !important;   /* coupe les mots trop longs */
+}
+
+/* Groupe de réponses (sous un commentaire) */
+.fb-replies-group {
+  margin-left: 40px !important;        /* indentation comme Facebook */
+  padding-left: 8px !important;
+  border-left: 1px solid rgba(255,255,255,0.15) !important; /* petite barre verticale */
+}
+
+/* Bulle des RÉPONSES (niveau 1) */
+.fb-replies-group .fb-reply-bubble {
+  max-width: 78% !important;          /* un peu plus étroit que le parent */
+  word-break: break-word !important;
+}
+
+/* Chaque réponse alignée proprement */
+.fb-reply {
+  margin-top: 6px !important;
+  display: flex !important;
+}
+
+/* Bouton "Répondre" légèrement décalé */
+.fb-reply-btn {
+  margin-left: 46px !important;       /* aligné au début des réponses */
+}
+
+/* Mobile – on donne un peu plus de largeur pour respirer */
+@media (max-width: 480px) {
+  .fb-comment-bubble {
+    max-width: 90% !important;
+  }
+
+  .fb-replies-group .fb-reply-bubble {
+    max-width: 86% !important;
+  }
+}
+.fb-comments-link {
+  cursor: pointer;
+}
+
+.fb-comments-link:hover {
+  text-decoration: underline;
+}
+/* ========================================
+   AVATARS (POST, COMMENTAIRES, REPONSES)
+======================================== */
+
+/* Avatar dans le header du post */
+.fb-post-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+/* Commentaires (modal et feed) */
+.fb-comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.fb-comment-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+/* Bulle commentaire */
+.fb-comment-bubble {
+  background: #3a3b3c;
+  padding: 8px 12px;
+  border-radius: 18px;
+  max-width: 80%;
+  color: #e4e6eb;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.fb-comment-author {
+  font-weight: 600;
+  color: #e4e6eb;
+  margin-right: 6px;
+}
+
+/* Réponses */
+.fb-reply {
+  display: flex;
+  align-items: flex-start;
+  margin-left: 48px; /* indentation Facebook */
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.fb-reply-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.fb-reply-bubble {
+  background: #3a3b3c;
+  padding: 6px 10px;
+  border-radius: 16px;
+  max-width: 75%;
+  color: #e4e6eb;
+  font-size: 13px;
+}
+
+.fb-reply-author {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+/* Section reply input */
+.fb-reply-input-row {
+  display: flex;
+  margin-left: 48px;
+  margin-top: 6px;
+}
+
+.fb-reply-input {
+  flex: 1;
+  background: #242526;
+  border: 1px solid #3a3b3c;
+  padding: 8px 12px;
+  border-radius: 18px;
+  color: #fff;
+}
+
+/* Reply button */
+.fb-reply-btn {
+  margin-left: 48px;
+  margin-top: 4px;
+  color: #4599ff;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Voir plus */
+.fb-see-more-replies {
+  margin-left: 48px;
+  margin-top: 4px;
+  color: #b0b3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* Modal structure */
+.fb-modal-comment-block {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #3a3b3c;
+  margin-bottom: 12px;
+}
+.fb-comment-actions,
+.fb-reply-actions {
+  display: flex;
+  gap: 10px;
+  margin-left: 42px;
+  margin-top: 4px;
+  align-items: center;
+}
+
+.fb-comment-like-btn,
+.fb-reply-like-btn {
+  background: transparent;
+  border: none;
+  color: #4599ff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.fb-comment-likes-count,
+.fb-reply-likes-count {
+  color: #b0b3b8;
+  font-size: 12px;
+}
+
+.fb-comment-upload-btn {
+  padding: 6px;
+  color: #4599ff;
+  cursor: pointer;
+}
+/* Placeholder avatar (si pas d'image) */
+.fb-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #4b4c4f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c9ccd1;
+  font-size: 14px;
+  font-weight: bold;
+}
+/* POST */
+.fb-post-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  background-color: #4b4c4f; /* fallback */
+}
+
+/* COMMENTAIRE */
+.fb-comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.fb-comment-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  background-color: #4b4c4f;
+}
+
+/* REPLY */
+.fb-reply {
+  display: flex;
+  align-items: flex-start;
+  margin-left: 48px;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.fb-reply-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  background-color: #4b4c4f;
+}
+.fb-comment-bubble,
+.fb-reply-bubble {
+  background: #3a3b3c;
+  padding: 8px 12px;
+  border-radius: 18px;
+  max-width: 80%;
+  color: #e4e6eb;
+  line-height: 1.4;
+}
+
+.fb-reply-bubble {
+  max-width: 75%;
+}
+
+.fb-comment-author,
+.fb-reply-author {
+  font-weight: 600;
+  margin-right: 6px;
+}
+.fb-comment-media,
+.fb-reply-media {
+  margin-top: 6px;
+}
+
+.fb-comment-image,
+.fb-reply-image {
+  width: 160px;
+  border-radius: 10px;
+}
+
+.fb-comment-video,
+.fb-reply-video {
+  width: 180px;
+  border-radius: 10px;
+}
+.fb-reply-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 48px;
+  margin-top: 6px;
+}
+
+.fb-reply-input {
+  flex: 1;
+  background: #242526;
+  border: 1px solid #3a3b3c;
+  padding: 8px 12px;
+  border-radius: 18px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.fb-comment-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4599ff;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 999px;
+  transition: 0.2s;
+}
+
+.fb-comment-upload-btn:hover {
+  background: #3a3b3c;
+}
+/* Conteneur sous la bulle */
+.fb-comment-actions,
+.fb-reply-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+/* Bouton like / réaction */
+.fb-comment-like-btn,
+.fb-reply-like-btn {
+  background: transparent;
+  border: none;
+  color: #b0b3b8;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  transition: 0.15s;
+}
+
+.fb-comment-like-btn:hover,
+.fb-reply-like-btn:hover {
+  color: #fff;
+}
+
+/* Compteur */
+.fb-comment-likes-count,
+.fb-reply-likes-count {
+  background: #303031;
+  color: #e4e6eb;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Affichage icônes réactions */
+.fb-reaction-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  background: #1877f2;
+  color: white;
+}
+
+.fb-reaction-heart {
+  background: #f02849;
+}
+
+.fb-reaction-laugh {
+  background: #f7b125;
+}
+
+.fb-reaction-wow {
+  background: #f7b125;
+}
+
+.fb-reaction-sad {
+  background: #f7b125;
+}
+
+.fb-reaction-angry {
+  background: #e9710f;
+}
+.fb-see-more-replies,
+.fb-reply-btn {
+  margin-left: 48px;
+  color: #4599ff;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.fb-see-more-replies {
+  color: #b0b3b8;
+}
+.fb-modal-comment-block {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #3a3b3c;
+  margin-bottom: 14px;
+}
+/* ======================================================
+   MENU DE RÉACTIONS PACK 1 (👍❤️😂😮😢😡)
+====================================================== */
+
+/* Bouton pour ouvrir le menu (le petit 🙂 à côté de "J’aime") */
+.fb-comment-react-btn {
+  background: transparent;
+  border: none;
+  color: #e4e6eb;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.fb-comment-react-btn:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+/* Barre de réactions flottante */
+.fb-reactions-picker {
+  position: absolute;
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  background: #242526;
+  border-radius: 999px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  margin-top: -40px; /* remonte juste au-dessus des actions */
+  z-index: 10;
+}
+
+/* On ancre le picker sur le bloc d’actions */
+.fb-comment-actions,
+.fb-reply-actions {
+  position: relative;
+}
+
+/* Pastilles de réaction individuelles */
+.fb-reaction-pill {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center bottom;
+  transition: transform 0.12s ease-out, filter 0.12s ease-out;
+}
+
+.fb-reaction-pill-emoji {
+  font-size: 22px;
+}
+
+/* Effet zoom / hover à la Facebook */
+.fb-reaction-pill:hover {
+  transform: translateY(-4px) scale(1.15);
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45));
+}
+
+/* Optionnel : légère mise en scène différente par type */
+.fb-reaction-pill-like  { }
+.fb-reaction-pill-love  { }
+.fb-reaction-pill-haha  { }
+.fb-reaction-pill-wow   { }
+.fb-reaction-pill-sad   { }
+.fb-reaction-pill-angry { }
+
+/* Mobile : version bien serrée */
+@media (max-width: 480px) {
+  .fb-reactions-picker {
+    padding: 2px 4px;
+    gap: 2px;
+    margin-top: -42px; /* remonte encore plus */
+  }
+
+  .fb-reaction-pill {
+    width: 26px;
+    height: 26px;
+  }
+
+  .fb-reaction-pill-emoji {
+    font-size: 18px;
+    line-height: 26px;
+  }
+}
+
+/* =====================================================
+   INPUT RÉPONSE + BOUTON ENVOYER
+===================================================== */
+.fb-reply-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 48px;
+  margin-top: 6px;
+}
+
+.fb-reply-input {
+  flex: 1;
+  background: #242526;
+  border: 1px solid #3a3b3c;
+  padding: 8px 12px;
+  border-radius: 18px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.fb-reply-send-btn {
+  border: none;
+  background: #1877f2;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 18px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Upload bouton dans la ligne de réponse */
+.fb-comment-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4599ff;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 999px;
+}
+
+.fb-comment-upload-btn:hover {
+  background: #3a3b3c;
+}
+/* Même style pour le bouton réactions des réponses que pour les commentaires */
+.fb-comment-react-btn,
+.fb-reply-react-btn {
+  background: transparent;
+  border: none;
+  color: #e4e6eb;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.fb-comment-react-btn:hover,
+.fb-reply-react-btn:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}/* COMMENTAIRE (niveau 1) */
+.fb-comment {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px !important;
+}
+
+.fb-comment-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+}
+
+.fb-comment-bubble {
+  background: #3a3b3c;
+  padding: 10px 14px;
+  border-radius: 18px;
+  max-width: 85%;
+  font-size: 15px;
+  color: #fff;
+  line-height: 1.45;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+/* AUTEUR DU COMMENTAIRE */
+.fb-comment-author {
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 6px;
+}
+
+
+/* ================================
+   RÉPONSES — STYLE FACEBOOK
+================================ */
+
+/* Groupe des réponses avec trait vertical plus visible */
+.fb-replies-group {
+  margin-left: 48px !important;
+  padding-left: 12px;
+  border-left: 2px solid rgba(255,255,255,0.12);
+  margin-top: 8px;
+}
+
+/* Chaque réponse -> plus petite */
+.fb-reply {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+/* Avatar plus petit */
+.fb-reply-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Bulle des réponses -> plus foncée + plus fine */
+.fb-reply-bubble {
+  background: #2b2b2b;
+  padding: 8px 12px;
+  border-radius: 14px;
+  max-width: 78%;
+  font-size: 14px;
+  color: #e4e6eb;
+  line-height: 1.4;
+}
+
+/* Auteur dans replies */
+.fb-reply-author {
+  font-weight: 600;
+  margin-right: 6px;
+  font-size: 13px;
+}
+
+/* Bouton "Répondre" */
+.fb-reply-btn {
+  margin-left: 48px;
+  color: #4599ff;
+  font-size: 13px;
+  margin-top: -4px;
+}
+
+/* Bouton "Voir plus de réponses" */
+.fb-see-more-replies {
+  margin-left: 48px;
+  font-size: 13px;
+  color: #b0b3b8;
+  margin-top: -4px;
+}
+/* ============================================================
+   COMMENTAIRES & RÉPONSES — MÊME TAILLE, MÊME STYLE, MÊME BULLE
+============================================================ */
+
+/* Commentaires parents */
+.fb-comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+/* Réponses — même style mais indentées */
+.fb-reply {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+  margin-left: 45px; /* indentation */
+}
+
+/* Avatar identique pour parent et reply */
+.fb-comment-avatar,
+.fb-reply-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: #4b4c4f;
+}
+
+/* BULLE IDENTIQUE parent + reply */
+.fb-comment-bubble,
+.fb-reply-bubble {
+  background: #2f2f2f;
+  padding: 10px 14px;
+  border-radius: 18px;
+  max-width: 85%;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.45;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  word-break: break-word;
+}
+
+/* Auteurs identiques */
+.fb-comment-author,
+.fb-reply-author {
+  font-weight: 600;
+  margin-right: 6px;
+  font-size: 14px;
+}
+
+/* Groupe de réponses avec ligne verticale */
+.fb-replies-group {
+  margin-left: 45px;
+  padding-left: 12px;
+  border-left: 2px solid rgba(255,255,255,0.12);
+}
+
+/* Bouton répondre */
+.fb-reply-btn,
+.fb-see-more-replies {
+  margin-left: 45px;
+  color: #4599ff;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: -8px;
+}
+
+/* Input des réponses — même style de base */
+.fb-reply-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 45px;
+  margin-top: 6px;
+}
+
+.fb-reply-input {
+  flex: 1;
+  background: #1f1f1f;
+  border: 1px solid #3a3a3c;
+  padding: 10px 14px;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 14px;
+}
+/* ============================================================
+   FIX GLOBAL — COMMENTAIRES & RÉPONSES IDENTIQUES
+   Place ce bloc TOUT EN BAS de ton CSS
+============================================================ */
+
+.fb-comment,
+.fb-reply {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin-bottom: 18px !important;
+}
+
+/* Avatar parent + reply identique */
+.fb-comment-avatar,
+.fb-reply-avatar {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: #4b4c4f !important;
+}
+
+/* Bulle identique parent + reply */
+.fb-comment-bubble,
+.fb-reply-bubble {
+  background: #2f2f2f !important;
+  padding: 10px 14px !important;
+  border-radius: 18px !important;
+  max-width: 85% !important;
+  color: #fff !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.35) !important;
+  word-break: break-word !important;
+}
+
+/* Auteur */
+.fb-comment-author,
+.fb-reply-author {
+  font-weight: 600 !important;
+  margin-right: 6px !important;
+  font-size: 14px !important;
+}
+
+/* Indentation replies */
+.fb-replies-group {
+  margin-left: 45px !important;
+  padding-left: 12px !important;
+  border-left: 2px solid rgba(255,255,255,0.15) !important;
+}
+
+/* Reply item aligné */
+.fb-reply {
+  margin-left: 0 !important; /* évite double indentation */
+}
+
+/* Boutons sous bulle */
+.fb-reply-btn,
+.fb-see-more-replies {
+  margin-left: 45px !important;
+  color: #4599ff !important;
+  background: transparent !important;
+  border: none !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  margin-top: -6px !important;
+}
+
+/* Input réponses */
+.fb-reply-input-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-left: 45px !important;
+  margin-top: 6px !important;
+}
+
+.fb-reply-input {
+  flex: 1 !important;
+  background: #1f1f1f !important;
+  border: 1px solid #3a3a3c !important;
+  padding: 10px 14px !important;
+  border-radius: 20px !important;
+  color: #fff !important;
+  font-size: 14px !important;
+}
+/* ===============================
+   PREVIEW MEDIA COMMENTAIRE / RÉPONSE
+=============================== */
+
+.fb-comment-preview,
+.fb-reply-preview {
+  margin-top: 8px;
+  margin-left: 48px; /* aligné avec les bulles dans le modal */
+}
+
+.fb-comment-preview-media,
+.fb-reply-preview-media {
+  max-width: 180px;
+  max-height: 180px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+  background: #111;
+}
+/* ============================================================
+   COMMENTAIRES & REPONSES — STYLE FACEBOOK PREMIUM
+============================================================ */
+
+/* Commentaire parent */
+.fb-comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+/* Avatar parent + reply (même style) */
+.fb-comment-avatar,
+.fb-reply-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: #4b4c4f;
+}
+
+/* Bulle parent + reply identiques */
+.fb-comment-bubble,
+.fb-reply-bubble {
+  background: #2f2f2f;
+  padding: 10px 14px;
+  border-radius: 18px;
+  max-width: 85%;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.45;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  word-break: break-word;
+}
+
+/* Auteur */
+.fb-comment-author,
+.fb-reply-author {
+  font-weight: 600;
+  margin-right: 6px;
+  font-size: 14px;
+}
+
+/* ============================================================
+   RÉPONSES (indentation + ligne verticale)
+============================================================ */
+
+.fb-replies-group {
+  margin-left: 45px;
+  padding-left: 12px;
+  border-left: 2px solid rgba(255,255,255,0.12);
+  margin-top: 10px;
+}
+
+.fb-reply {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+/* Médias */
+.fb-comment-media,
+.fb-reply-media {
+  margin-top: 8px;
+}
+
+.fb-comment-image,
+.fb-reply-image {
+  width: 180px;
+  max-width: 90%;
+  border-radius: 10px;
+}
+
+.fb-comment-video,
+.fb-reply-video {
+  width: 200px;
+  max-width: 95%;
+  border-radius: 10px;
+}
+
+/* ============================================================
+   ACTIONS COMMENTAIRES + REPONSES
+============================================================ */
+
+.fb-comment-actions,
+.fb-reply-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  margin-left: 4px;
+  position: relative;
+}
+
+/* Boutons réaction */
+.fb-comment-react-btn,
+.fb-reply-react-btn {
+  background: transparent;
+  border: none;
+  color: #b0b3b8;
+  font-size: 17px;
+  cursor: pointer;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  transition: .15s;
+}
+
+.fb-comment-react-btn:hover,
+.fb-reply-react-btn:hover {
+  color: #fff;
+}
+
+/* Compteur likes */
+.fb-comment-likes-count,
+.fb-reply-likes-count {
+  background: #303031;
+  color: #e4e6eb;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fb-reaction-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-reaction-heart { background: #f02849; }
+.fb-reaction-laugh,
+.fb-reaction-wow,
+.fb-reaction-sad { background: #f7b125; }
+.fb-reaction-angry { background: #e9710f; }
+
+/* ============================================================
+   MENU RÉACTIONS FLOTTANT
+============================================================ */
+
+.fb-reactions-picker {
+  position: absolute;
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  background: #242526;
+  border-radius: 999px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.45);
+  top: -46px;
+  z-index: 10;
+}
+
+.fb-reaction-pill {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform .12s ease;
+}
+
+.fb-reaction-pill:hover {
+  transform: translateY(-4px) scale(1.15);
+}
+
+.fb-reaction-pill-emoji {
+  font-size: 22px;
+}
+
+/* ============================================================
+   BOUTON RÉPONDRE + VOIR PLUS
+============================================================ */
+
+.fb-reply-btn,
+.fb-see-more-replies {
+  margin-left: 45px;
+  margin-top: -6px;
+  color: #4599ff;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ============================================================
+   INPUT RÉPONSE + COMMENTAIRE
+============================================================ */
+
+.fb-reply-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 45px;
+  margin-top: 10px;
+}
+
+.fb-reply-input,
+.fb-comments-modal-input {
+  flex: 1;
+  background: #1f1f1f;
+  border: 1px solid #3a3a3c;
+  padding: 10px 14px;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.fb-reply-send-btn,
+.fb-comments-modal-send {
+  background: #1877f2;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.fb-comment-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4599ff;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 999px;
+  transition: .2s;
+}
+
+.fb-comment-upload-btn:hover {
+  background: #333;
+}
+
+/* ============================================================
+   PREVIEW MEDIA COMMENTAIRE + REPLY
+============================================================ */
+
+.fb-comment-preview,
+.fb-reply-preview {
+  padding: 8px 45px;
+}
+
+.fb-comment-preview-media,
+.fb-reply-preview-media {
+  width: 160px;
+  border-radius: 10px;
+}
+
+/* ============================================================
+   BOUTON SUPPRESSION COMMENTAIRE & REPLY
+============================================================ */
+
+.fb-reply-delete-btn {
+  background: transparent;
+  border: none;
+  color: #ff4d4d;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.fb-reply-delete-btn:hover {
+  color: #ff7777;
+}
+/* =========================================
+   SKELETON COMMENTAIRE (modal)
+========================================= */
+.fb-comment-skeleton {
+  display: flex;
+  margin-bottom: 14px;
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  background: #3a3b3c;
+  border-radius: 50%;
+}
+
+.skeleton-lines {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.skeleton-line {
+  height: 10px;
+  background: #3a3b3c;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  animation: pulse 0.8s infinite ease-in-out alternate;
+}
+
+.skeleton-line.long { width: 80%; }
+.skeleton-line.short { width: 50%; }
+
+@keyframes pulse {
+  from { opacity: 0.4; }
+  to { opacity: 0.8; }
+}
+
+
+/* =========================================
+   MENU ⋮ (modifier / supprimer)
+========================================= */
+.fb-comment-action-menu-btn {
+  background: none;
+  border: none;
+  color: #b0b3b8;
+  margin-left: auto;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.fb-action-dropdown {
+  position: absolute;
+  right: 12px;
+  margin-top: 6px;
+  background: #3a3b3c;
+  padding: 6px 0;
+  border-radius: 8px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+}
+
+.fb-action-dropdown button {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  color: #e4e6eb;
+  font-size: 14px;
+  text-align: left;
+  width: 100%;
+}
+
+.fb-action-dropdown button:hover {
+  background: #4a4b4d;
+}
+
+.fb-action-dropdown .danger {
+  color: #f14848;
+}
+
+
+/* =========================================
+   INPUT ÉDITION COMMENTAIRE
+========================================= */
+.fb-edit-input {
+  width: 100%;
+  padding: 7px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: #4a4b4d;
+  color: #fff;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+
+/* =========================================
+   PICKER RÉACTIONS
+========================================= */
+.fb-reactions-picker {
+  display: flex;
+  background: #3a3b3c;
+  padding: 6px;
+  border-radius: 20px;
+  margin-top: 8px;
+  gap: 6px;
+}
+
+.fb-reaction-pill {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+
+/* =========================================
+   PREVIEW MEDIA COMMENTAIRE & REPONSE
+========================================= */
+.fb-comment-preview,
+.fb-reply-preview {
+  padding: 10px 0;
+}
+
+.fb-comment-preview-media,
+.fb-reply-preview-media {
+  width: 150px;
+  border-radius: 10px;
+}
+/* ========================================================= */
+/* 🔵 MODAL OVERLAY                                           */
+/* ========================================================= */
+.fb-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 50px;
+  z-index: 5000;
+}
+
+/* ========================================================= */
+/* 🔵 MODAL BOX                                               */
+/* ========================================================= */
+.fb-modal {
+  width: 95%;
+  max-width: 550px;
+  background: #242526;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  animation: fbModalAppear 0.25s ease;
+}
+
+@keyframes fbModalAppear {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ========================================================= */
+/* 🔵 HEADER                                                  */
+/* ========================================================= */
+.fb-modal-header {
+  padding: 14px 16px;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid #3a3b3c;
+  color: #e4e6eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fb-modal-close {
+  background: none;
+  border: none;
+  color: #b0b3b8;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+}
+.fb-modal-close:hover {
+  background: #3a3b3c;
+}
+
+/* ========================================================= */
+/* 🔵 ERREUR LIMITE FICHIERS                                  */
+/* ========================================================= */
+.fb-create-error {
+  background: #ff3b30;
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ========================================================= */
+/* 🔵 TEXTAREA                                                */
+/* ========================================================= */
+.fb-modal-textarea {
+  width: 100%;
+  border: none;
+  padding: 16px;
+  min-height: 110px;
+  background: transparent;
+  color: #e4e6eb;
+  resize: none;
+  outline: none;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.fb-modal-textarea::placeholder {
+  color: #b0b3b8;
+}
+
+/* ========================================================= */
+/* 🔵 PREVIEW ZONE                                            */
+/* ========================================================= */
+.fb-preview-zone {
+  width: 100%;
+  padding: 10px 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.fb-preview-item {
+  width: 100%;
+  height: 110px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #111;
+  position: relative;
+}
+
+.fb-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ========================================================= */
+/* 🔵 FILE BUTTON                                             */
+/* ========================================================= */
+.fb-modal-file-btn {
+  display: block;
+  margin: 12px 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #3a3b3c;
+  color: #e4e6eb;
+  font-size: 15px;
+  cursor: pointer;
+  text-align: center;
+}
+.fb-modal-file-btn:hover {
+  background: #4b4c4d;
+}
+
+/* ========================================================= */
+/* 🔵 SUBMIT BUTTON                                           */
+/* ========================================================= */
+.fb-modal-submit {
+  width: calc(100% - 32px);
+  margin: 14px 16px 18px;
+  padding: 10px 0;
+  background: #1877f2;
+  border: none;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.fb-modal-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fb-modal-submit:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+/* ========================================================= */
+/* 🔵 RESPONSIVE                                              */
+/* ========================================================= */
+@media (max-width: 480px) {
+  .fb-modal {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    height: 100%;
+  }
+
+  .fb-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .fb-preview-item {
+    height: 90px;
+  }
+}/* =========================================
+   CARTE CREATE POST DANS LE FEED
+========================================= */
+
+.fb-create-post-box {
+  background: #242526;
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #3a3b3c;
+}
+
+.fb-create-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fb-create-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3a3b3c;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* champ "exprimez-vous" */
+.fb-create-input-fake {
+  flex: 1;
+  background: #3a3b3c;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 15px;
+  color: #b0b3b8;
+  cursor: pointer;
+}
+
+/* petite ligne d'actions sous le champ */
+.fb-create-post-actions-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.fb-create-mini-btn {
+  border: none;
+  background: transparent;
+  color: #b0b3b8;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.fb-create-mini-btn:hover {
+  background: #3a3b3c;
+}
+
+/* =========================================
+   MODAL CREATE POST — COMPLEMENTS
+========================================= */
+
+.fb-modal-body {
+  padding: 10px 16px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+/* ligne user dans le modal */
+.fb-modal-user-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.fb-modal-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3a3b3c;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-modal-user-infos {
+  display: flex;
+  flex-direction: column;
+}
+
+.fb-modal-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.fb-modal-privacy {
+  font-size: 12px;
+  color: #b0b3b8;
+}
+
+/* tu as déjà .fb-modal-overlay, .fb-modal, .fb-modal-header,
+   .fb-modal-textarea, .fb-preview-zone, .fb-preview-item,
+   .fb-preview-img, .fb-modal-file-btn, .fb-modal-submit
+   dans ton CSS: on les réutilise directement */
+/* ===============================================
+   FIX CREATE POST MODAL — CENTRAGE DESKTOP
+   (IDENTIQUE À FACEBOOK)
+================================================ */
+@media (min-width: 768px) {
+  .fb-modal-overlay {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important; /* CENTRE verticalement */
+    padding-top: 0 !important;
+  }
+
+  .fb-modal {
+    width: 100% !important;
+    max-width: 550px !important;
+    border-radius: 12px !important;
+    margin: 0 !important;
+    max-height: 90vh !important;
+    animation: fbModalAppear 0.22s ease-out !important;
+  }
+}
+
+/* Animation descendante à la Facebook */
+@keyframes fbModalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* =========================================================
+   🔵 BARRE CREATE POST (Feed)
+========================================================= */
+.fb-create-post-bar {
+  background: #242526;
+  padding: 10px 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #3a3b3c;
+  cursor: pointer;
+}
+
+.fb-create-post-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: #3a3b3c;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.fb-create-post-placeholder {
+  flex: 1;
+  background: #3a3b3c;
+  padding: 12px 16px;
+  border-radius: 30px;
+  font-size: 15px;
+  color: #b0b3b8;
+}
+
+.fb-create-post-photo-btn {
+  width: 38px;
+  height: 38px;
+  background: #3a3b3c;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================================================
+   🔵 MODAL OVERLAY
+========================================================= */
+.fb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
+  z-index: 99999;
+}
+
+/* =========================================================
+   🔵 MODAL BOX (Desktop)
+========================================================= */
+.fb-modal {
+  width: 96%;
+  max-width: 500px;
+  background: #242526;
+  color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalIn .22s ease-out;
+  border: 1px solid #3a3b3c;
+}
+
+@keyframes modalIn {
+  from { transform: translateY(12px) scale(.96); opacity:0; }
+  to   { transform: translateY(0) scale(1); opacity:1; }
+}
+
+/* =========================================================
+   🔵 HEADER MODAL
+========================================================= */
+.fb-modal-header {
+  padding: 14px;
+  background: #3a3b3c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.fb-modal-close {
+  position: absolute;
+  left: 12px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 999px;
+}
+
+.fb-modal-close:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* =========================================================
+   🔵 BODY MODAL
+========================================================= */
+.fb-modal-body {
+  padding: 16px;
+  max-height: calc(80vh - 60px);
+  overflow-y: auto;
+}
+
+/* Ligne utilisateur */
+.fb-modal-user-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.fb-modal-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: #3a3b3c;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-modal-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.fb-modal-privacy {
+  font-size: 12px;
+  background: #3a3b3c;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-top: 3px;
+  width: fit-content;
+  opacity: .8;
+}
+
+/* Zone texte */
+.fb-modal-textarea {
+  width: 100%;
+  min-height: 130px;
+  font-size: 18px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  outline: none;
+  resize: none;
+}
+
+.fb-modal-textarea::placeholder {
+  color: #b0b3b8;
+}
+
+/* =========================================================
+   🔵 PREVIEW MEDIA
+========================================================= */
+.fb-preview-zone {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.fb-preview-item {
+  background: #111;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.fb-preview-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+
+/* =========================================================
+   🔵 BOUTON PUBLIER
+========================================================= */
+.fb-modal-submit {
+  margin: 18px;
+  margin-top: 10px;
+  background: #1877f2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.fb-modal-submit:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   BARRE CREATE POST (comme Facebook)
+========================================================= */
+.fb-create-post-bar {
+  background: #242526;
+  border-radius: 40px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  border: 1px solid #3a3b3c;
+}
+
+.fb-create-post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.fb-create-post-placeholder {
+  flex: 1;
+  background: #3a3b3c;
+  border-radius: 40px;
+  padding: 10px 16px;
+  font-size: 15px;
+  color: #b0b3b8;
+}
+
+.fb-create-post-photo-btn {
+  background: #3a3b3c;
+  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-create-post-photo-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke: #2EDF40 !important;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .fb-create-post-photo-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+.fb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+/* =========================================================
+   MODAL BOX
+========================================================= */
+.fb-modal {
+  width: 100%;
+  max-width: 480px;
+  background: #242526;
+  border-radius: 14px;
+  overflow: hidden;
+  animation: fbModalPop 0.20s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes fbModalPop {
+  from { transform: scale(.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+.fb-modal-header {
+  background: #3a3b3c;
+  padding: 14px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  position: relative;
+}
+
+.fb-modal-close {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+.fb-modal-body {
+  padding: 16px;
+  color: #fff;
+}
+
+/* Avatar + nom */
+.fb-modal-user-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.fb-modal-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+}
+
+.fb-modal-name {
+  font-weight: bold;
+}
+
+.fb-modal-privacy {
+  font-size: 12px;
+  color: #b0b3b8;
+}
+
+/* Textarea */
+.fb-modal-textarea {
+  width: 100%;
+  min-height: 110px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 17px;
+  padding: 10px 0;
+  resize: none;
+}
+
+/* Preview images/videos */
+.fb-preview-zone {
+  margin-top: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.fb-preview-item img,
+.fb-preview-item video {
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* Bouton fichier */
+.fb-modal-file-btn {
+  margin-top: 14px;
+  background: #3a3b3c;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.fb-modal-file-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke: #2EDF40 !important;
+}
+
+/* =========================================================
+   BOUTON PUBLIER
+========================================================= */
+.fb-modal-submit {
+  margin: 16px;
+  padding: 12px 0;
+  background: #1877f2;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.fb-modal-submit:disabled {
+  opacity: .5;
+}
+/* =========================================================
+   📱 VERSION MOBILE — FACEBOOK CREATE POST (FINAL CLEAN)
+========================================================= */
+@media (max-width: 768px) {
+
+  /* Anti horizontal scroll */
+  body, html {
+    overflow-x: hidden !important;
+  }
+
+  /* Overlay */
+  .fb-modal-overlay {
+    align-items: flex-end !important;
+    justify-content: flex-end !important;
+    padding: 0 !important;
+  }
+
+  /* Modal fullscreen */
+  .fb-modal {
+    width: 100% !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #242526 !important;
+    overflow: hidden !important;
+  }
+
+  /* Header */
+  .fb-modal-header {
+    background: #3A3B3C !important;
+    padding: 16px !important;
+    border-bottom: 1px solid #2e2e2e !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Body scroll vertical ONLY */
+  .fb-modal-body {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 18px 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  /* Textarea */
+  .fb-modal-textarea {
+    font-size: 18px !important;
+    min-height: 150px !important;
+    line-height: 1.5 !important;
+    padding-top: 12px !important;
+  }
+  /* =========================================================
+     🔵 BOUTON PUBLIER — PETIT, ARRONDI, FIXÉ EN BAS
+  ========================================================= */
+  .fb-modal-submit {
+    width: 90% !important;
+    margin: 10px auto !important;
+    padding: 14px !important;
+    border-radius: 999px !important; /* arrondi parfait */
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    background: #1877f2 !important;
+    position: sticky !important;
+    bottom: 10px !important;
+  }
+
+  .fb-modal-submit:active {
+    transform: scale(0.97);
+  }
+}
+/* =========================================================
+   🔵 BOUTON MEDIA — PETIT, ROND, BIEN CENTRÉ
+========================================================= */
+.fb-modal-file-btn {
+  background: #3A3B3C !important;
+  
+  /* 💥 petit + centré */
+  width: 70% !important;
+  margin: 0 auto !important;
+  
+  padding: 10px 12px !important;
+  border-radius: 999px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 10px !important;
+
+  /* anti débordement */
+  overflow: hidden !important;
+}
+
+/* Texte */
+.fb-modal-file-btn span {
+  font-size: 15px !important;
+  color: #fff !important;
+  white-space: nowrap !important;
+}
+/* Icône (agrandie) */
+.fb-modal-file-btn svg {
+  width: 38px !important;
+  height: 38px !important;
+  stroke: #2EDF40 !important;
+  fill: none !important;
+
+  background: #2f2f2f !important;
+  padding: 8px !important; /* Ajusté à la taille */
+  border-radius: 50% !important;
+}
+/* ============================================
+   MODAL OVERLAY — FIX MOBILE + DESKTOP
+=============================================== */
+.fb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 70px;        /* distance avec le header du feed */
+  z-index: 99999;
+}
+
+/* ============================================
+   MODAL BOX
+=============================================== */
+.fb-modal {
+  width: 95%;
+  max-width: 520px;
+  background: #242526;
+  color: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalIn .22s ease-out;
+  border: 1px solid #3a3b3c;
+}
+
+@keyframes modalIn {
+  from { transform: translateY(18px) scale(.96); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ============================================
+   HEADER
+=============================================== */
+.fb-modal-header {
+  padding: 14px 16px;
+  background: #3a3b3c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.fb-modal-close {
+  position: absolute;
+  left: 12px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+}
+
+.fb-modal-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ============================================
+   BODY — SCROLL INTERNE
+=============================================== */
+.fb-modal-body {
+  padding: 14px 16px;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+}
+
+/* ============================================
+   SVG PHOTO FIX
+=============================================== */
+.fb-modal-file-btn svg {
+  width: 22px !important;
+  height: 22px !important;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   PREVIEW ZONE — SCROLLABLE
+=============================================== */
+.fb-preview-zone {
+  margin-top: 12px;
+  max-height: 220px;             /* hauteur max */
+  overflow-y: auto;              /* scroll vertical */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+  padding-right: 4px;
+}
+
+.fb-preview-item {
+  width: 100%;
+  height: 110px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+}
+
+.fb-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ============================================
+   BOUTON FILE
+=============================================== */
+.fb-modal-file-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin: 14px auto 0;
+  padding: 12px 16px;
+  width: 92%;
+  border-radius: 30px;
+  background: #3a3b3c;
+  color: #e4e6eb;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.fb-modal-file-btn span {
+  line-height: 1;
+}
+
+/* ============================================
+   BOUTON PUBLIER
+=============================================== */
+.fb-modal-submit {
+  width: 92%;
+  margin: 20px auto 18px;
+  padding: 12px 0;
+  background: #1877f2;
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 24px;      /* bouton arrondi */
+  cursor: pointer;
+}
+
+.fb-modal-submit:disabled {
+  opacity: 0.45;
+}
+
+/* ============================================
+   DESKTOP — MODAL CENTRÉ
+=============================================== */
+@media (min-width: 768px) {
+  .fb-modal-overlay {
+    align-items: center;
+    padding-top: 0;
+  }
+
+  .fb-modal {
+    max-height: 90vh;
+  }
+}
+/***************************************************
+ * 🔵 OVERLAY (fond flou derrière le modal)
+ ***************************************************/
+.fb-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/***************************************************
+ * 🔵 MODAL BOX (desktop / mobile)
+ ***************************************************/
+.fb-modal {
+    width: 100%;
+    max-width: 480px;
+    background: #242526;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    animation: fbModalIn 0.22s ease-out;
+}
+
+@keyframes fbModalIn {
+    from { opacity: 0; transform: translateY(14px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/***************************************************
+ * 🔵 HEADER
+ ***************************************************/
+.fb-modal-header {
+    background: #3a3b3c;
+    padding: 14px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.fb-modal-close {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+}
+
+.fb-modal-close:hover {
+    background: rgba(255,255,255,0.12);
+}
+
+/***************************************************
+ * 🔵 BODY (scroll VERT uniquement)
+ ***************************************************/
+.fb-modal-body {
+    flex: 1;
+    padding: 18px 16px;
+    overflow-y: auto;
+    overflow-x: hidden !important;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/***************************************************
+ * 🔵 USER ROW
+ ***************************************************/
+.fb-modal-user-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fb-modal-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-color: #3a3b3c;
+}
+
+.fb-modal-name {
+    font-weight: 600;
+}
+
+.fb-modal-privacy {
+    font-size: 12px;
+    opacity: 0.8;
+    background: #3a3b3c;
+    padding: 3px 8px;
+    border-radius: 8px;
+    margin-top: 3px;
+    width: fit-content;
+}
+
+/***************************************************
+ * 🔵 TEXTAREA
+ ***************************************************/
+.fb-modal-textarea {
+    width: 100%;
+    min-height: 120px;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 17px;
+    outline: none;
+    resize: none;
+}
+
+/***************************************************
+ * 🔵 PREVIEW ZONE – scroll vertical
+ ***************************************************/
+.fb-preview-zone {
+    width: 100%;
+    max-height: 220px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    padding-right: 6px; /* anti overflow */
+}
+
+.fb-preview-item {
+    width: 100%;
+    height: 120px;
+    border-radius: 12px;
+    background: #111;
+    overflow: hidden;
+}
+
+.fb-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/***************************************************
+ * 🔵 BOUTON FICHIER (petit, arrondi, centré)
+ ***************************************************/
+.fb-modal-file-btn {
+    margin: 0 auto;
+    width: 70%;
+    background: #3a3b3c;
+    padding: 10px 14px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.fb-modal-file-btn span {
+    font-size: 15px;
+    color: white;
+}
+
+/* SVG FIX – taille parfaite mobile & desktop */
+.fb-modal-file-btn svg {
+    width: 28px !important;
+    height: 28px !important;
+    stroke: #2EDF40 !important;
+    background: #2f2f2f;
+    padding: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/***************************************************
+ * 🔵 BOUTON PUBLIER — arrondi, centré
+ ***************************************************/
+.fb-modal-submit {
+    width: 75%;
+    margin: 10px auto 20px;
+    padding: 14px 0;
+    background: #1877f2;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.fb-modal-submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/***************************************************
+ * 🔵 RESPONSIVE FULLSCREEN MOBILE
+ ***************************************************/
+@media (max-width: 768px) {
+
+    .fb-modal-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .fb-modal {
+        width: 100% !important;
+        height: 100vh !important;
+        border-radius: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .fb-modal-body {
+        padding: 20px 18px !important;
+    }
+
+    .fb-modal-submit {
+        position: sticky;
+        bottom: 12px;
+    }
+}
+/***************************************************
+ * 🔥 FIX — BOUTON FERMER INVISIBLE EN MOBILE
+ ***************************************************/
+@media (max-width: 768px) {
+
+    /* Force l’apparition du header */
+    .fb-modal-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+        background: #3a3b3c !important;
+        z-index: 999999 !important;
+    }
+
+    /* Bouton fermer forcé */
+    .fb-modal-close {
+        display: block !important;
+        opacity: 1 !important;
+
+        position: absolute !important;
+        left: 14px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+
+        background: none !important;
+        border: none !important;
+        color: #fff !important;
+        font-size: 26px !important;
+        padding: 6px !important;
+        z-index: 999999 !important; /* Passe devant tout */
+    }
+
+    /* Empêche que le scroll du body passe devant */
+    .fb-modal-body {
+        position: relative !important;
+        z-index: 1 !important;
+        margin-top: 10px !important;
+    }
+}
+/* ===============================
+   OVERLAY (fond noir)
+================================*/
+.fb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 9999;
+  overflow-y: auto;
+  padding-top: 20px;
+}
+
+/* ===============================
+   MODAL WRAPPER
+================================*/
+.fb-modal {
+  background: #242526;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ===============================
+   HEADER
+================================*/
+.fb-modal-header {
+  padding: 14px;
+  background: #18191a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid #3a3b3c;
+}
+
+.fb-modal-title {
+  font-weight: bold;
+  font-size: 17px;
+  color: #fff;
+}
+
+.fb-modal-close {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #3a3b3c;
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* 🔥 Bouton fermer mobile à droite de l’avatar */
+.fb-modal-close-mobile {
+  margin-left: auto;
+  background: #3a3b3c;
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  color: #fff;
+  font-size: 18px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .fb-modal-close-mobile {
+    display: flex;
+  }
+}
+
+/* ===============================
+   MODAL BODY
+================================*/
+.fb-modal-body {
+  padding: 14px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* ===============================
+   USER ROW
+================================*/
+.fb-modal-user-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.fb-modal-avatar {
+  width: 48px;
+  height: 48px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  background-color: #3a3b3c;
+}
+
+.fb-modal-user-infos {
+  margin-left: 12px;
+}
+
+.fb-modal-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.fb-modal-privacy {
+  font-size: 13px;
+  color: #b0b3b8;
+}
+
+/* ===============================
+   TEXTAREA
+================================*/
+.fb-modal-textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  resize: none;
+  font-size: 17px;
+  min-height: 120px;
+  color: #fff;
+  outline: none;
+  margin-bottom: 14px;
+}
+
+/* ===============================
+   PREVIEW MEDIA
+================================*/
+.fb-preview-zone {
+  max-height: 300px;
+  overflow-y: auto;  /* SCROLL VERTICAL UNIQUEMENT */
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-right: 6px;
+}
+
+.fb-preview-item {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.fb-preview-img,
+.fb-preview-item video {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+}
+
+/* ❌ Bouton suppression image */
+.fb-preview-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===============================
+   BOUTON IMPORT MEDIA
+================================*/
+.fb-modal-file-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #3a3b3c;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 15px;
+}
+
+.fb-modal-file-btn svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* ===============================
+   SUBMIT BUTTON
+================================*/
+.fb-modal-submit {
+  width: 90%;
+  margin: 10px auto 18px;
+  display: block;
+  background: #2374e1;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.fb-modal-submit:disabled {
+  background: #3a3b3c;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   BARRE CREATE POST
+================================*/
+.fb-create-post-bar {
+  display: flex;
+  align-items: center;
+  background: #242526;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.fb-create-post-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: #3a3b3c;
+}
+
+.fb-create-post-placeholder {
+  margin-left: 12px;
+  flex-grow: 1;
+  color: #b0b3b8;
+  font-size: 15px;
+}
+
+.fb-create-post-photo-btn svg {
+  width: 28px;
+  height: 28px;
+}
+/* =========================================================
+   BARRE CREATE POST — ARRONDIS PARFAITS (STYLE FACEBOOK)
+========================================================= */
+.fb-create-post-bar {
+  background: #242526;
+  padding: 10px 14px;
+  border-radius: 40px !important;    /* 🔥 arrondi max */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #3a3b3c;
+  cursor: pointer;
+}
+
+/* Avatar rond */
+.fb-create-post-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px !important;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+/* Champ placeholder arrondi */
+.fb-create-post-placeholder {
+  flex: 1;
+  background: #3a3b3c;
+  padding: 12px 16px;
+  border-radius: 45px !important;     /* 🔥 forme pilule */
+  font-size: 15px;
+  color: #b0b3b8;
+}
+
+/* Bouton média rond */
+.fb-create-post-photo-btn {
+  background: #3a3b3c;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Taille SVG stable */
+.fb-create-post-photo-btn svg {
+  width: 22px;
+  height: 22px;
+}
+/* Bloquer le scroll body quand viewer ouvert */
+.fb-no-scroll {
+  overflow: hidden;
+}
+
+/* ===================================================== */
+/* MEDIA WRAPPER (multi images style FB)                 */
+/* ===================================================== */
+
+.fb-post-media-wrapper {
+  margin: 8px -10px 0;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fb-post-media-wrapper--single,
+.fb-post-media-wrapper--multi {
+  display: block;
+}
+
+/* IMAGE UNIQUE – COMME FACEBOOK */
+.fb-media-single {
+  width: 100%;
+  background: #000;
+  display: flex;
+  justify-content: center;
+}
+
+.fb-media-single img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  background: #000;
+}
+
+@media (max-width: 768px) {
+  .fb-media-single img {
+    max-height: none;
+  }
+}
+
+.fb-media-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 2px;
+  background: #000;
+}
+
+.fb-media-item {
+  position: relative;
+  background: #000;
+  padding-top: 100%;
+  overflow: hidden;
+}
+
+.fb-media-item img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Badge +X pour les nombreuses images */
+.fb-media-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-weight: 600;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover léger sur desktop */
+@media (hover: hover) {
+  .fb-post-media:hover img.fb-post-image,
+  .fb-post-media:hover video.fb-post-video {
+    transform: scale(1.03);
+    transition: transform 0.18s ease-out;
+  }
+}
+
+/* ===================================================== */
+/* MEDIA VIEWER FULLSCREEN                               */
+/* ===================================================== */
+
+.fb-media-viewer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-media-viewer {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  padding: 48px 60px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.fb-media-viewer-content {
+  flex: 1;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.fb-media-viewer-img,
+.fb-media-viewer-video {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+  background: #000;
+}
+
+.fb-media-viewer-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  border: none;
+  background: rgba(24, 24, 24, 0.85);
+  color: #fff;
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: ;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-media-viewer-prev,
+.fb-media-viewer-next {
+  border: none;
+  background: rgba(24, 24, 24, 0.85);
+  color: #fff;
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+  border-radius: 17 px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+  .fb-media-viewer-counter {
+    position: absolute;
+    bottom: 18px;
+    right: 24px;
+    background: rgba(24, 24, 24, 0.85);
+    color: #fff;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+/* Mobile : viewer plus compact */
+@media (max-width: 768px) {
+  .fb-media-viewer {
+    padding: 40px 12px 24px;
+  }
+
+  .fb-media-viewer-prev,
+  .fb-media-viewer-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .fb-media-viewer-prev {
+    left: 10px;
+  }
+
+  .fb-media-viewer-next {
+    right: 10px;
+  }
+
+  .fb-media-viewer-close {
+    top: 10px;
+    right: 10px;
+  }
+}
+/* ===================================================== */
+/* MEDIA WRAPPER (multi images style FB)                 */
+/* ===================================================== */
+
+.fb-post-media-wrapper {
+  margin: 8px -10px 0;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fb-post-media-wrapper--single,
+.fb-post-media-wrapper--multi {
+  display: block;
+}
+
+.fb-media-grid {
+  width: 100%;
+  display: grid;
+  gap: 2px;
+  background: #000;
+}
+
+.fb-media-1 {
+  grid-template-columns: 1fr;
+}
+
+.fb-media-1 img {
+  width: 100%;
+  object-fit: contain;
+}
+
+.fb-media-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.fb-media-3 {
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.fb-media-3 .fb-media-item:first-child {
+  grid-row: span 2;
+}
+
+.fb-media-4,
+.fb-media-5 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.fb-media-item {
+  position: relative;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-media-item img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Badge +X pour les nombreuses images */
+.fb-media-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-weight: 600;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover léger sur desktop */
+@media (hover: hover) {
+  .fb-post-media:hover img.fb-post-image,
+  .fb-post-media:hover video.fb-post-video {
+    transform: scale(1.03);
+    transition: transform 0.18s ease-out;
+  }
+}
+
+/* ===================================================== */
+/* MEDIA VIEWER FULLSCREEN                               */
+/* ===================================================== */
+
+.fb-media-viewer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-media-viewer {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  padding: 48px 60px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.fb-media-viewer-content {
+  flex: 1;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.fb-media-viewer-img,
+.fb-media-viewer-video {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+  background: #000;
+}
+
+  .fb-media-viewer-close {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    border: none;
+    background: rgba(24, 24, 24, 0.85);
+    color: #fff;
+    font-size: 20px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  justify-content: center;
+}
+
+.fb-media-viewer-prev,
+.fb-media-viewer-next {
+  border: none;
+  background: rgba(24, 24, 24, 0.85);
+  color: #fff;
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+  .fb-media-viewer-counter {
+    position: absolute;
+    bottom: 18px;
+    right: 24px;
+    background: rgba(24, 24, 24, 0.85);
+    color: #fff;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+/* Mobile : viewer plus compact */
+@media (max-width: 768px) {
+  .fb-media-viewer {
+    padding: 0;
+  }
+
+  .fb-media-viewer-prev,
+  .fb-media-viewer-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .fb-media-viewer-prev {
+    left: 10px;
+  }
+
+  .fb-media-viewer-next {
+    right: 10px;
+  }
+
+  .fb-media-viewer-close {
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .fb-media-viewer-content {
+    width: 100%;
+    height: 100%;
+  }
+
+  .fb-media-viewer-img,
+  .fb-media-viewer-video {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: contain;
+  }
+}
+/* BOUTON FERMETURE (X) */
+.fb-media-viewer-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  border: none;
+  background: rgba(24, 24, 24, 0.85);
+  color: #fff;
+  font-size: 20px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%; /* ← rond */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.fb-media-viewer-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Bouton de fermeture spécifique au mobile */
+.fb-media-viewer-mobile-close {
+  display: none;
+}
+
+.fb-media-viewer-mobile-close button {
+  border: none;
+  background: rgba(0, 0, 0, 0.78);
+  color: #fff;
+  font-size: 15px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .fb-media-viewer-mobile-close {
+    display: block;
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .fb-media-viewer-mobile-close button {
+    padding: 12px 24px;
+    font-weight: 600;
+  }
+}
+
+/* BOUTONS PREV / NEXT */
+.fb-media-viewer-prev,
+.fb-media-viewer-next {
+  border: none;
+  background: rgba(24, 24, 24, 0.85);
+  color: #fff;
+  font-size: 32px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%; /* ← rond */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.fb-media-viewer-prev:hover,
+.fb-media-viewer-next:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+}
+
+/* COMPTEUR BAS DE PAGE */
+  .fb-media-viewer-counter {
+    position: absolute;
+    bottom: 18px;
+    right: 24px;
+    background: rgba(24, 24, 24, 0.85);
+    color: #fff;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 6px; /* ← arrondi propre */
+  }
+
+  @media (max-width: 768px) {
+    .fb-media-viewer-close {
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      width: 34px;
+      height: 34px;
+    }
+
+    .fb-media-viewer-counter {
+    right: 16px;
+    bottom: 14px;
+  }
+}
+
+/* Fullscreen media viewer: edge-to-edge with no borders */
+.fb-media-viewer-backdrop {
+  padding: 0;
+}
+
+.fb-media-viewer {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  padding: 0;
+  gap: 0;
+  background: #000;
+}
+
+.fb-media-viewer-content {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+.fb-media-viewer-img,
+.fb-media-viewer-video {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 0;
+  box-shadow: none;
+  background: #000;
+}
+
+/* Remove leftover blank space under videos in feed */
+.fb-feed .fb-post-media-video {
+  align-items: stretch;
+  line-height: 0;
+}
+
+.fb-feed .fb-post-media-video .media-renderer,
+.fb-feed .fb-post-media-video video {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* ===================================================== */
+/* COMPACTAGE DES CARTES EN DESKTOP (FEED UNIQUEMENT)     */
+/* Objectif : densifier le feed sans impacter le mobile. */
+/* ===================================================== */
+@media (min-width: 1024px) {
+  .fb-feed {
+    padding: 10px 6px 64px;
+    max-width: 640px;
+  }
+
+  .fb-feed .fb-post,
+  .fb-feed .fb-post-card {
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+
+  .fb-feed .fb-post-header {
+    margin-bottom: 6px;
+  }
+
+  .fb-feed .fb-post-avatar {
+    width: 36px;
+    height: 36px;
+    margin-right: 6px;
+  }
+
+  .fb-feed .fb-post-author {
+    font-size: 13px;
+  }
+
+  .fb-feed .fb-post-meta {
+    font-size: 10px;
+    margin-top: 0;
+  }
+
+  .fb-feed .fb-post-menu-btn {
+    font-size: 18px;
+    padding: 2px;
+  }
+
+  .fb-feed .fb-post-text {
+    font-size: 14px;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .fb-feed .fb-post-media-wrapper {
+    margin: 4px -8px 0;
+    gap: 2px;
+  }
+
+  /* Desktop media box to avoid cropping while keeping cards compact */
+  .fb-feed .fb-post-media-box {
+    width: 100%;
+    max-height: 520px;
+    background: #0f1115;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fb-feed .fb-post-media-box img,
+  .fb-feed .fb-post-media-box video {
+    width: 100%;
+    height: 100%;
+    max-height: 520px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .fb-feed .fb-post-media-box img {
+    max-width: 100%;
+  }
+
+  .fb-feed .fb-post-media-box .fb-post-image-btn {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fb-feed .fb-post-stats {
+    padding-top: 4px;
+    margin-top: 4px;
+    font-size: 11px;
+  }
+
+  .fb-feed .fb-post-actions {
+    margin-top: 2px;
+    padding-top: 2px;
+  }
+
+  .fb-feed .fb-post-action-btn {
+    font-size: 12px;
+    padding: 4px 0;
+    gap: 4px;
+  }
+}
+
+.post-highlight {
+  animation: highlightFlash 2.5s ease;
+}
+
+.comment-highlight {
+  animation: highlightFlash 2.5s ease;
+}
+
+.reply-highlight {
+  animation: highlightFlash 2.5s ease;
+}
+
+@keyframes highlightFlash {
+  0% {
+    background: rgba(24, 119, 242, 0.25);
+  }
+  100% {
+    background: transparent;
+  }
+}

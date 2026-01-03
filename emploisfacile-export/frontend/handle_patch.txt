@@ -1,0 +1,37 @@
+  const handleCreatePost = async (payload) => {
+    try {
+      const fd = new FormData();
+      fd.append('text', payload.text || '');
+
+      const allFiles = [
+        ...payload.images,
+        ...payload.videos,
+        ...payload.audios,
+        ...payload.pdfs,
+      ];
+
+      allFiles.forEach((file) => {
+        fd.append('files', file);
+      });
+
+      const res = await fetch(`${API_BASE}/api/posts`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: fd,
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || 'Erreur création post');
+        return;
+      }
+
+      const newPost = await res.json();
+      setPosts((p) => [newPost, ...p]);
+    } catch (e) {
+      console.error(e);
+      alert('Erreur réseau lors de la publication');
+    }
+  };

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Votre publicité est prête — Paiement requis</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f6f8fb; color: #1f2933; margin: 0; padding: 24px; }
+    .container { max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 10px; padding: 24px; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+    h1 { font-size: 20px; margin: 0 0 12px; color: #111827; }
+    p { line-height: 1.5; margin: 8px 0; }
+    .recap { margin: 18px 0; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb; }
+    .recap div { margin: 6px 0; }
+    .button { display: inline-block; padding: 12px 18px; background: #2563eb; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700; margin-top: 12px; }
+    .footer { margin-top: 18px; font-size: 12px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Votre publicité est prête</h1>
+    <p>Bonjour {{firstName}},</p>
+    <p>Votre campagne est prête et nécessite un paiement pour être lancée.</p>
+
+    <div class="recap">
+      <div><strong>Objectif :</strong> {{objective}}</div>
+      <div><strong>Audience :</strong> {{audience}}</div>
+      <div><strong>Budget total :</strong> {{budget}}</div>
+      <div><strong>Dates :</strong> {{dates}}</div>
+    </div>
+
+    <a class="button" href="{{paymentLink}}" target="_blank" rel="noreferrer">Procéder au paiement</a>
+
+    <p class="footer">Merci d'utiliser emploisfacile.org</p>
+  </div>
+</body>
+</html>

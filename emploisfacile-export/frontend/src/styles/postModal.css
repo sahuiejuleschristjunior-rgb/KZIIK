@@ -1,0 +1,212 @@
+/* ====================== */
+/* OVERLAY & CONTAINER    */
+/* ====================== */
+
+.postmodal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  backdrop-filter: blur(4px);
+}
+
+.postmodal-container {
+  width: 95%;
+  max-width: 500px;
+  background: #0f0f0f;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 0 50px rgba(0,0,0,0.6);
+  animation: popIn 0.25s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ====================== */
+/* HEADER                 */
+/* ====================== */
+
+.postmodal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.postmodal-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+/* ====================== */
+/* TEXTAREA               */
+/* ====================== */
+
+.postmodal-textarea {
+  width: 100%;
+  background: #111;
+  color: white;
+  border: none;
+  padding: 12px;
+  resize: none;
+  min-height: 110px;
+  border-radius: 12px;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+/* ====================== */
+/* PREVIEW                */
+/* ====================== */
+
+.preview-zone {
+  margin-bottom: 15px;
+}
+
+.postmodal-preview img,
+.postmodal-preview video {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+/* ====================== */
+/* BOUTONS RONDS (STYLE GPT) */
+/* ====================== */
+
+.media-buttons-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 18px 0 25px;
+}
+
+.circle-btn {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #181818;
+  border: 1px solid #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s ease;
+}
+
+.circle-btn:hover {
+  background: #222;
+  transform: scale(1.05);
+}
+
+.circle-icon {
+  font-size: 26px;
+  user-select: none;
+  color: white;
+}
+
+.circle-btn input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* ====================== */
+/* SUBMIT BUTTON          */
+/* ====================== */
+
+.postmodal-submit {
+  width: 100%;
+  background: white;
+  color: black;
+  padding: 13px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.postmodal-submit:disabled {
+  background: #444;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.postmodal-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.postmodal-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+/* ========================= */
+/* MÉDIA GRID (STYLE FB)     */
+/* ========================= */
+
+.media-grid {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.media-grid.one   { grid-template-columns: 1fr; }
+.media-grid.two   { grid-template-columns: 1fr 1fr; }
+.media-grid.three { grid-template-columns: 1fr 1fr; }
+.media-grid.four  { grid-template-columns: 1fr 1fr; }
+
+.media-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+  height: 260px; /* limite standard */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-item img,
+.media-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 📌 carré propre */
+}
+
+.media-item .remove-media {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0,0,0,0.7);
+  border: none;
+  color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* PDF + Audio */
+.media-type-box {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  text-align: center;
+  color: #ccc;
+}

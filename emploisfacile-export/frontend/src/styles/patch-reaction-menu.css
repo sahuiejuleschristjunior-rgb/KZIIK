@@ -1,0 +1,18 @@
+/* Fix position menu réactions */
+.fb-comment-actions,
+.fb-reply-actions {
+  position: relative !important;
+}
+
+.fb-reactions-picker {
+  position: absolute !important;
+  bottom: 100% !important;
+  left: 0 !important;
+  transform: translateY(-6px) !important;
+  z-index: 2000 !important;
+}
+
+/* Empêche le scroll horizontal */
+.fb-comments-modal-body {
+  overflow-x: hidden !important;
+}

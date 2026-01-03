@@ -1,0 +1,152 @@
+/* =========================== */
+/* CONTAINER GLOBAL            */
+/* =========================== */
+
+.right-menu-container {
+  width: 270px;                  /* légèrement élargi pour éviter l'impression d'écrasement */
+  background: #0b0b0b;
+  border: 1px solid #1f1f1f;
+  padding: 20px 18px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.55);
+
+  position: sticky;
+  top: 105px;                    /* parfaitement aligné avec le menu gauche */
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  box-sizing: border-box;        /* IMPORTANT : évite que le padding déborde */
+  margin-right: 10px;            /* empêche le menu d’être collé au bord droit */
+}
+
+
+/* =========================== */
+/* TITRE SECTION               */
+/* =========================== */
+
+.right-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+}
+
+
+/* =========================== */
+/* LISTE SUGGESTIONS           */
+/* =========================== */
+
+.right-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.right-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  background: #111;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid #1f1f1f;
+
+  transition: .25s ease;
+  cursor: pointer;
+}
+
+.right-item:hover {
+  background: #1b1b1b;
+  transform: translateX(4px);
+}
+
+.right-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #222;
+}
+
+.right-info {
+  flex: 1;
+}
+
+.right-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+.right-meta {
+  font-size: 12px;
+  color: #999;
+}
+
+
+/* =========================== */
+/* BOUTON SUIVRE               */
+/* =========================== */
+
+.right-follow-btn {
+  background: #101010;
+  border: 1px solid #333;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: white;
+  cursor: pointer;
+  transition: .2s ease;
+  white-space: nowrap;        /* empêche le bouton de casser sur deux lignes */
+}
+
+.right-follow-btn:hover {
+  background: #1c1c1c;
+}
+
+
+/* =========================== */
+/* ZONE PUB                    */
+/* =========================== */
+
+.right-ads-box {
+  background: #111;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid #1f1f1f;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.right-ads-title {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+}
+
+.right-ad {
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  text-align: center;
+  color: #ccc;
+}
+
+
+/* =========================== */
+/* CACHER EN MOBILE            */
+/* =========================== */
+
+@media (max-width: 950px) {
+  .right-menu-container {
+    display: none !important;
+  }
+}

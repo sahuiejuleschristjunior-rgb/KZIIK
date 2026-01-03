@@ -1,0 +1,77 @@
+.reels-page {
+  background: #000;
+  color: #fff;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.reels-container {
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior: contain;
+}
+
+.reels-container::-webkit-scrollbar {
+  display: none;
+}
+
+.reels-item {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  background: #000;
+}
+
+.reels-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+.reels-overlay {
+  position: absolute;
+  bottom: 24px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.reels-user {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.reels-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 14px;
+  color: #ddd;
+}
+
+.reels-status {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #fff;
+  background: #000;
+}

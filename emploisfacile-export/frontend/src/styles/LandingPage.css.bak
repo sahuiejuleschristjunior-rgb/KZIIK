@@ -1,0 +1,202 @@
+html, body { overflow-x:hidden !important; overflow-y:auto !important; width:100% !important; max-width:100% !important; position:relative !important; }
+html, body { overflow-x:hidden !important; overflow-y:hidden !important; width:100% !important; max-width:100% !important; position:relative !important; }
+:root{
+  --bg:#000;
+  --text:#fff;
+  --muted:#9a9a9a;
+  --card:#111;
+}
+
+body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui;
+  overflow-x:hidden !important;
+  position:relative;
+}
+
+/* ===== DESKTOP (inchang√©) ===== */
+.lp-header{
+  display:flex;
+  justify-content:space-between;
+  padding:20px 30px;
+}
+.lp-logo{
+  font-size:22px;
+  font-weight:800;
+  color:white;
+  text-decoration:none;
+}
+.lp-nav{
+  display:flex;
+  gap:15px;
+}
+.lp-btn-small{
+  padding:8px 18px;
+  border-radius:12px;
+  border:1px solid #666;
+  color:white;
+  text-decoration:none;
+  font-size:14px;
+}
+.lp-btn-small.white{
+  background:white;
+  color:black;
+}
+.lp-container{
+  text-align:center;
+  padding:20px;
+}
+.lp-title{
+  font-size:45px;
+  margin-top:110px;
+  font-weight:900;
+}
+.lp-sub-top{
+  font-size:16px;
+  margin-top:18px;
+  font-weight:300;
+  color:#eaeaea;
+}
+.lp-buttons{
+  margin-top:32px;
+  display:flex;
+  justify-content:center;
+  gap:18px;
+}
+.lp-btn{
+  padding:15px 32px;
+  border-radius:50px;
+  font-weight:700;
+  font-size:16px;
+  text-decoration:none;
+  transition:.25s;
+}
+.lp-btn-white{ background:white; color:black; }
+.lp-btn-outline{ border:2px solid #fff; color:white; }
+.lp-btn:hover{ transform:scale(1.04); }
+
+.lp-stats{
+  margin-top:70px;
+  display:flex;
+  justify-content:center;
+  gap:35px;
+}
+
+.lp-card{
+  background:var(--card);
+  padding:30px 22px;
+  border-radius:22px;
+  width:160px;
+  border:1px solid rgba(255,255,255,0.1);
+  transition:0.35s ease;
+}
+.lp-card:hover{
+  transform:translateY(-10px) scale(1.08);
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+
+.lp-value{ font-size:28px; font-weight:800; }
+.lp-label{ margin-top:5px; font-size:15px; color:var(--muted); }
+
+.lp-sub-bottom{
+  margin-top:40px;
+  font-size:16px;
+  font-weight:300;
+  color:#ccc;
+}
+
+.lp-footer{
+  margin-top:60px;
+  padding-bottom:30px;
+  color:var(--muted);
+  font-weight:600;
+}
+
+/* ===============================
+   Ì†ΩÌ≥± MOBILE < 768px
+   =============================== */
+@media (max-width: 768px) {
+
+  .lp-header{ display:none; }
+
+  .lp-title{
+    font-size:30px;
+    margin-top:25px;
+    font-weight:900;
+    line-height:1.25;
+    padding:0 10px;
+  }
+
+  .lp-sub-top{
+    margin-top:32px;
+    font-size:19px;
+    font-weight:300;
+    padding:0 18px;
+  }
+
+  /* Ì†ºÌæØ Boutons d√©bordants */
+  .lp-buttons{
+    margin-top:28px;
+    gap:18px;
+    justify-content:center;
+    width:120% !important;
+    max-width:120% !important;
+    margin-left:-10% !important;
+    overflow-x:visible !important;
+  }
+
+  .lp-btn{
+    padding:18px 38px;
+    font-size:17px;
+    border-radius:45px;
+    min-width:140px;
+    text-align:center;
+  }
+
+  .lp-stats{
+    margin-top:85px;
+    flex-direction:row;
+    justify-content:center;
+    gap:12px;
+  }
+
+  .lp-card{
+    width:28%;
+    padding:20px 12px;
+    border-radius:16px;
+  }
+
+  .lp-value{
+    font-size:19px;
+  }
+
+  .lp-label{
+    font-size:12px;
+  }
+
+  .lp-sub-bottom{
+    margin-top:140px;
+    margin-bottom:0;
+    font-size:18px;
+    font-weight:300;
+    padding:0 25px;
+  }
+
+  .lp-footer::before{
+    content:"";
+    display:block;
+    width:75%;
+    height:1px;
+    background:#333;
+    margin:0 auto 15px auto;
+  }
+
+  .lp-footer{
+    margin-top:0;
+    padding-bottom:45px;
+    font-size:14px;
+  }
+}

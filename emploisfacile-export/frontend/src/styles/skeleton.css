@@ -1,0 +1,50 @@
+.skeleton-post {
+  background: #0f1115;
+  padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 26px;
+}
+
+/* Animation shimmering */
+.skeleton {
+  background: linear-gradient(90deg, #1a1c21 0%, #272a33 50%, #1a1c21 100%);
+  background-size: 200% 100%;
+  animation: loadingAnimation 1.3s infinite;
+  border-radius: 12px;
+}
+
+/* Avatar */
+.skeleton-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+/* Lines */
+.skeleton-line {
+  width: 100%;
+  height: 14px;
+  margin: 10px 0;
+}
+
+.skeleton-line.short {
+  width: 60%;
+}
+
+/* Image */
+.skeleton-image {
+  width: 100%;
+  height: 260px;
+  border-radius: 14px;
+  margin-top: 12px;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

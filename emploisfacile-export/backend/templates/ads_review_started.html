@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Votre publicité est en cours de validation</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f6f8fb; color: #1f2933; margin: 0; padding: 24px; }
+    .container { max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 10px; padding: 24px; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+    h1 { font-size: 20px; margin: 0 0 12px; color: #111827; }
+    p { line-height: 1.5; margin: 8px 0; }
+    .recap { margin: 18px 0; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb; }
+    .recap div { margin: 6px 0; }
+    .footer { margin-top: 18px; font-size: 12px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Votre publicité est en cours de validation</h1>
+    <p>Bonjour {{firstName}},</p>
+    <p>Votre campagne publicitaire est en cours d’analyse. Nous vérifions rapidement que tout est conforme.</p>
+
+    <div class="recap">
+      <div><strong>Objectif :</strong> {{objective}}</div>
+      <div><strong>Budget :</strong> {{budget}}</div>
+      <div><strong>Dates :</strong> {{dates}}</div>
+    </div>
+
+    <p>Vous n’avez rien à faire pour le moment. Cette étape prend généralement moins de 10 minutes.</p>
+    <p class="footer">Merci d'utiliser emploisfacile.org</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+.otp-page {
+  height: 100vh;
+  width: 100%;
+  background: radial-gradient(circle at top, #1a1f29, #0c0f14);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.otp-card {
+  width: 90%;
+  max-width: 420px;
+  padding: 40px 32px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.6s ease;
+  text-align: center;
+}
+
+.otp-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}
+.otp-subtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #c7c7c7;
+}
+
+.otp-inputs {
+  margin: 30px 0;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.otp-box {
+  width: 48px;
+  height: 55px;
+  font-size: 24px;
+  text-align: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+.otp-box:focus {
+  border-color: #4b8cff;
+  box-shadow: 0 0 8px #4b8cff;
+  background: rgba(75, 140, 255, 0.15);
+}
+
+.otp-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  background: linear-gradient(135deg, #4b8cff, #2a6de0);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s ease;
+}
+
+.otp-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.shake {
+  animation: shake 0.25s ease-in-out 0s 2;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+
+.resend-btn {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.resend-btn:hover {
+  text-decoration: underline;
+}
+.shake {
+  animation: shake 0.25s ease-in-out 0s 2;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+
+.resend-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.resend-btn:hover {
+  text-decoration: underline;
+}
+
+.otp-error {
+  color: salmon;
+  text-align: center;
+  margin-bottom: 10px;
+}

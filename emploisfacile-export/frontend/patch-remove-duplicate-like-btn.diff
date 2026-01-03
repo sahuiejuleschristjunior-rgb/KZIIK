@@ -1,0 +1,32 @@
+--- a/src/components/FacebookFeed.jsx
++++ b/src/components/FacebookFeed.jsx
+@@ -750,14 +750,6 @@
+ 
+   <div className="fb-comment-actions">
+ 
+-    <button
+-      className="fb-comment-like-btn"
+-      onClick={() => handleLikeComment(activePost, c)}
+-    >
+-      {svgThumb}
+-    </button>
+-
+-    <!-- Duplicated button removed -->
+ 
+     <button
+       className="fb-comment-react-btn"
+@@ -950,14 +942,6 @@
+ 
+   <div className="fb-reply-actions">
+ 
+-    <button
+-      className="fb-reply-like-btn"
+-      onClick={() => handleLikeReply(activePost, c, r)}
+-    >
+-      {svgThumb}
+-    </button>
+-
+-    <!-- duplicated SVG like button removed -->
+ 
+     <button
+       className="fb-comment-react-btn"

@@ -1,0 +1,145 @@
+/* styles/stories.css (VERSION FINALE) */
+
+.fb-stories-container {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  align-items: stretch;
+}
+
+.fb-stories-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* 🔥 FORCE LA CARTE */
+.fb-story {
+  width: 96px;
+  height: 96px;
+  min-width: 96px;
+  background: var(--fb-bg-card); /* copied from FacebookFeed card bg */
+  border-radius: 14px;
+  border: 1px solid #262933;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.fb-story-create {
+  border-style: dashed;
+  border-color: #1877f2;
+}
+
+/* 🔥 AVATAR CENTRÉ */
+.story-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #242526;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.story-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-circle.has-story {
+  border: 3px solid #1877f2;
+}
+
+.story-circle.no-story {
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.create-story-circle {
+  border: 2px dashed #1877f2;
+}
+
+/* 🔥 TEXTE BAS */
+.fb-story-user,
+.fb-story-create-btn {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e4e6eb;
+  text-align: center;
+  max-width: 90%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+/* 🔵 STORY CRÉER */
+.fb-story-create.is-uploading {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* 🧼 EMPÊCHE L’ANCIEN STYLE */
+.fb-story > img,
+  .fb-story > span {
+    display: block;
+  }
+
+/* Skeleton loader (stories) */
+.fb-story-skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.fb-story-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0)
+  );
+  transform: translateX(-100%);
+  animation: fb-story-shimmer 1.5s infinite;
+}
+
+.fb-story-skeleton-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #2a2d33;
+  border: 3px solid #2f3338;
+}
+
+.fb-story-skeleton-text {
+  width: 60%;
+  height: 12px;
+  border-radius: 6px;
+  background: #2a2d33;
+}
+
+@keyframes fb-story-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

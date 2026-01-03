@@ -1,0 +1,240 @@
+/********************************************
+ * MODAL DE MODIFICATION DE PUBLICATION
+ ********************************************/
+
+.post-edit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 60px;
+  z-index: 2000;
+}
+
+.post-edit-modal {
+  background: #242526;
+  width: 95%;
+  max-width: 600px;
+  border-radius: 12px;
+  padding: 18px;
+  color: #e4e6eb;
+  animation: fadeInScale 0.25s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Animation */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.93);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/***********************
+ * HEADER
+ ***********************/
+.pem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #3a3b3c;
+}
+
+.pem-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e4e6eb;
+}
+
+.pem-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #e4e6eb;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.pem-close:hover {
+  background: #3a3b3c;
+}
+
+/***********************
+ * MESSAGE D'ERREUR
+ ***********************/
+.pem-error {
+  background: #ff4444;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pem-status {
+  background: #1f6fe0;
+  color: #e4e6eb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 8px 0;
+  font-size: 14px;
+  border: 1px solid #2d88ff;
+}
+
+/***********************
+ * TEXTAREA
+ ***********************/
+.pem-textarea {
+  width: 100%;
+  background: #3a3b3c;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  color: #e4e6eb;
+  font-size: 15px;
+  min-height: 90px;
+  resize: vertical;
+  outline: none;
+  margin-top: 12px;
+}
+
+.pem-textarea::placeholder {
+  color: #b0b3b8;
+}
+
+/***********************
+ * MEDIA GROUP
+ ***********************/
+.pem-media-group {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+/***********************
+ * MEDIA ITEM
+ ***********************/
+.pem-media-item {
+  position: relative;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pem-img,
+.pem-video {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/***********************
+ * REMOVE BUTTON
+ ***********************/
+.pem-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: white;
+  font-size: 18px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.pem-remove:hover {
+  background: rgba(255, 0, 0, 0.7);
+}
+
+/***********************
+ * ADD MEDIA BUTTON
+ ***********************/
+.pem-add-media {
+  display: block;
+  margin-top: 16px;
+  background: #3a3b3c;
+  text-align: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #e4e6eb;
+  font-size: 15px;
+  cursor: pointer;
+  border: 1px solid #4b4c4e;
+}
+
+.pem-add-media:hover {
+  background: #4b4c4e;
+}
+
+/***********************
+ * COUNTER
+ ***********************/
+.pem-counter {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #b0b3b8;
+  text-align: right;
+}
+
+/***********************
+ * SAVE BUTTON
+ ***********************/
+.pem-save {
+  width: 100%;
+  margin-top: 18px;
+  background: #2d88ff;
+  border: none;
+  color: white;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pem-save:hover {
+  background: #1f6fe0;
+}
+
+.pem-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/***********************
+ * RESPONSIVE MOBILE
+ ***********************/
+@media (max-width: 480px) {
+  .post-edit-modal {
+    width: 100%;
+    border-radius: 0;
+    height: 100vh;
+    max-height: 100vh;
+    padding: 16px;
+  }
+
+  .pem-media-group {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
+  }
+
+  .pem-img,
+  .pem-video {
+    height: 90px;
+  }
+}

@@ -1,0 +1,131 @@
+/* =============================== */
+/* MENU GAUCHE DESKTOP (NOUVEAU)  */
+/* =============================== */
+
+.left-desktop-menu {
+  background: #0b0b0b;
+  border-radius: 18px;
+  border: 1px solid #1f1f1f;
+  padding: 18px 14px;
+  width: 240px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  position: sticky;
+  top: 100px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* on cache complètement en mobile */
+@media (max-width: 950px) {
+  .left-desktop-menu {
+    display: none;
+  }
+}
+
+/* Profil en haut */
+
+.left-desktop-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.left-desktop-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 0, #22c55e, #0ea5e9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: white;
+  overflow: hidden;
+}
+
+.left-desktop-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.left-desktop-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.left-desktop-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.left-desktop-role {
+  margin: 3px 0 0 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Séparateur */
+
+.left-desktop-divider {
+  height: 1px;
+  background: linear-gradient(to right, #111, #27272a, #111);
+  margin: 4px 0 6px;
+}
+
+/* Liste des menus */
+
+.left-desktop-menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.left-desktop-item {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 8px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+
+  transition: background 0.15s ease, transform 0.12s ease,
+    box-shadow 0.15s ease;
+}
+
+.left-desktop-item:hover {
+  background: #111827;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+}
+
+.left-desktop-icon {
+  font-size: 26px;
+  display: inline-block;
+  background: linear-gradient(135deg, #ff6b6b, #ffd166, #5ddcff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.left-desktop-text {
+  flex: 1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

@@ -1,0 +1,204 @@
+.job-chat-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.job-chat-subtitle {
+  color: #a9b4c9;
+  margin-top: 8px;
+}
+
+.job-chat-card {
+  background: #0f172a;
+  border: 1px solid #1f2a44;
+  color: #e2e8f0;
+}
+
+.job-chat-muted {
+  color: #94a3b8;
+}
+
+.job-chat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.job-chat-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #1e293b;
+  background: #0b1324;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border 0.2s ease, transform 0.2s ease;
+}
+
+.job-chat-item:hover {
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.job-chat-item-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.job-chat-item-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5f5;
+  font-size: 0.95rem;
+}
+
+.job-chat-item-preview {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  align-self: center;
+}
+
+.job-chat-role {
+  background: #1d4ed8;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.job-chat-page {
+  background: #0b1220;
+  border-radius: 16px;
+  padding: 20px;
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.job-chat-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.job-chat-header-info h2 {
+  margin: 0;
+  color: #e2e8f0;
+}
+
+.job-chat-header-sub {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  color: #cbd5f5;
+}
+
+.job-chat-badge {
+  background: #0f766e;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.job-chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.job-chat-row {
+  display: flex;
+}
+
+.job-chat-row.me {
+  justify-content: flex-end;
+}
+
+.job-chat-row.other {
+  justify-content: flex-start;
+}
+
+.job-chat-bubble {
+  max-width: 70%;
+  background: #1e293b;
+  color: #f1f5f9;
+  padding: 12px 14px;
+  border-radius: 16px;
+  position: relative;
+}
+
+.job-chat-row.me .job-chat-bubble {
+  background: #2563eb;
+}
+
+.job-chat-bubble p {
+  margin: 0;
+}
+
+.job-chat-time {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.job-chat-input {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.job-chat-input input {
+  flex: 1;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  color: #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.job-chat-input input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.job-chat-input .primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 96px;
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.job-chat-typing {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.job-chat-loading,
+.job-chat-error {
+  color: #cbd5f5;
+}
+
+.job-chat-denied {
+  text-align: center;
+  padding: 32px;
+}

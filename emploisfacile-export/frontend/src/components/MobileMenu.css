@@ -1,0 +1,140 @@
+/* =========================== */
+/* OVERLAY                     */
+/* =========================== */
+
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 9998;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+
+.mobile-menu-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* =========================== */
+/* PANNEAU LATERAL             */
+/* =========================== */
+
+.mobile-menu-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 260px;
+  height: 100vh;
+
+  background: #0d0d0d;
+  padding: 20px;
+  z-index: 9999;
+
+  transform: translateX(-100%);
+  transition: transform .30s ease;
+}
+
+.mobile-menu-panel.open {
+  transform: translateX(0);
+}
+
+/* =========================== */
+/* BOUTON FERMER — STYLE CHATGPT */
+/* =========================== */
+
+.mobile-menu-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(6px);
+
+  color: white;
+  font-size: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35),
+              inset 0 0 6px rgba(255,255,255,0.08);
+
+  transition: all 0.25s ease;
+}
+
+.mobile-menu-close:hover {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.3);
+  transform: scale(1.06);
+  box-shadow: 0 5px 16px rgba(0,0,0,0.45),
+              inset 0 0 8px rgba(255,255,255,0.12);
+}
+
+/* =========================== */
+/* PROFIL MOBILE (NOUVELLE VERSION ALIGNÉE) */
+/* =========================== */
+
+.mobile-menu-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 25px 0;
+}
+
+.mobile-profile-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #222;
+}
+
+.mobile-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-profile-name {
+  color: white;
+  font-size: 17px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.mobile-profile-role {
+  color: #999;
+  margin: 3px 0 0 0;
+  font-size: 13px;
+}
+
+/* =========================== */
+/* LISTE DES MENUS             */
+/* =========================== */
+
+.mobile-menu-items {
+  margin-top: 10px;
+}
+
+.mobile-menu-items .left-menu {
+  padding: 0;
+}
+
+.mobile-menu-items .menu-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.mobile-menu-items .menu-item .menu-text {
+  font-size: 16px;
+}

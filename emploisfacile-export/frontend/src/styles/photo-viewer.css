@@ -1,0 +1,309 @@
+/***********************************************
+   PHOTO VIEWER – MODE DYNAMIQUE CLAIR / SOMBRE
+   Thème basé sur fb-layout : body[data-theme="dark"]
+***********************************************/
+
+/* ===========================
+   VARIABLES THÈME
+=========================== */
+:root {
+  --pv-bg: #ffffff;
+  --pv-bg-secondary: #f0f2f5;
+  --pv-text: #050505;
+  --pv-text-secondary: #65676b;
+  --pv-border: #d8d8d8;
+  --pv-backdrop: rgba(0, 0, 0, 0.75);
+}
+
+/* MODE SOMBRE DYNAMIQUE */
+body[data-theme="dark"] {
+  --pv-bg: #18191a;
+  --pv-bg-secondary: #242526;
+  --pv-text: #e4e6eb;
+  --pv-text-secondary: #b0b3b8;
+  --pv-border: #3a3b3c;
+  --pv-backdrop: rgba(0, 0, 0, 0.85);
+}
+
+/* ROOT */
+.pv-root {
+  position: fixed;
+  inset: 0;
+  background: var(--pv-backdrop);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pv-fullscreen {
+  background: #000 !important;
+}
+
+/* ===========================
+   TOP BAR TYPE FACEBOOK
+=========================== */
+.pv-topbar {
+  height: 56px;
+  background: var(--pv-bg-secondary);
+  border-bottom: 1px solid var(--pv-border);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.pv-close {
+  background: transparent;
+  border: none;
+  color: var(--pv-text);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.pv-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pv-avatar {
+  width: 38px;
+  height: 38px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 999px;
+}
+
+.pv-user-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+.pv-user-name {
+  font-weight: 600;
+  color: var(--pv-text);
+}
+
+.pv-date {
+  color: var(--pv-text-secondary);
+  font-size: 12px;
+}
+
+.pv-actions {
+  margin-left: auto;
+}
+
+.pv-action {
+  background: var(--pv-bg);
+  border: 1px solid var(--pv-border);
+  color: var(--pv-text);
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===========================
+   BODY
+=========================== */
+.pv-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ===========================
+   LEFT – VIEWER MEDIA
+=========================== */
+.pv-media-area {
+  flex: 2;
+  background: #000;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Nav buttons */
+.pv-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(30, 30, 30, 0.55);
+  color: #fff;
+  font-size: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pv-prev {
+  left: 10px;
+}
+
+.pv-next {
+  right: 10px;
+}
+
+/* Wrapper full-width/height */
+.pv-media-wrapper {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Le média touche les bords */
+.pv-media {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  border-radius: 0 !important;
+}
+
+/* FULLSCREEN MODE */
+.pv-fullscreen .pv-media {
+  object-fit: contain;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ===========================
+   RIGHT – SIDE PANEL
+=========================== */
+.pv-side {
+  flex: 1;
+  background: var(--pv-bg);
+  border-left: 1px solid var(--pv-border);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.pv-text {
+  color: var(--pv-text);
+  font-size: 15px;
+}
+
+/* ACTION BUTTONS */
+.pv-side-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.pv-side-actions button {
+  flex: 1;
+  background: var(--pv-bg-secondary);
+  border: 1px solid var(--pv-border);
+  color: var(--pv-text);
+  padding: 6px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* THUMBNAILS */
+.pv-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pv-thumb {
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.pv-thumb img,
+.pv-thumb-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pv-thumb--active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid #2e89ff;
+  pointer-events: none;
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+.pv-footer {
+  height: 40px;
+  background: var(--pv-bg-secondary);
+  border-top: 1px solid var(--pv-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pv-text-secondary);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+/* ===========================
+   MOBILE / TABLETTE
+=========================== */
+@media (max-width: 900px) {
+  .pv-body {
+    flex-direction: column;
+  }
+
+  .pv-side {
+    border-left: none;
+    border-top: 1px solid var(--pv-border);
+    flex: none;
+    max-height: 45vh;
+  }
+
+  .pv-media-area {
+    flex: 1;
+  }
+
+  .pv-nav {
+    width: 32px;
+    height: 32px;
+    font-size: 26px;
+  }
+}
+
+/* ===========================
+   LOADER / EMPTY STATE
+=========================== */
+.pv-loader,
+.pv-empty {
+  color: var(--pv-text);
+  font-size: 16px;
+  margin-top: 120px;
+  text-align: center;
+}
+
+.pv-back {
+  margin-top: 20px;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+}

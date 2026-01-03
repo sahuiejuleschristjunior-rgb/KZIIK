@@ -1,0 +1,19 @@
+--- Avant
++++ Après
+@@ -XXX,7 +XXX,19 @@
+-      {isCommentsModalOpen && activePost && (
+-        <div className="fb-comments-modal-backdrop" onClick={closeCommentsModal}>
++      {isCommentsModalOpen && activePost && (
++        <div
++          className="fb-comments-modal-backdrop"
++          onClick={(e) => {
++            // Empêche la fermeture quand on scroll horizontalement
++            // Ne ferme que si on clique directement sur le backdrop
++            if (e.target.classList.contains("fb-comments-modal-backdrop")) {
++              closeCommentsModal();
++            }
++          }}
++        >
+           <div
+             className="fb-comments-modal"
+             onClick={(e) => e.stopPropagation()}

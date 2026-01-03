@@ -1,0 +1,172 @@
+/* src/styles/stories-viewer.css (Styles pour la Modale d'Affichage) */
+
+.story-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95); /* Fond très sombre */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Assure que c'est au-dessus de tout le reste */
+    color: white;
+}
+
+.story-media {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Assure que le média est visible sans être coupé */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Correction : Placer le média au-dessus des zones de clic (pour le son vidéo) */
+    z-index: 1001; 
+}
+
+/* --- PROGRESSION --- */
+
+.story-progress {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 5px;
+    z-index: 10000;
+}
+
+.story-progress-segment {
+    flex-grow: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.4);
+    margin: 0 2px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.story-progress-fill {
+    height: 100%;
+    background: #fff;
+    transition: width 0.06s linear; /* La transition pour l'animation */
+}
+
+/* --- TOUCH ZONES (Navigation) --- */
+
+.story-touch-zone {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 30%; /* Pour cliquer/toucher sur le tiers gauche ou droit */
+    z-index: 1000;
+    cursor: pointer;
+    /* Correction standard (déjà en place) */
+    outline: none; 
+    box-shadow: none;
+    border: none;
+}
+
+/* CORRECTION DÉFINITIVE DU CONTOUR BLEU/GRIS SUR MOBILE */
+.story-touch-zone,
+.story-touch-zone:focus,
+.story-touch-zone:active {
+    /* Suppression du highlight de tap sur WebKit/Chrome (souvent bleu/gris) */
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+/* Fin des corrections définitives */
+
+
+.story-touch-zone.left {
+    left: 0;
+}
+
+.story-touch-zone.right {
+    right: 0;
+}
+
+/* --- HEADER ET BOUTONS --- */
+
+.story-header {
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.story-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 10000;
+    padding: 10px;
+    line-height: 1;
+    outline: none;
+}
+.story-close:focus {
+    box-shadow: none;
+    /* Correction : Cible aussi l'état de tap */
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* --- REACTIONS --- */
+
+.story-reactions {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    display: flex;
+    gap: 15px;
+}
+
+.story-reactions button {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    font-size: 20px;
+    padding: 8px 12px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.2s;
+    outline: none;
+}
+
+.story-reactions button:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.story-reactions button:focus {
+    box-shadow: none;
+    /* Correction : Cible aussi l'état de tap */
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* --- Style pour le message de chargement (media-loader) --- */
+
+.media-loader {
+    position: absolute;
+    top: 50%;
+    color: #fff;
+    transform: translateY(-50%);
+    font-size: 16px;
+    z-index: 100;
+}

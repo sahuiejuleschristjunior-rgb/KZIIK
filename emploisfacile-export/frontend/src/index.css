@@ -1,0 +1,38 @@
+/* ——————— RESET GLOBAL ——————— */
+
+html, body, #root {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 100vh;
+  background: #020617;
+  box-sizing: border-box !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* ——————— Neutralisation totale de Vite ——————— */
+
+#root {
+  text-align: left !important;
+  background: #020617;
+}
+
+/* ——————— Basic global styles ——————— */
+
+* {
+  box-sizing: border-box;
+}
+
+img, video {
+  max-width: 100%;
+  display: block;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  html, body, #root {
+    overflow-x: hidden !important;
+  }
+}

@@ -1,0 +1,774 @@
+/*************************************
+ * 1. GLOBAL
+ *************************************/
+body,
+html {
+  background: #000;
+  color: white;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    sans-serif;
+}
+
+.feed-wrapper {
+  min-height: 100vh;
+  background: #000;
+}
+
+/*************************************
+ * 2. NAVBAR MOBILE (TOP) 
+ *************************************/
+.mobile-navbar {
+  height: 65px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.nav-btn-round {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #111;
+  color: white;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-title-pill {
+  padding: 10px 20px;
+  background: #111;
+  border-radius: 25px;
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+}
+
+.nav-btn-pill {
+  padding: 10px 15px;
+  background: #111;
+  border-radius: 25px;
+  border: none;
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/*************************************
+ * 3. BARRE BASSE MOBILE (BOTTOM)
+ *************************************/
+.mobile-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #000;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 999;
+}
+
+.bottom-plus-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #1a1a1a;
+  color: white;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottom-input-wrapper {
+  flex: 1;
+  background: #1a1a1a;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  padding-right: 5px;
+  transition: all 0.25s ease;
+}
+
+.bottom-input-wrapper.expanded {
+  transform: scale(1.05);
+}
+
+.bottom-input-wrapper input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  height: 42px;
+  outline: none;
+}
+
+.bottom-input-wrapper input::placeholder {
+  color: #888;
+}
+
+.bottom-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: black;
+  font-size: 18px;
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* cacher la barre basse en desktop */
+@media (min-width: 950px) {
+  .mobile-bottom-bar {
+    display: none;
+  }
+}
+
+/*************************************
+ * 4. FEED MOBILE (CENTRE)
+ *************************************/
+.feed-main-mobile {
+  margin-top: 75px;            /* sous la navbar mobile */
+  margin-bottom: 75px;         /* au-dessus de la barre basse */
+  padding: 0 12px 12px;
+  height: calc(100vh - 75px - 75px);
+  overflow-y: auto;
+}
+
+@media (min-width: 950px) {
+  .feed-main-mobile {
+    display: none;
+  }
+}
+
+/*************************************
+ * 5. HEADER DESKTOP
+ *************************************/
+.desktop-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  padding: 10px 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000;
+  border-bottom: 1px solid #111;
+  z-index: 999;
+}
+
+.desktop-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.desktop-header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.icon-btn {
+  background: #111;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: #1f1f1f;
+}
+
+.logout-pill {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  background: #b60000;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout-pill:hover {
+  background: #ff0000;
+}
+
+/* hide desktop header on mobile */
+@media (max-width: 950px) {
+  .desktop-header {
+    display: none;
+  }
+}
+
+/*************************************
+ * 6. BARRE DE RECHERCHE DESKTOP
+ *************************************/
+.desktop-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #111;
+  padding: 8px 12px;
+  border-radius: 30px;
+  border: 1px solid #222;
+  transition: 0.3s;
+  width: 280px;
+  margin-right: 12px;
+}
+
+.desktop-search.focus {
+  transform: scale(1.03);
+  border-color: #444;
+}
+
+.desktop-search span.material-icons {
+  font-size: 20px;
+  color: #0f0f0f;
+}
+
+.desktop-search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 14px;
+  outline: none;
+}
+
+.desktop-search input::placeholder {
+  color: #777;
+}
+
+.desktop-search-btn {
+  border: none;
+  background: #222;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.desktop-search-btn:hover {
+  background: #333;
+}
+
+/*************************************
+ * 7. LAYOUT DESKTOP (3 COLONNES)
+ *************************************/
+
+/* par défaut : rien en mobile */
+.desktop-layout {
+  display: none;
+}
+
+/* desktop */
+@media (min-width: 950px) {
+  .mobile-navbar {
+    display: none;
+  }
+
+  .desktop-layout {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 72px;   /* compense la hauteur du header */
+    box-sizing: border-box;
+  }
+
+  .desktop-left {
+    width: 260px;
+    padding: 20px 0 20px 20px;
+  }
+
+  .desktop-center {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .desktop-right {
+    width: 260px;
+    padding: 20px 20px 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+}
+
+/*************************************
+ * 8. MENU GAUCHE (LEFT-BOX)
+ *************************************/
+.left-box {
+  background: #111;
+  width: 230px;
+  padding: 20px 15px;
+  border-radius: 15px;
+  border: 1px solid #1f1f1f;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: sticky;
+  top: 90px; /* descend sous le header */
+}
+
+.left-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  background: #000;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 15px;
+}
+
+.left-item:hover {
+  background: #1a1a1a;
+}
+
+.left-item i {
+  font-size: 20px;
+  color: white;
+}
+
+/* cacher le left-menu en mobile */
+@media (max-width: 950px) {
+  .left-menu,
+  .left-box {
+    display: none;
+  }
+}
+
+/*************************************
+ * 9. MENU DROITE (RIGHT MENU + ADS)
+ *************************************/
+.desktop-right {
+  /* déjà géré en @media plus haut */
+}
+
+.right-menu-box {
+  width: 260px;
+  background: #0b0b0b;
+  border: 1px solid #1f1f1f;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.45);
+
+  position: sticky;
+  top: 90px;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.right-menu-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.right-menu-box::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+
+.right-menu-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.right-section h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+}
+
+.right-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.right-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #222;
+}
+
+.right-info {
+  flex: 1;
+}
+
+.right-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.right-meta {
+  margin: 0;
+  font-size: 11px;
+  color: #888;
+}
+
+.right-btn-follow {
+  background: #111;
+  color: white;
+  border: 1px solid #222;
+  padding: 6px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.right-btn-follow:hover {
+  background: #1a1a1a;
+}
+
+.right-stat {
+  padding: 8px 0;
+  font-size: 13px;
+  color: #ccc;
+}
+
+/* petite zone pub/promo si tu en utilises une */
+.right-ads-box {
+  width: 240px;
+  background: #0b0b0b;
+  border: 1px solid #1f1f1f;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.45);
+  height: 160px;
+  overflow: hidden;
+}
+
+.ads-slide {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: adsScroll 9s infinite linear;
+}
+
+.ads-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #111;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #222;
+}
+
+.ads-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.ads-item-text {
+  font-size: 13px;
+  color: #e5e7eb;
+  line-height: 1.2;
+}
+
+@keyframes adsScroll {
+  0% { transform: translateY(0); }
+  33% { transform: translateY(-60px); }
+  66% { transform: translateY(-120px); }
+  100% { transform: translateY(0); }
+}
+
+/* cacher le menu droit en mobile */
+@media (max-width: 950px) {
+  .desktop-right {
+    display: none;
+  }
+}
+
+/*************************************
+ * 10. FEED / CARTES DE POSTS
+ *************************************/
+.feed-posts {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.feed-post-card {
+  background: #0b0b0b;
+  border-radius: 18px;
+  border: 1px solid #1f2933;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.6);
+}
+
+.feed-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.feed-post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 0, #22c55e, #0ea5e9);
+}
+
+.feed-post-author {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.feed-post-meta {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.feed-post-meta .dot {
+  margin: 0 4px;
+}
+
+.feed-post-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 6px 0 4px;
+}
+
+.feed-post-text {
+  font-size: 14px;
+  color: #e5e7eb;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.feed-post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.feed-post-tags span {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #111827;
+  color: #93c5fd;
+}
+
+/*************************************
+ * 11. BOUTON PUBLIER (HEADER DESKTOP)
+ *************************************/
+.publish-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background: #111;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid #222;
+
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: 0.15s ease;
+}
+
+.publish-btn .material-icons {
+  font-size: 20px;
+}
+
+.publish-btn:hover {
+  background: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+.publish-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 950px) {
+  .publish-btn {
+    display: none !important;
+  }
+}
+
+/*************************************
+ * 12. STORIES (SCROLL HORIZONTAL)
+ *************************************/
+.stories-bar {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 20px 10px 10px;
+  gap: 12px;
+}
+
+.stories-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.story-item {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70px;
+  text-align: center;
+}
+
+.story-avatar {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #444;
+}
+
+.story-name {
+  margin-top: 5px;
+  font-size: 12px;
+  max-width: 70px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*************************************
+ * 13. SKELETON LOADER
+ *************************************/
+.skeleton-card {
+  background: #111;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 18px;
+  display: flex;
+  gap: 15px;
+}
+
+.skeleton-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #222;
+}
+
+.skeleton-lines {
+  flex: 1;
+}
+
+.skeleton-line {
+  height: 12px;
+  background: #222;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.skeleton-line.short {
+  width: 50%;
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #222 0%, #333 50%, #222 100%);
+  background-size: 200% 100%;
+  animation: shimmerAnim 1.4s infinite;
+}
+
+@keyframes shimmerAnim {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+/*************************************
+ * NEW DESKTOP LAYOUT (APP DESKTOP)
+ *************************************/
+@media (min-width: 950px) {
+  .app-desktop {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    width: 100%;
+    padding-top: 72px; 
+    box-sizing: border-box;
+  }
+
+  .app-left {
+    width: 260px;
+    padding: 20px 0 20px 20px;
+  }
+
+  .app-center {
+    flex: 1;
+    padding: 20px;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .app-right {
+    width: 260px;
+    padding: 20px 20px 20px 0;
+  }
+}
+
+@media (max-width: 950px) {
+  .app-desktop {
+    display: none !important;
+  }
+}
