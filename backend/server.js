@@ -1,4 +1,3 @@
-require("dotenv").config({ path: __dirname + "/.env" });
 const path = require("path");
 require("./config/loadEnv")();
 const express = require("express");
