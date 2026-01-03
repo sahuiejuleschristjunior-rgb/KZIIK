@@ -1,10 +1,11 @@
+import { API_URL } from "../api/config";
 // src/context/NotificationContext.jsx
 import { useCallback, createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useActiveConversation } from "./ActiveConversationContext";
 
-const API_ROOT = import.meta.env.VITE_API_URL;
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL; // 🔥 Correction propre
+const API_ROOT = API_URL;
+const SOCKET_URL = API_URL.replace(/\/api\/?$/, "") || "/";
 
 const NotificationContext = createContext(null);
 

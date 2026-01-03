@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import RecruiterLayout from "../../layouts/RecruiterLayout";
 import { createJobConversation } from "../../api/jobChatApi";
 import "../../styles/RecruiterDashboard.css";
+import { API_URL } from "../../api/config";
 
 export default function RecruiterAllApplications() {
   const nav = useNavigate();
-  const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
 
   const [applications, setApplications] = useState([]);

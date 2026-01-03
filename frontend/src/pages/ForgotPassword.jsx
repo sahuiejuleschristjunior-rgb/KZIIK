@@ -1,6 +1,7 @@
 import "../styles/Auth.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../api/config";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ export default function ForgotPassword() {
     }
 
     try {
-      const res = await fetch(import.meta.env.VITE_API_URL + "/auth/forgot", {
+      const res = await fetch(API_URL + "/auth/forgot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

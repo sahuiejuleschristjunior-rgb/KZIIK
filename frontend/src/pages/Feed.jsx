@@ -3,6 +3,7 @@ import { FaHeart, FaRegComment, FaShare } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import MediaRenderer from "../components/MediaRenderer";
 import TextClamp from "../components/TextClamp";
+import { API_URL } from "../api/config";
 
 export default function Feed() {
   const [posts, setPosts] = useState([]);
@@ -12,7 +13,7 @@ export default function Feed() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("/api/post", {
+    fetch(`${API_URL}/post`, {
       headers: { Authorization: `Bearer ${token}`
     })
       .then(res => res.json())
@@ -25,7 +26,7 @@ export default function Feed() {
   const sendComment = async (postId) => {
     if (!commentText[postId]) return;
 
-    await fetch(`/api/post/${postId}/comment`, {
+    await fetch(`${API_URL}/post/${postId}/comment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,7 +38,7 @@ export default function Feed() {
     setCommentText({ ...commentText, [postId]: "" });
 
     // Recharger les posts après commentaire
-    const updated = await fetch("/api/post", {
+    const updated = await fetch(`${API_URL}/post`, {
       headers: { Authorization: `Bearer ${token}`
     }).then(r => r.json());
 

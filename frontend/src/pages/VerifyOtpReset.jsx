@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../styles/otp.css";
 import { useNavigate, useLocation } from "react-router-dom";
+import { API_URL } from "../api/config";
 
 export default function VerifyOtpReset() {
   const nav = useNavigate();
@@ -69,7 +70,7 @@ export default function VerifyOtpReset() {
       setTimer(60);
 
       const res = await fetch(
-        import.meta.env.VITE_API_URL + "/auth/resend-reset-otp",
+        API_URL + "/auth/resend-reset-otp",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -110,7 +111,7 @@ export default function VerifyOtpReset() {
 
     try {
       const res = await fetch(
-        import.meta.env.VITE_API_URL + "/auth/verify-reset",
+        API_URL + "/auth/verify-reset",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

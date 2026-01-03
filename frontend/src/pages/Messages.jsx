@@ -3,19 +3,18 @@ import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import "../styles/messages.css";
 import VideoCallOverlay from "../components/VideoCallOverlay";
+import { API_URL } from "../api/config";
 import {
   acceptMessageRequest,
   blockMessageRequest,
   declineMessageRequest,
-  fetchMessageRequests,
   fetchInbox,
+  fetchMessageRequests,
   sendMessagePayload,
 } from "../api/messagesApi";
 import { fetchFriends } from "../api/socialApi";
 import { useActiveConversation } from "../context/ActiveConversationContext";
 import { useNotifications } from "../context/NotificationContext";
-
-const API_URL = import.meta.env.VITE_API_URL;
 const API_HOST = API_URL?.replace(/\/?api$/, "");
 const SOCKET_URL = API_HOST || window.location.origin;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "😡"];

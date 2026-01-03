@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CandidateLayout from "../../layouts/CandidateLayout";
 import useCandidateDashboardData from "../../hooks/candidate/useCandidateDashboardData";
+import { API_URL } from "../../api/config";
 
 export default function JobConnectProfile() {
   const nav = useNavigate();
   const data = useCandidateDashboardData();
-  const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
   const [formValues, setFormValues] = useState({
     name: "",

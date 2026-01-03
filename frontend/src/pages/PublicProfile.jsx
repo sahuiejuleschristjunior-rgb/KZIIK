@@ -9,8 +9,9 @@ import { useAuth } from "../context/AuthContext";
 import { filterHiddenPosts, rememberHiddenPost } from "../utils/hiddenPosts";
 import useRelation from "../hooks/useRelation";
 import { fetchInbox, sendMessagePayload } from "../api/messagesApi";
+import { API_URL } from "../api/config";
 
-const API_ROOT = import.meta.env.VITE_API_URL;
+const API_ROOT = API_URL;
 
 /* ================================================
    FIX URL IMAGES – VERSION PROPRE

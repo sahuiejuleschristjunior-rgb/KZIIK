@@ -1,6 +1,7 @@
 import "../styles/Auth.css";
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { API_URL } from "../api/config";
 
 export default function NewPassword() {
   const nav = useNavigate();
@@ -36,7 +37,7 @@ export default function NewPassword() {
 
     try {
       const res = await fetch(
-        import.meta.env.VITE_API_URL + "/auth/reset-password",
+        API_URL + "/auth/reset-password",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

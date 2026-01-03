@@ -1,3 +1,4 @@
+import { API_URL } from "../api/config";
 // PhotoViewerPage.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -9,8 +10,6 @@ export default function PhotoViewerPage() {
   const { postId, index } = useParams(); // route: /photo/:postId/:index
   const nav = useNavigate();
   const startIndex = Math.max(0, parseInt(index || "0", 10));
-
-  const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
 
   const [post, setPost] = useState(null);

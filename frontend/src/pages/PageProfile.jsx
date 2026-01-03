@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { API_URL } from "../api/config";
 import {
   getPageBySlug,
   toggleFollowPage,
@@ -173,7 +174,7 @@ export default function PageProfile() {
 
   const handleLike = async (postId) => {
     try {
-      const res = await fetch(`/api/posts/${postId}/like`, {
+      const res = await fetch(`${API_URL}/posts/${postId}/like`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -202,7 +203,7 @@ export default function PageProfile() {
     if (!confirm("Supprimer le post ?")) return;
 
     try {
-      const res = await fetch(`/api/posts/${postId}`, {
+      const res = await fetch(`${API_URL}/posts/${postId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -444,4 +445,3 @@ export default function PageProfile() {
     </div>
   );
 }
-

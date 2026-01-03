@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import "../styles/RecruiterDashboard.css";
 import "../styles/job-detail.css";
+import { API_URL } from "../api/config";
 
 const formatDate = (value) => {
   if (!value) return "Date inconnue";
@@ -20,7 +21,6 @@ const resolveCompanyName = (job) =>
 export default function JobDetailPage() {
   const { id } = useParams();
   const location = useLocation();
-  const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
 
   const [job, setJob] = useState(() => location.state?.job || null);

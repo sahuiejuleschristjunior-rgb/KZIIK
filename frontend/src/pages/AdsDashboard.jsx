@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/ads.css";
 import FBIcon from "../components/FBIcon";
+import { API_URL } from "../api/config";
 import {
   addArchivedCampaign,
   buildPaymentLink,
@@ -13,8 +14,6 @@ import {
 } from "../utils/adsStorage";
 import apiFetch from "../utils/apiFetch";
 import { useAuth } from "../context/AuthContext";
-
-const API_URL = import.meta.env.VITE_API_URL || "https://api.kziik.com/api";
 
 export default function AdsDashboard({ view = "campaigns" }) {
   const [campaigns, setCampaigns] = useState([]);

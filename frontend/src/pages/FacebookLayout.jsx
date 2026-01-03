@@ -264,7 +264,7 @@ export default function FacebookLayout({ headerOnly = false, children }) {
 
     if (!authToken) return;
 
-    const SOCKET_URL = "https://kziik.com";
+    const SOCKET_URL = API_URL.replace(/\/api\/?$/, "") || "/";
 
     const s = io(SOCKET_URL, {
       path: "/socket.io",

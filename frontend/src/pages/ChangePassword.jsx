@@ -1,4 +1,5 @@
 import PageLoader from "../components/PageLoader";
+import { API_URL } from "../api/config";
 import "../styles/auth.css";
 import { useState } from "react";
 
@@ -17,7 +18,7 @@ export default function ChangePassword() {
     }
 
     try {
-      const res = await fetch("https://api.kziik.com/api/auth/change-password", {
+      const res = await fetch(`${API_URL}/auth/change-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ otp, password }),

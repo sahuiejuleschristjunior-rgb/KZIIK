@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import io from "socket.io-client";
 import { useNotifications } from "../context/NotificationContext";
+import { API_URL } from "../api/config";
 
-const API_ROOT = import.meta.env.VITE_API_URL;
+const API_ROOT = API_URL;
 const socket = io(API_ROOT.replace("/api", ""));
 const loadErrorMessage = "Impossible de charger vos conversations";
 

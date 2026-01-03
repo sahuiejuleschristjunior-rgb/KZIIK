@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { API_URL } from "../../api/config";
 
 export default function useRecruiterDashboardData() {
   const [user, setUser] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
   const [error, setError] = useState(null);
-
-  const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
 
   useEffect(() => {

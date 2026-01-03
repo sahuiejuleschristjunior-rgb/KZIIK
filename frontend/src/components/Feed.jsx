@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Post from "./Post";
 import PageLoader from "./PageLoader"; // ton loader existant
 import { filterHiddenPosts, rememberHiddenPost } from "../utils/hiddenPosts";
+import { API_URL } from "../api/config";
 
 export default function Feed() {
   const [posts, setPosts] = useState([]);
@@ -17,7 +18,7 @@ export default function Feed() {
 
   async function loadPosts() {
     try {
-      const res = await fetch(import.meta.env.VITE_API_URL + "/posts", {
+      const res = await fetch(API_URL + "/posts", {
         method: "GET",
         credentials: "include",
         headers: {

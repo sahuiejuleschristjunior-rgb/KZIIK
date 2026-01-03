@@ -4,8 +4,7 @@ import Post from "../components/Post";
 import ProfilePhotoViewer from "../components/ProfilePhotoViewer";
 import "../styles/profil.css";
 import { filterHiddenPosts, rememberHiddenPost } from "../utils/hiddenPosts";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../api/config";
 
 /* ================================================
    FIX DES URL IMAGES / UPLOAD

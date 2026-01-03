@@ -11,8 +11,7 @@ import { getAvatarStyle, getImageUrl } from "../utils/imageUtils";
 import { sharePost } from "../api/posts";
 import "../styles/facebook-feed.css";
 import "../styles/post.css";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../api/config";
 
 export default function PagesFeed() {
   const nav = useNavigate();

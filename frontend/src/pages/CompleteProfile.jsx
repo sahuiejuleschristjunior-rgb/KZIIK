@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getImageUrl } from "../utils/imageUtils";
 import "../styles/complete-profile.css";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../api/config";
 
 const getLocationParts = (location) => {
   if (!location) return { city: "", country: "" };
