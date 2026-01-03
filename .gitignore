@@ -6,3 +6,6 @@ build
 logs/*.log
 npm-debug.log
 yarn-error.log
+*.zip
+frontend_backup_*
+www/
