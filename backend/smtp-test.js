@@ -1,31 +1,26 @@
-const nodemailer = require("nodemailer");
+const { transporter, defaultFrom } = require("./config/smtp");
 
 async function main() {
-  const transporter = nodemailer.createTransport({
-    host: "mail.kziik.com",
-    port: 465,
-    secure: true,
-    auth: {
-      user: "no-reply@kziik.com",
-      pass: "@SUCCESS7a"
-    }
-  });
+  if (!transporter) {
+    console.error("❌ Impossible de tester SMTP : configuration manquante");
+    return;
+  }
 
   try {
     console.log("⏳ Connexion SMTP…");
     await transporter.verify();
     console.log("✔ Connexion SMTP OK");
 
-    let info = await transporter.sendMail({
-      from: "no-reply@kziik.com",
-      to: "sahuieJuleschristjunior@gmail.com",
+    const info = await transporter.sendMail({
+      from: process.env.SMTP_TEST_FROM || defaultFrom,
+      to: process.env.SMTP_TEST_TO || "test@example.com",
       subject: "TEST SMTP - KZIIK",
-      text: "Si tu reçois ce mail, SMTP fonctionne !"
+      text: "Si tu reçois ce mail, SMTP fonctionne !",
     });
 
-    console.log(" Mail envoyé:", info.messageId);
+    console.log("📤 Mail envoyé:", info.messageId);
   } catch (err) {
-    console.error("❌ ERREUR SMTP:", err);
+    console.error("❌ ERREUR SMTP:", err?.message || err);
   }
 }
 

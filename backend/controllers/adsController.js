@@ -134,8 +134,7 @@ async function sendAdReviewStartedEmail(campaign) {
       "ads_review_started.html",
       recipient.email,
       "Votre publicité est en cours de validation",
-      variables,
-      "noreply"
+      variables
     );
 
     console.log("ADS_EMAIL_REVIEW_SENT", {
@@ -202,8 +201,7 @@ async function maybeSendAwaitingPaymentEmail(campaign) {
       "ads_payment_ready.html",
       recipient.email,
       "Votre publicité est prête — Paiement requis",
-      variables,
-      "noreply"
+      variables
     );
 
     console.log("EMAIL_STATUS", "SEND_OK");

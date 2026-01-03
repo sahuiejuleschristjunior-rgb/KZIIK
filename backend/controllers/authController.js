@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mailer = require("../utils/mailer");
 
+const INSCRIPTION_FROM = process.env.SMTP_INSCRIPTION_FROM || "KZIIK <inscription@kziik.com>";
+
 /* ================================
    Générateur OTP
 ================================ */
@@ -77,7 +79,7 @@ async function register(req, res) {
           email,
           "Votre nouveau code de vérification",
           { OTP_CODE: otp },
-          "inscription"
+          INSCRIPTION_FROM
         );
 
         return res.json({
@@ -113,7 +115,7 @@ async function register(req, res) {
       email,
       "Votre code de vérification",
       { OTP_CODE: otp },
-      "inscription"
+      INSCRIPTION_FROM
     );
 
     res.json({ success: true, message: "OTP envoyé" });
@@ -146,7 +148,7 @@ async function verifyRegisterOtp(req, res) {
       email,
       "Bienvenue sur KZIIK 🎉",
       {},
-      "inscription"
+      INSCRIPTION_FROM
     );
 
     const token = createToken(user);
@@ -178,7 +180,7 @@ async function resendRegisterOtp(req, res) {
       email,
       "Nouveau code de vérification",
       { OTP_CODE: otp },
-      "inscription"
+      INSCRIPTION_FROM
     );
 
     res.json({ success: true, message: "Nouveau code envoyé" });
@@ -211,8 +213,7 @@ async function login(req, res) {
       "new_login_alert.html",
       email,
       "Nouvelle connexion détectée",
-      { DEVICE: device, IP: ip, DATE: date },
-      "noreply"
+      { DEVICE: device, IP: ip, DATE: date }
     );
 
     const token = createToken(user);
@@ -259,8 +260,7 @@ async function forgotPassword(req, res) {
       "otp_email.html",
       email,
       "Réinitialisation du mot de passe",
-      { OTP_CODE: otp },
-      "noreply"
+      { OTP_CODE: otp }
     );
 
     res.json({ success: true, message: "OTP envoyé" });
@@ -309,8 +309,7 @@ async function resendResetOtp(req, res) {
       "otp_email.html",
       email,
       "Nouveau code de réinitialisation",
-      { OTP_CODE: otp },
-      "noreply"
+      { OTP_CODE: otp }
     );
 
     res.json({ success: true, message: "Nouveau code envoyé" });
@@ -348,8 +347,7 @@ async function resetPassword(req, res) {
       "password_reset_success.html",
       email,
       "Mot de passe mis à jour",
-      {},
-      "noreply"
+      {}
     );
 
     res.json({ success: true });
