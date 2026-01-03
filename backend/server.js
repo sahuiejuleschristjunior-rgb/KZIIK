@@ -115,18 +115,24 @@ function dumpRoutesSafe() {
 /* ============================================================
    START SERVER
 ============================================================ */
-db.connect()
-  .then(() => {
-    server.listen(PORT, "0.0.0.0", () => {
-      console.log("✔ Backend running on port", PORT);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log("✔ Backend running on port", PORT);
 
-      // 🔍 active seulement si besoin
-      // dumpRoutesSafe();
-    });
-  })
-  .catch((err) => {
+  // 🔍 active seulement si besoin
+  // dumpRoutesSafe();
+});
+
+const connectWithRetry = async () => {
+  try {
+    await db.connect();
+    console.log("✔ Database connected");
+  } catch (err) {
     console.error("❌ DB ERROR :", err);
-    process.exit(1);
-  });
+    console.log("⏳ Retrying database connection in 5s...");
+    setTimeout(connectWithRetry, 5000);
+  }
+};
+
+connectWithRetry();
 
   
