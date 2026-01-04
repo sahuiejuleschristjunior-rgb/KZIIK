@@ -84,8 +84,9 @@ function resolveMessageType({ explicitType, mimeType }) {
 
 function buildFileMetaFromUpload(file) {
   if (!file) return {};
+  const publicUrl = `/uploads/messages/${file.filename}`;
   return {
-    fileUrl: `/uploads/messages/${file.filename}`,
+    fileUrl: publicUrl,
     fileName: file.originalname || file.filename,
     mimeType: file.mimetype || null,
   };
@@ -256,17 +257,30 @@ async function createAndDispatchMessage({
   await conversation.save();
 
   const populated = await populateMessage(message);
+  const plainMessage = populated?.toObject ? populated.toObject() : populated;
 
-  getIO().to(receiverId.toString()).emit("new_message", {
-    from: sender,
-    to: receiverId,
-    message: populated,
+  console.log("[messages] message enregistré", {
+    messageId: plainMessage?._id,
+    type: plainMessage?.type,
+    hasFile: Boolean(plainMessage?.fileUrl),
+    fileUrl: plainMessage?.fileUrl || null,
   });
 
-  getIO().to(sender.toString()).emit("new_message", {
+  const payload = {
     from: sender,
     to: receiverId,
-    message: populated,
+    message: plainMessage,
+  };
+
+  const io = getIO();
+  io.to(receiverId.toString()).emit("new_message", payload);
+  io.to(sender.toString()).emit("new_message", payload);
+  io.emit("new_message", payload);
+  console.log("[messages] événement émis", {
+    to: receiverId,
+    from: sender,
+    messageId: plainMessage?._id,
+    type: plainMessage?.type,
   });
 
   await pushNotification(receiverId, {
@@ -277,7 +291,7 @@ async function createAndDispatchMessage({
     text: "Nouveau message reçu",
   });
 
-  return message;
+  return plainMessage;
 }
 
 exports.sendMessage = async (req, res) => {
@@ -517,7 +531,22 @@ exports.sendAttachmentMessage = async (req, res) => {
       }
     }
 
+    console.log("[messages] fichier reçu", {
+      name: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      tempPath: file.path,
+    });
+
     const fileMeta = buildFileMetaFromUpload(file);
+    const relativePath = fileMeta.fileUrl.replace(/^\//, "");
+    const absolutePath = path.join(__dirname, "..", relativePath);
+    const saved = fs.existsSync(absolutePath);
+    console.log("[messages] fichier sauvegardé", {
+      absolutePath,
+      exists: saved,
+      publicUrl: fileMeta.fileUrl,
+    });
     const hasCaption = typeof content === "string" && content.trim() !== "";
 
     const message = await createAndDispatchMessage({
