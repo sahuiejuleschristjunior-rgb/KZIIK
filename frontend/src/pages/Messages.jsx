@@ -245,71 +245,6 @@ export default function Messages() {
     otherUser: null,
   });
 
-  const getCssHeaderHeight = () => {
-    if (typeof window === "undefined") return null;
-    const raw = getComputedStyle(document.documentElement).getPropertyValue(
-      "--fb-header-height"
-    );
-    const parsed = Number.parseFloat(raw);
-    return Number.isFinite(parsed) ? parsed : null;
-  };
-
-  const [appHeaderHeight, setAppHeaderHeight] = useState(() => {
-    const fallback = getCssHeaderHeight();
-    return fallback || 56;
-  });
-
-  useEffect(() => {
-    if (typeof window === "undefined") return undefined;
-
-    const updateHeaderHeight = () => {
-      const headerEl = document.querySelector(".fb-header");
-      const measured = headerEl?.getBoundingClientRect().height;
-      const fallback = getCssHeaderHeight();
-      const resolved =
-        (measured && Number.isFinite(measured) && measured) || fallback || 56;
-      setAppHeaderHeight(resolved);
-    };
-
-    updateHeaderHeight();
-    window.addEventListener("resize", updateHeaderHeight);
-
-    return () => {
-      window.removeEventListener("resize", updateHeaderHeight);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return undefined;
-    const media = window.matchMedia("(max-width: 950px)");
-    const previousOverflow = document.body.style.overflow;
-
-    const applyOverflow = (shouldHide) => {
-      document.body.style.overflow = shouldHide ? "hidden" : previousOverflow;
-    };
-
-    applyOverflow(media.matches);
-
-    const listener = (event) => {
-      applyOverflow(event.matches);
-    };
-
-    if (media.addEventListener) {
-      media.addEventListener("change", listener);
-    } else {
-      media.addListener(listener);
-    }
-
-    return () => {
-      if (media.removeEventListener) {
-        media.removeEventListener("change", listener);
-      } else {
-        media.removeListener(listener);
-      }
-      document.body.style.overflow = previousOverflow;
-    };
-  }, []);
-
   const recordStartRef = useRef(null);
   const recordTimerRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -2463,10 +2398,7 @@ export default function Messages() {
   }
 
   return (
-    <div
-      className={`messages-page ${activeChat ? "chat-open" : ""}`}
-      style={{ "--appHeaderH": `${appHeaderHeight}px` }}
-    >
+    <div className={`messages-page ${activeChat ? "chat-open" : ""}`}>
       {/* ================= LEFT — AMIS ================= */}
       <aside className="messages-sidebar">
         <div className="messages-sidebar-header">
