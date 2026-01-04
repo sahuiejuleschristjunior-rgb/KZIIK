@@ -9,13 +9,21 @@
    LAYOUT GLOBAL
 ========================= */
 .messages-page {
-  height: calc(100vh - 72px);
+  height: calc(var(--messages-vh, 100vh) - 72px);
+  min-height: calc(var(--messages-vh, 100vh) - 72px);
   width: 100%;
   display: flex;
   background: #18191a;
   color: #e4e6eb;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   margin-top: -25px;
+}
+
+@supports (height: 100dvh) {
+  .messages-page {
+    height: calc(var(--messages-vh, 100dvh) - 72px);
+    min-height: calc(var(--messages-vh, 100dvh) - 72px);
+  }
 }
 
 /* =========================
@@ -820,8 +828,10 @@
 
 /* Conteneur de la barre d’input */
 .chat-input-bar {
+  position: sticky;
+  bottom: 0;
   background: #111;
-  padding: 10px 12px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
   display: flex;
   gap: 10px;
   align-items: center;
@@ -893,7 +903,7 @@
   flex: 1;
   overflow-y: auto;
   padding: 12px;
-  padding-bottom: 120px; /* ✅ espace pour l’input fixe */
+  padding-bottom: calc(120px + env(safe-area-inset-bottom)); /* ✅ espace pour l’input fixe */
 }
 /* =========================
    ATTACH & MIC
@@ -1065,7 +1075,7 @@
 ========================= */
 .messages-page {
   flex-direction: column;
-  height: 100vh;
+  height: calc(var(--messages-vh, 100vh) - 72px);
 }
 
 .messages-sidebar {
@@ -1440,7 +1450,7 @@
   }
 
   .chat-body {
-    padding-bottom: 120px;
+    padding-bottom: calc(120px + env(safe-area-inset-bottom));
   }
 
   .chat-input-bar {

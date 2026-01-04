@@ -198,6 +198,35 @@ export default function Messages() {
   const [requestsError, setRequestsError] = useState("");
   const [lockedConversationId, setLockedConversationId] = useState(null);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const updateViewportHeight = () => {
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      root.style.setProperty("--messages-vh", `${viewportHeight}px`);
+    };
+
+    updateViewportHeight();
+
+    window.addEventListener("resize", updateViewportHeight);
+    window.visualViewport?.addEventListener("resize", updateViewportHeight);
+    window.visualViewport?.addEventListener("scroll", updateViewportHeight);
+
+    return () => {
+      window.removeEventListener("resize", updateViewportHeight);
+      window.visualViewport?.removeEventListener("resize", updateViewportHeight);
+      window.visualViewport?.removeEventListener("scroll", updateViewportHeight);
+      root.style.removeProperty("--messages-vh");
+    };
+  }, []);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
   const [activeChat, setActiveChat] = useState(null);
   const activeConversation = activeChat;
   const [isMobileView, setIsMobileView] = useState(false);
