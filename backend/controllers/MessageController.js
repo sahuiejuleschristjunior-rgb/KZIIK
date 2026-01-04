@@ -702,8 +702,15 @@ function ensureAudioDir() {
   return uploadDir;
 }
 
+function isFfmpegAvailable() {
+  return Boolean(ffmpegPath && fs.existsSync(ffmpegPath));
+}
+
 async function enhanceAudioQuality(filePath) {
-  if (!ffmpegPath) return;
+  if (!isFfmpegAvailable()) {
+    console.warn("⚠ FFmpeg skipped — binary not found or not installed.");
+    return { skipped: true };
+  }
 
   const outputPath = `${filePath}.tmp.webm`;
   const filters =
@@ -729,11 +736,13 @@ async function enhanceAudioQuality(filePath) {
   try {
     await execFileAsync(ffmpegPath, args);
     fs.renameSync(outputPath, filePath);
+    return { success: true };
   } catch (error) {
-    console.error("FFmpeg enhancement failed", error.message);
+    console.error(`❌ Audio processing failed: ${error.message}`);
     if (fs.existsSync(outputPath)) {
       fs.unlinkSync(outputPath);
     }
+    return { success: false, error };
   }
 }
 
@@ -776,6 +785,7 @@ exports.sendAudioMessage = async (req, res) => {
     await enhanceAudioQuality(file.path);
 
     const audioUrl = `/uploads/audio/${file.filename}`;
+    console.log("✔ Audio saved", { path: file.path, url: audioUrl });
 
     let replyPreview = null;
     let replyMessageId = null;
@@ -804,6 +814,12 @@ exports.sendAudioMessage = async (req, res) => {
       replyTo: replyMessageId,
       replyPreview,
       isRead: false,
+    });
+
+    console.log("✔ Message stored", {
+      messageId: message._id,
+      type: message.type,
+      audioUrl: message.audioUrl,
     });
 
     conversation.lastMessage = message._id;
