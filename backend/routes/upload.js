@@ -4,31 +4,50 @@ const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
 const ffmpeg = require("fluent-ffmpeg");
-const ffmpegPath = require("ffmpeg-static");
 
+/**
+ * ===============================
+ * FFmpeg / FFprobe (SYSTEM)
+ * ===============================
+ */
+const FFMPEG_PATH = "/usr/bin/ffmpeg";
+const FFPROBE_PATH = "/usr/bin/ffprobe";
+
+ffmpeg.setFfmpegPath(FFMPEG_PATH);
+ffmpeg.setFfprobePath(FFPROBE_PATH);
+
+console.log("✅ FFmpeg configuré :", FFMPEG_PATH);
+console.log("✅ FFprobe configuré :", FFPROBE_PATH);
+
+/**
+ * ===============================
+ * Uploads
+ * ===============================
+ */
 const uploadsDir = path.join(__dirname, "../uploads");
-const ffprobePath = ffmpegPath
-  ? ffmpegPath.replace(/ffmpeg(\.exe)?$/, (match, ext) => `ffprobe${ext || ""}`)
-  : null;
-
-if (ffprobePath && fs.existsSync(ffprobePath)) {
-  ffmpeg.setFfprobePath(ffprobePath);
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    const name = Date.now() + "-" + Math.random().toString(36).slice(2) + ext;
+    const name = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
     cb(null, name);
-  }
+  },
 });
 
 const upload = multer({
   storage,
-  limits: { fileSize: 500 * 1024 * 1024 } // 500MB
+  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
 });
 
+/**
+ * ===============================
+ * JOB MEDIA RULES
+ * ===============================
+ */
 const JOB_MEDIA = {
   imageMimes: new Set(["image/jpeg", "image/png", "image/webp", "image/jpg"]),
   videoMimes: new Set(["video/mp4"]),
@@ -42,6 +61,11 @@ const JOB_MEDIA = {
 const generateName = (extension) =>
   `${Date.now()}-${Math.random().toString(36).slice(2)}${extension}`;
 
+/**
+ * ===============================
+ * HELPERS
+ * ===============================
+ */
 const ensureFileCopied = async (src, dest) => {
   try {
     await fs.promises.copyFile(src, dest);
@@ -67,17 +91,19 @@ const processImageAsync = (file, targetPath) => {
 const processVideoAsync = (file, targetPath, thumbnailPath) => {
   setImmediate(() => {
     ffmpeg(file.path)
-      .setFfmpegPath(ffmpegPath)
       .videoCodec("libx264")
       .audioCodec("aac")
-      .outputOptions(["-b:v 1200k", "-preset veryfast", "-movflags +faststart"])
+      .outputOptions([
+        "-b:v 1200k",
+        "-preset veryfast",
+        "-movflags +faststart",
+      ])
       .on("error", async (err) => {
         console.error("[upload] video compression failed", err);
         await ensureFileCopied(file.path, targetPath);
       })
       .on("end", () => {
         ffmpeg(file.path)
-          .setFfmpegPath(ffmpegPath)
           .screenshots({
             count: 1,
             timemarks: ["1"],
@@ -94,20 +120,24 @@ const processVideoAsync = (file, targetPath, thumbnailPath) => {
 
 const isJobImage = (file) => {
   const ext = (path.extname(file.originalname) || "").toLowerCase();
-  return JOB_MEDIA.imageMimes.has(file.mimetype) || JOB_MEDIA.imageExtensions.has(ext);
+  return (
+    JOB_MEDIA.imageMimes.has(file.mimetype) ||
+    JOB_MEDIA.imageExtensions.has(ext)
+  );
 };
 
 const isJobVideo = (file) => {
   const ext = (path.extname(file.originalname) || "").toLowerCase();
-  return JOB_MEDIA.videoMimes.has(file.mimetype) || JOB_MEDIA.videoExtensions.has(ext);
+  return (
+    JOB_MEDIA.videoMimes.has(file.mimetype) ||
+    JOB_MEDIA.videoExtensions.has(ext)
+  );
 };
 
 const cleanupUploadedFiles = async (files = []) => {
   await Promise.all(
     files.map((file) =>
-      fs.promises.unlink(file.path).catch(() => {
-        // Ignore cleanup errors
-      })
+      fs.promises.unlink(file.path).catch(() => {})
     )
   );
 };
@@ -115,15 +145,17 @@ const cleanupUploadedFiles = async (files = []) => {
 const getVideoDuration = (filePath) =>
   new Promise((resolve, reject) => {
     ffmpeg.ffprobe(filePath, (err, metadata) => {
-      if (err) {
-        reject(err);
-        return;
-      }
+      if (err) return reject(err);
       const duration = metadata?.format?.duration;
       resolve(Number.isFinite(duration) ? duration : null);
     });
   });
 
+/**
+ * ===============================
+ * ROUTES
+ * ===============================
+ */
 router.post("/file", upload.array("files", 10), (req, res) => {
   const urls = (req.files || []).map((file) => {
     const mime = file.mimetype || "";
@@ -147,10 +179,7 @@ router.post("/file", upload.array("files", 10), (req, res) => {
     return `/uploads/${file.filename}`;
   });
 
-  return res.json({
-    success: true,
-    urls,
-  });
+  res.json({ success: true, urls });
 });
 
 router.post("/job-media", upload.array("files", 6), async (req, res) => {
@@ -165,7 +194,9 @@ router.post("/job-media", upload.array("files", 6), async (req, res) => {
 
   const images = files.filter(isJobImage);
   const videos = files.filter(isJobVideo);
-  const invalid = files.filter((file) => !isJobImage(file) && !isJobVideo(file));
+  const invalid = files.filter(
+    (file) => !isJobImage(file) && !isJobVideo(file)
+  );
 
   if (invalid.length) {
     await cleanupUploadedFiles(files);
@@ -198,42 +229,20 @@ router.post("/job-media", upload.array("files", 6), async (req, res) => {
         await cleanupUploadedFiles(files);
         return res.status(400).json({
           success: false,
-          error: "La durée de la vidéo ne doit pas dépasser 5 minutes.",
+          error: "Vidéo trop longue (max 5 minutes).",
         });
       }
     } catch (err) {
       await cleanupUploadedFiles(files);
       return res.status(400).json({
         success: false,
-        error: "Impossible de vérifier la durée de la vidéo.",
+        error: "Impossible de lire la vidéo.",
       });
     }
   }
 
-  const urls = files.map((file) => {
-    if (isJobImage(file)) {
-      const outputName = generateName(".webp");
-      const outputPath = path.join(uploadsDir, outputName);
-      processImageAsync(file, outputPath);
-      return `/uploads/${outputName}`;
-    }
-
-    if (isJobVideo(file)) {
-      const outputName = generateName(".mp4");
-      const outputPath = path.join(uploadsDir, outputName);
-      const thumbName = `${path.parse(outputName).name}-thumb.jpg`;
-      const thumbPath = path.join(uploadsDir, thumbName);
-      processVideoAsync(file, outputPath, thumbPath);
-      return `/uploads/${outputName}`;
-    }
-
-    return `/uploads/${file.filename}`;
-  });
-
-  return res.json({
-    success: true,
-    urls,
-  });
+  const urls = files.map((file) => `/uploads/${file.filename}`);
+  res.json({ success: true, urls });
 });
 
 module.exports = router;
