@@ -63,7 +63,23 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 ============================================================ */
 // Serve uploaded files under both /uploads and /api/uploads for backward compatibility
 const uploadsPath = path.join(__dirname, "uploads");
+app.use((req, res, next) => {
+  if (req.url.endsWith(".mp3")) {
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Accept-Ranges", "bytes");
+  }
+  next();
+});
+
 app.use("/uploads", express.static(uploadsPath));
+app.use((req, res, next) => {
+  if (req.url.endsWith(".mp3")) {
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Accept-Ranges", "bytes");
+  }
+  next();
+});
+
 app.use("/api/uploads", express.static(uploadsPath));
 
 /* ============================================================
