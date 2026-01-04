@@ -565,6 +565,83 @@
 /* =========================
    INPUT BAR (sticky bottom)
 ========================= */
+.pending-attachments {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px 8px;
+  overflow-x: auto;
+}
+
+.pending-attachment-card {
+  position: relative;
+  width: 120px;
+  background: #1f2021;
+  border: 1px solid #2f3031;
+  border-radius: 12px;
+  padding: 8px 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pending-attachment-preview {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0f0f10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pending-attachment-preview img,
+.pending-attachment-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pending-attachment-file {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e4e6eb;
+  font-size: 22px;
+}
+
+.pending-attachment-file-icon {
+  font-size: 24px;
+}
+
+.pending-attachment-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #2f3031;
+  background: rgba(0, 0, 0, 0.65);
+  color: #e4e6eb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.pending-attachment-name {
+  color: #e4e6eb;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 6px;
+}
+
 .chat-input-bar {
   position: sticky;
   bottom: 0;
