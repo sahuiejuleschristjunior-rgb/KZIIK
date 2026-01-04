@@ -16,7 +16,7 @@ module.exports = function (req, res, next) {
 
     const payload = jwt.verify(
       token,
-      process.env.JWT_SECRET || "change_this_secret_now"
+      process.env.JWT_SECRET
     );
 
     // 🔥 CRITIQUE : compatibilité avec tous les controllers
