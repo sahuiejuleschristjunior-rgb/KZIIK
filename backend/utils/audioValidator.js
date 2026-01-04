@@ -1,10 +1,10 @@
 const fs = require("fs");
 const { spawn } = require("child_process");
-const ffmpegPath = require("ffmpeg-static");
 
-const ffprobePath = ffmpegPath
-  ? ffmpegPath.replace(/ffmpeg(\.exe)?$/, (match, ext) => `ffprobe${ext || ""}`)
-  : "ffprobe";
+/**
+ * ffprobe système (Ubuntu / production)
+ */
+const ffprobePath = "ffprobe";
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -17,7 +17,7 @@ async function waitForFileStability(filePath) {
     const currentSize = stats.size;
 
     if (currentSize === lastSize) {
-      stableCount += 1;
+      stableCount++;
     } else {
       stableCount = 0;
       lastSize = currentSize;
@@ -34,41 +34,29 @@ async function waitForFileStability(filePath) {
 function runFfprobe(filePath) {
   return new Promise((resolve, reject) => {
     const args = [
-      "-v",
-      "error",
-      "-print_format",
-      "json",
+      "-v", "error",
+      "-print_format", "json",
       "-show_format",
       "-show_streams",
       filePath,
     ];
 
-    const probe = spawn(ffprobePath, args, { windowsHide: true });
+    const probe = spawn(ffprobePath, args);
 
     let stdout = "";
     let stderr = "";
 
-    probe.stdout.on("data", (chunk) => {
-      stdout += chunk;
-    });
+    probe.stdout.on("data", (d) => (stdout += d));
+    probe.stderr.on("data", (d) => (stderr += d));
 
-    probe.stderr.on("data", (chunk) => {
-      stderr += chunk;
-    });
-
-    probe.on("error", (err) => {
-      reject(err);
-    });
+    probe.on("error", reject);
 
     probe.on("close", (code) => {
       if (code !== 0) {
-        reject(new Error(stderr || `ffprobe exited with code ${code}`));
-        return;
+        return reject(new Error(stderr || `ffprobe exited with ${code}`));
       }
-
       try {
-        const data = JSON.parse(stdout || "{}");
-        resolve(data);
+        resolve(JSON.parse(stdout || "{}"));
       } catch (err) {
         reject(err);
       }
@@ -76,25 +64,25 @@ function runFfprobe(filePath) {
   });
 }
 
+/**
+ * Validation stricte (worker / traitement)
+ */
 async function validateAudioStrict(filePath) {
-  const exists = await fs.promises
-    .access(filePath, fs.constants.R_OK)
-    .then(() => true)
-    .catch(() => false);
-
-  if (!exists) {
-    throw new Error(`Audio file not accessible: ${filePath}`);
-  }
+  await fs.promises.access(filePath, fs.constants.R_OK);
 
   const metadata = await runFfprobe(filePath);
   const streams = metadata.streams || [];
-  const audioStream = streams.find((stream) => stream.codec_type === "audio");
+  const audioStream = streams.find(s => s.codec_type === "audio");
 
   if (!audioStream) {
     throw new Error("No audio stream detected");
   }
 
-  const duration = Number(metadata?.format?.duration || audioStream?.duration || 0);
+  const duration = Number(
+    metadata?.format?.duration ||
+    audioStream?.duration ||
+    0
+  );
 
   if (!Number.isFinite(duration) || duration < 0.8) {
     throw new Error("Audio too short (< 0.8s)");
@@ -108,9 +96,27 @@ async function validateAudioStrict(filePath) {
   };
 }
 
+/**
+ * Wrapper SAFE pour le contrôleur
+ * ❌ ne casse jamais l'app
+ */
+async function validateAudio(filePath) {
+  try {
+    await validateAudioStrict(filePath);
+    return true;
+  } catch (err) {
+    console.error("❌ Validation audio échouée", {
+      path: filePath,
+      error: err.message,
+    });
+    return false;
+  }
+}
+
 module.exports = {
   waitForFileStability,
-  validateAudioStrict,
   runFfprobe,
+  validateAudioStrict,
+  validateAudio,
   ffprobePath,
 };
