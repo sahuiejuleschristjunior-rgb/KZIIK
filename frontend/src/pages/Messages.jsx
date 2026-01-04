@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import "../styles/messages.css";
 import VideoCallOverlay from "../components/VideoCallOverlay";
 import { API_URL } from "../api/config";
+import Avatar from "../components/Avatar";
 import {
   acceptMessageRequest,
   blockMessageRequest,
@@ -15,6 +16,7 @@ import {
 import { fetchFriends } from "../api/socialApi";
 import { useActiveConversation } from "../context/ActiveConversationContext";
 import { useNotifications } from "../context/NotificationContext";
+import { getAvatarUrl } from "../utils/avatarUtils";
 const API_HOST = API_URL?.replace(/\/?api$/, "");
 const SOCKET_URL = API_HOST || window.location.origin;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "😡"];
@@ -308,6 +310,7 @@ export default function Messages() {
   /* =====================================================
      HELPERS
   ===================================================== */
+  const meAvatar = getAvatarUrl(me?.avatar);
   const getFriendId = useCallback((friend) => {
     return String(friend?._id || friend?.id || friend?.user?._id || "");
   }, []);
@@ -325,11 +328,12 @@ export default function Messages() {
 
     const base = friend || {};
     const convo = conversation || {};
+    const avatar = getAvatarUrl(base.avatar || convo.avatar);
 
     return {
       _id: base._id || convo._id,
       name: base.name || convo.name || "Utilisateur",
-      avatar: base.avatar || convo.avatar || "/default-avatar.png",
+      avatar: avatar,
       role: base.role || convo.role || null,
       isProfessional:
         typeof base.isProfessional === "boolean"
@@ -385,6 +389,9 @@ export default function Messages() {
         (typeof target === "object" ? target?._id : target) || null;
 
       const targetRole = typeof target === "object" ? target?.role : null;
+      const avatar = getAvatarUrl(
+        (typeof target === "object" ? target?.avatar : null) || f?.avatar
+      );
 
       return {
         _id: targetId,
@@ -392,10 +399,7 @@ export default function Messages() {
           (typeof target === "object" ? target?.name : null) ||
           f?.name ||
           "Utilisateur",
-        avatar:
-          (typeof target === "object" ? target?.avatar : null) ||
-          f?.avatar ||
-          "/default-avatar.png",
+        avatar,
         role: targetRole,
         isProfessional: isProfessionalContact(targetRole),
         unreadCount: typeof f?.unreadCount === "number" ? f.unreadCount : 0,
@@ -417,10 +421,16 @@ export default function Messages() {
       f?._id ||
       null;
 
+    const avatar = getAvatarUrl(
+      userObj?.avatar ||
+        f?.avatar ||
+        (typeof f?.user === "string" ? null : undefined)
+    );
+
     return {
       _id: userId,
       name: userObj?.name || f?.name || "Utilisateur",
-      avatar: userObj?.avatar || f?.avatar || "/default-avatar.png",
+      avatar,
       role: userObj?.role || f?.role || null,
       isProfessional: isProfessionalContact(userObj?.role || f?.role || null),
       unreadCount: typeof f?.unreadCount === "number" ? f.unreadCount : 0,
@@ -1141,6 +1151,7 @@ export default function Messages() {
     const clickedId = getFriendId(user);
     const sanitizedUser = {
       ...user,
+      avatar: getAvatarUrl(user?.avatar),
       unreadCount: 0,
       lastMessage: getReadLastMessage(user),
     };
@@ -2456,11 +2467,10 @@ export default function Messages() {
                       data-conv-id={convId}
                       onClick={() => handleConversationClick(friend)}
                     >
-                      <img
-                        src={resolveUrl(friend.avatar)}
-                        alt={friend.name}
+                      <Avatar
+                        avatar={friend.avatar}
+                        name={friend.name}
                         className="conversation-avatar"
-                        loading="lazy"
                       />
 
                       <div className="conversation-info">
@@ -2495,14 +2505,10 @@ export default function Messages() {
               {requests.map((req) => (
                 <div key={req._id} className="request-item">
                   <div className="request-main">
-                    <img
-                      src={resolveUrl(req?.fromUser?.avatar)}
-                      alt={req?.fromUser?.name || "Utilisateur"}
+                    <Avatar
+                      avatar={req?.fromUser?.avatar}
+                      name={req?.fromUser?.name || "Utilisateur"}
                       className="conversation-avatar"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.currentTarget.src = "/default-avatar.png";
-                      }}
                     />
                     <div className="request-info">
                       <div className="conversation-name">
@@ -2559,7 +2565,11 @@ export default function Messages() {
                 <BackIcon />
               </button>
 
-              <img src={activeChat.avatar} alt={activeChat.name} className="chat-avatar" loading="lazy" />
+              <Avatar
+                avatar={activeChat.avatar}
+                name={activeChat.name}
+                className="chat-avatar"
+              />
 
               <div className="chat-user-info">
                 <div className="chat-username">{activeChat.name}</div>
@@ -2668,9 +2678,22 @@ export default function Messages() {
                     const senderId =
                       typeof msg.sender === "object" ? msg.sender?._id : msg.sender;
                     const isMe = senderId === me?._id;
+                    const senderObj =
+                      typeof msg.sender === "object" ? msg.sender : null;
+                    const senderName =
+                      senderObj?.name ||
+                      (isMe ? me?.name || "Vous" : activeChat?.name || "Contact");
+                    const senderAvatar = isMe
+                      ? meAvatar
+                      : senderObj?.avatar || activeChat?.avatar;
 
                     return (
                       <div key={msg._id} className={`message-row ${isMe ? "me" : "other"}`}>
+                        <Avatar
+                          avatar={senderAvatar}
+                          name={senderName}
+                          className="message-avatar"
+                        />
                         <div
                           ref={(node) => {
                             if (!node) {
