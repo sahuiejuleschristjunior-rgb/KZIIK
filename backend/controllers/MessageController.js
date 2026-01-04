@@ -7,7 +7,6 @@ const { getIO } = require("../socket");
 const Notification = require("../models/Notification");
 const path = require("path");
 const fs = require("fs");
-const ffmpegPath = require("ffmpeg-static");
 const { execFile } = require("child_process");
 const { promisify } = require("util");
 const { validateAudioStrict } = require("../utils/audioValidator");
