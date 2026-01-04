@@ -9,13 +9,16 @@
    LAYOUT GLOBAL
 ========================= */
 .messages-page {
-  height: calc(100vh - 72px);
+  --messages-header-offset: var(--fb-header-height, 64px);
+  height: calc(100vh - var(--messages-header-offset));
   width: 100%;
   display: flex;
   background: #18191a;
   color: #e4e6eb;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  margin-top: -25px;
+  padding-top: var(--messages-header-offset);
+  margin-top: 0;
+  box-sizing: border-box;
 }
 
 /* =========================
@@ -364,6 +367,9 @@
   border-bottom: 1px solid #2f3031;
   background: #18191a;
   flex-shrink: 0;
+  position: sticky;
+  top: var(--messages-header-offset);
+  z-index: 10;
 }
 
 .chat-avatar {
@@ -1062,7 +1068,7 @@
 ========================= */
 .messages-page {
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - var(--messages-header-offset));
 }
 
 .messages-sidebar {
