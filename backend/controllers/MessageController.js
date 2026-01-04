@@ -10,7 +10,7 @@ const fs = require("fs");
 const ffmpegPath = require("ffmpeg-static");
 const { execFile } = require("child_process");
 const { promisify } = require("util");
-const { validateAudio } = require("../utils/audioValidator");
+const { validateAudioStrict } = require("../utils/audioValidator");
 const { convertWebmToMp3 } = require("../utils/audioConverter");
 
 const typingState = new Map();
@@ -801,7 +801,7 @@ exports.sendAudioMessage = async (req, res) => {
     }
 
     try {
-      await validateAudio(file.path);
+      await validateAudioStrict(file.path);
     } catch (validationError) {
       console.error("❌ Validation audio échouée", {
         path: file.path,
