@@ -9,13 +9,16 @@
    LAYOUT GLOBAL
 ========================= */
 .messages-page {
-  height: calc(100vh - 72px);
+  --appHeaderH: var(--fb-header-height, 56px);
+  height: calc(100dvh - var(--appHeaderH));
+  min-height: calc(100dvh - var(--appHeaderH));
   width: 100%;
   display: flex;
   background: #18191a;
   color: #e4e6eb;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  margin-top: -25px;
+  margin-top: 0;
+  overflow: hidden;
 }
 
 /* =========================
@@ -149,20 +152,18 @@
 @media (max-width: 950px) {
   .messages-page {
     flex-direction: column;
-    height: auto;
-    min-height: 100vh;
-    margin-top: 0;
-    padding-top: 65px;
-    padding-bottom: 85px;
+    height: calc(100dvh - var(--appHeaderH));
+    min-height: calc(100dvh - var(--appHeaderH));
     background: #000;
+    padding: 0;
   }
 
   .messages-wrapper {
     flex: 1;
     width: 100%;
     padding: 12px;
-    height: calc(100vh - 65px - 85px);
-    overflow-y: auto;
+    height: 100%;
+    overflow: hidden;
   }
 
   .messages-list {
@@ -497,6 +498,7 @@
   height: 100%;
   position: relative;
   overflow: hidden;
+  max-height: 100%;
 }
 
 .chat-panel {
@@ -505,6 +507,7 @@
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
+  height: 100%;
 }
 
 /* HEADER CHAT */
@@ -519,7 +522,7 @@
   background: #18191a;
   flex-shrink: 0;
   position: sticky;
-  top: var(--fb-header-height, 72px);
+  top: 0;
   z-index: 5;
 }
 
@@ -645,6 +648,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Placeholder */
@@ -778,6 +783,8 @@
   .messages-content {
     display: none;
     width: 100%;
+    height: 100%;
+    min-height: 0;
   }
 
   .messages-page.chat-open .messages-sidebar {
@@ -1219,7 +1226,8 @@
 ========================= */
 .messages-page {
   flex-direction: column;
-  height: 100vh;
+  height: calc(100dvh - var(--appHeaderH));
+  min-height: calc(100dvh - var(--appHeaderH));
 }
 
 .messages-sidebar {
