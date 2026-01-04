@@ -183,6 +183,21 @@
   background: #111;
 }
 
+.avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #2f3031, #3a3b3c);
+  color: #f5f6f7;
+}
+
+.conversation-avatar.avatar-fallback {
+  border: 1px solid #2f3031;
+  font-size: 15px;
+}
+
 .conversation-info {
   flex: 1;
   min-width: 0;
@@ -359,6 +374,11 @@
   background: #111;
 }
 
+.chat-avatar.avatar-fallback {
+  border: 1px solid #2f3031;
+  font-size: 14px;
+}
+
 .chat-user-info {
   display: flex;
   flex-direction: column;
@@ -487,15 +507,32 @@
 ========================= */
 .message-row {
   display: flex;
+  align-items: flex-end;
+  gap: 10px;
   margin: 8px 0;
 }
 
 .message-row.me {
-  justify-content: flex-end;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
 }
 
 .message-row.other {
   justify-content: flex-start;
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #111;
+  flex-shrink: 0;
+}
+
+.message-avatar.avatar-fallback {
+  border: 1px solid #2f3031;
+  font-size: 12px;
 }
 
 .message-bubble {
@@ -613,11 +650,14 @@
 /* Ligne d’un message */
 .message-row {
   display: flex;
+  align-items: flex-end;
+  gap: 10px;
   margin: 0; /* ✅ pas d’espace externe */
 }
 
 .message-row.me {
-  justify-content: flex-end;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
 }
 
 .message-row.other {
