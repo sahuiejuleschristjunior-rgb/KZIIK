@@ -2188,7 +2188,22 @@ export default function Messages() {
       }
       currentAudioRef.current = audio;
       currentAudioIdRef.current = messageId;
-      audio.play();
+      audio.volume = 1;
+      audio.playbackRate = 1;
+      const playPromise = audio.play();
+      if (playPromise?.catch) {
+        playPromise.catch((err) => {
+          console.error("Erreur lecture audio", err);
+          setInfoBanner("Impossible de lire la note vocale");
+          setAudioStatus((prev) => ({
+            ...prev,
+            [messageId]: {
+              ...(prev[messageId] || {}),
+              playing: false,
+            },
+          }));
+        });
+      }
     } else {
       audio.pause();
       currentAudioRef.current = audio;
@@ -2200,6 +2215,27 @@ export default function Messages() {
     if (!node) return;
     audioRefs.current[msg._id] = node;
 
+    node.preload = "auto";
+    node.crossOrigin = "anonymous";
+    node.volume = 1;
+
+    const persistDuration = () => {
+      const durationSec = Number(node.duration);
+      if (!durationSec || Number.isNaN(durationSec)) return;
+
+      setMessages((prev) => {
+        let updated = false;
+        const next = prev.map((m) => {
+          if (m._id === msg._id && m.audioDuration !== durationSec) {
+            updated = true;
+            return { ...m, audioDuration: durationSec };
+          }
+          return m;
+        });
+        return updated ? next : prev;
+      });
+    };
+
     const updateStatus = () => {
       setAudioStatus((prev) => ({
         ...prev,
@@ -2210,6 +2246,7 @@ export default function Messages() {
           playing: !node.paused,
         },
       }));
+      persistDuration();
     };
 
     node.onloadedmetadata = updateStatus;
@@ -2226,6 +2263,17 @@ export default function Messages() {
       }
       updateStatus();
     };
+    node.onerror = (event) => {
+      console.error("Erreur média audio", event?.error || event);
+      setInfoBanner("Audio indisponible ou corrompu");
+      updateStatus();
+    };
+
+    if (Number.isFinite(node.duration) && node.duration > 0) {
+      updateStatus();
+    } else {
+      node.load();
+    }
   };
 
   /* =====================================================
