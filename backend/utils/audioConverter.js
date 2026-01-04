@@ -1,5 +1,4 @@
 const { spawn } = require("child_process");
-const ffmpegPath = require("ffmpeg-static");
 
 function convertAudioSafe(input, output) {
   return new Promise((resolve, reject) => {
