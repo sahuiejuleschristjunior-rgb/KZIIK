@@ -1215,7 +1215,6 @@ export default function Messages() {
 
     socket.on("new_message", handleMessage);
     socket.on("reaction_update", handleReactionUpdate);
-    socket.on("audio_message", handleMessage);
     socket.on("call_offer", handleCallOffer);
     socket.on("message_updated", handleMessageUpdated);
     socket.on("message_pinned", handleMessagePinned);
@@ -1230,7 +1229,6 @@ export default function Messages() {
     return () => {
       socket.off("new_message", handleMessage);
       socket.off("reaction_update", handleReactionUpdate);
-      socket.off("audio_message", handleMessage);
       socket.off("call_offer", handleCallOffer);
       socket.off("message_updated", handleMessageUpdated);
       socket.off("message_pinned", handleMessagePinned);
@@ -2523,7 +2521,12 @@ export default function Messages() {
           {formatTime(status.currentTime)} / {formatTime(status.duration)}
         </div>
 
-      <audio ref={(node) => bindAudioRef(msg, node)} src={url} preload="metadata" />
+      <audio
+        ref={(node) => bindAudioRef(msg, node)}
+        src={url}
+        preload="metadata"
+        controls
+      />
     </div>
     );
   };
