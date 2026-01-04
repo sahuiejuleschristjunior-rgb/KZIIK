@@ -17,7 +17,6 @@ import { fetchFriends } from "../api/socialApi";
 import { useActiveConversation } from "../context/ActiveConversationContext";
 import { useNotifications } from "../context/NotificationContext";
 import { getAvatarUrl } from "../utils/avatarUtils";
-import useKeyboardViewport from "../hooks/useKeyboardViewport";
 const API_HOST = API_URL?.replace(/\/?api$/, "");
 const SOCKET_URL = API_HOST || window.location.origin;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "😡"];
@@ -198,22 +197,6 @@ export default function Messages() {
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [requestsError, setRequestsError] = useState("");
   const [lockedConversationId, setLockedConversationId] = useState(null);
-
-  useKeyboardViewport(true);
-
-  useEffect(() => {
-    const { body, documentElement } = document;
-    const previousBodyOverflow = body.style.overflow;
-    const previousDocOverflow = documentElement.style.overflow;
-
-    body.style.overflow = "hidden";
-    documentElement.style.overflow = "hidden";
-
-    return () => {
-      body.style.overflow = previousBodyOverflow;
-      documentElement.style.overflow = previousDocOverflow;
-    };
-  }, []);
 
   const [activeChat, setActiveChat] = useState(null);
   const activeConversation = activeChat;
