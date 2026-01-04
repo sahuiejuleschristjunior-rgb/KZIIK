@@ -2728,21 +2728,26 @@ export default function Messages() {
   const renderAttachment = (msg) => {
     if (!msg?.fileUrl) return null;
     const url = resolveUrl(msg.fileUrl);
+    const isImage =
+      msg.type === "image" || (msg.mimeType && msg.mimeType.startsWith("image/"));
+    const isVideo =
+      msg.type === "video" || (msg.mimeType && msg.mimeType.startsWith("video/"));
+    const attachmentLabel = msg.content || msg.fileName;
 
-    if (msg.type === "image") {
+    if (isImage) {
       return (
         <div className="message-attachment image">
-          <img src={url} alt={msg.fileName || "Image"} />
-          {msg.content && <div className="attachment-name">{msg.content}</div>}
+          <img src={url} alt={attachmentLabel || "Image"} />
+          {attachmentLabel && <div className="attachment-name">{attachmentLabel}</div>}
         </div>
       );
     }
 
-    if (msg.type === "video") {
+    if (isVideo) {
       return (
         <div className="message-attachment video">
           <video controls src={url} />
-          <div className="attachment-name">{msg.content || msg.fileName || "Vidéo"}</div>
+          <div className="attachment-name">{attachmentLabel || "Vidéo"}</div>
         </div>
       );
     }
@@ -2754,7 +2759,7 @@ export default function Messages() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <div className="attachment-name">{msg.content || msg.fileName || "Fichier"}</div>
+        <div className="attachment-name">{attachmentLabel || "Fichier"}</div>
         {msg.mimeType && <div className="attachment-meta">{msg.mimeType}</div>}
       </a>
     );
