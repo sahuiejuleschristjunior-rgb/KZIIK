@@ -264,10 +264,12 @@ export default function JobConversationPage() {
       }
     };
 
+    socket.on("message:new", handleMessage);
     socket.on("new_message", handleMessage);
     socket.on("typing", handleTyping);
 
     return () => {
+      socket.off("message:new", handleMessage);
       socket.off("new_message", handleMessage);
       socket.off("typing", handleTyping);
     };

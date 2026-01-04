@@ -323,16 +323,18 @@ exports.sendMessage = async (req, res) => {
     conversation.updatedAt = new Date();
     await conversation.save();
 
-    const populated = await populateMessage(message);
-
     /* 🔥 SOCKET.IO — MESSAGE TEMPS RÉEL */
-    const payload = {
+    getIO().to(receiverId.toString()).emit("new_message", {
       from: sender,
       to: receiverId,
-      message: populated,
-    };
+      message,
+    });
 
-    getIO().to(receiverId.toString()).to(sender.toString()).emit("new_message", payload);
+    getIO().to(sender.toString()).emit("new_message", {
+      from: sender,
+      to: receiverId,
+      message,
+    });
 
     /* 🔥 NOTIFICATION */
     await pushNotification(receiverId, {
@@ -346,7 +348,7 @@ exports.sendMessage = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Message envoyé.",
-      data: populated,
+      data: message,
     });
   } catch (error) {
     return res.status(500).json({
