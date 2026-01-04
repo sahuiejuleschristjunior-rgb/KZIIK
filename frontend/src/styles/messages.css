@@ -1755,3 +1755,68 @@
     padding-bottom: var(--chat-input-desktop-h) !important;
   }
 }
+/* =========================================================
+   PATCH DESKTOP V2 — ZÉRO ESPACE, PIXEL PERFECT
+   Cause probable: scroll container + padding/gap/marges
+========================================================= */
+
+:root{
+  --chat-input-desktop-h: 64px;
+}
+
+@media (min-width: 769px){
+
+  /* 1) On force un layout "colonne" propre */
+  .messages-content,
+  .chat-panel{
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* 2) On force LE scroll sur .chat-scroll (pas sur .chat-body) */
+  .chat-scroll{
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto !important;
+
+    /* IMPORTANT: padding bottom EXACT = hauteur barre */
+    padding-bottom: var(--chat-input-desktop-h) !important;
+
+    /* évite un faux vide (certains browsers) */
+    margin-bottom: 0 !important;
+  }
+
+  /* 3) Si .chat-body existe, on le neutralise en desktop */
+  .chat-body{
+    overflow: visible !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    gap: 0 !important; /* gap peut créer une sensation de vide */
+  }
+
+  /* 4) Barre input strictement en bas DU PANNEAU CHAT */
+  .chat-input-bar{
+    position: sticky !important;
+    bottom: 0 !important;
+
+    left: auto !important;
+    right: auto !important;
+
+    width: 100% !important;
+    height: var(--chat-input-desktop-h) !important;
+
+    padding: 10px 12px !important;
+    box-sizing: border-box !important;
+
+    background: rgba(17,17,17,.98) !important;
+    border-top: 1px solid #222 !important;
+
+    z-index: 50 !important;
+  }
+
+  /* 5) Bonus: évite que le dernier message "s'arrête trop haut"
+        à cause de marges sur .message-row */
+  .message-row{
+    margin-bottom: 0 !important;
+  }
+}
