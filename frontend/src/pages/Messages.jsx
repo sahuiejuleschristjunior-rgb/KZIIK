@@ -200,6 +200,7 @@ export default function Messages() {
 
   const [activeChat, setActiveChat] = useState(null);
   const activeConversation = activeChat;
+  const [isMobileView, setIsMobileView] = useState(false);
   const setActiveConversation = setActiveChat;
   const activeConversationIdValue = activeConversation?._id || null;
   const [messages, setMessages] = useState([]);
@@ -481,6 +482,41 @@ export default function Messages() {
     setHighlightedMessageId(messageId);
     setTimeout(() => setHighlightedMessageId(null), 1600);
   };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    const handleChange = (event) => {
+      setIsMobileView(event.matches);
+    };
+
+    handleChange(mediaQuery);
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return undefined;
+    const body = document.body;
+    if (!body) return undefined;
+
+    const previousOverflow = body.style.overflow;
+    const previousPosition = body.style.position;
+    const previousWidth = body.style.width;
+
+    if (activeChat && isMobileView) {
+      body.style.overflow = "hidden";
+      body.style.position = "fixed";
+      body.style.width = "100%";
+    }
+
+    return () => {
+      body.style.overflow = previousOverflow;
+      body.style.position = previousPosition;
+      body.style.width = previousWidth;
+    };
+  }, [activeChat, isMobileView]);
 
   const resolveUrl = (url) => {
     if (!url) return "";
