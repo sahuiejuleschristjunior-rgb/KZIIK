@@ -638,7 +638,7 @@
   .chat-input-bar {
     left: 0;
     bottom: env(safe-area-inset-bottom);
-    padding: 8px 10px calc(16px + env(safe-area-inset-bottom));
+    padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
   }
 
   .chat-close-btn {
