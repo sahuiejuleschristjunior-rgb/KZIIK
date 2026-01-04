@@ -11,6 +11,7 @@ import {
   declineMessageRequest,
   fetchInbox,
   fetchMessageRequests,
+  sendAttachmentMessage,
   sendMessagePayload,
 } from "../api/messagesApi";
 import { fetchFriends } from "../api/socialApi";
@@ -284,6 +285,10 @@ export default function Messages() {
   const messagesEndRef = useRef(null);
   const chatBodyRef = useRef(null);
   const attachMenuRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const imageInputRef = useRef(null);
+  const videoInputRef = useRef(null);
+  const documentInputRef = useRef(null);
   const attachSwipeStart = useRef(null);
   const longPressTimer = useRef(null);
   const typingTimeoutRef = useRef(null);
@@ -605,12 +610,19 @@ export default function Messages() {
     const prefix = senderId === me?._id ? "Vous: " : "";
 
     let content = msg.content || "";
+    const attachmentLabel = msg.fileUrl ? getAttachmentLabel(msg.type) : null;
     if (!content && msg.type === "audio") content = "Message vocal";
-    if (!content && msg.fileUrl) content = "Fichier";
+    if (!content && attachmentLabel) content = attachmentLabel;
     if (!content) content = "Message";
 
     return `${prefix}${content}`;
   };
+
+  function getAttachmentLabel(type) {
+    if (type === "image") return "Image";
+    if (type === "video") return "Vidéo";
+    return "Fichier";
+  }
 
   const conversationHasUnread = useCallback((conversation) => {
     if (!conversation) return false;
@@ -1747,6 +1759,74 @@ export default function Messages() {
     }
   };
 
+  const uploadAttachment = async (file, explicitType = null) => {
+    const receiverId = getConversationTargetId();
+    if (!activeChat || !receiverId || !file || !token) {
+      setInfoBanner(loadErrorMessage);
+      return;
+    }
+
+    const { replyId, preview: replyPreview } = buildReplyData(replyTo);
+
+    const clientTempId = `temp-${Date.now()}`;
+    const blobUrl = URL.createObjectURL(file);
+    const messageType =
+      explicitType ||
+      (file.type?.startsWith("image/")
+        ? "image"
+        : file.type?.startsWith("video/")
+        ? "video"
+        : "file");
+
+    const tempMessage = {
+      _id: clientTempId,
+      sender: me?._id,
+      receiver: receiverId,
+      type: messageType,
+      fileUrl: blobUrl,
+      fileName: file.name,
+      mimeType: file.type || null,
+      content: file.name || getAttachmentLabel(messageType),
+      clientTempId,
+      replyTo: replyId,
+      replyPreview,
+      createdAt: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, tempMessage]);
+    setTimeout(() => scrollToBottom(true), 10);
+
+    try {
+      const { ok, data } = await sendAttachmentMessage({
+        file,
+        receiver: receiverId,
+        type: explicitType || undefined,
+        content: file.name,
+        clientTempId,
+        replyTo: replyId,
+      });
+
+      if (ok && data?.data) {
+        upsertMessage(data.data);
+      } else if (data?.message) {
+        setInfoBanner(data.message);
+      }
+    } catch (err) {
+      console.error("Erreur envoi fichier", err);
+      setInfoBanner(loadErrorMessage);
+      setMessages((prev) =>
+        prev.filter(
+          (m) =>
+            m.clientTempId !== clientTempId &&
+            m._id !== clientTempId &&
+            m.clientTempId !== tempMessage._id
+        )
+      );
+    } finally {
+      setReplyTo(null);
+    }
+  };
+
   const saveEditedMessage = async () => {
     if (!editingMessage || !input.trim()) return;
     const content = input.trim();
@@ -1869,6 +1949,11 @@ export default function Messages() {
       const url = resolveUrl(msg.audioUrl);
       const preview = getAudioPreviewText(msg);
       return url ? `${preview}\n${url}` : preview;
+    }
+    if (msg.fileUrl) {
+      const url = resolveUrl(msg.fileUrl);
+      const label = msg.content || msg.fileName || getAttachmentLabel(msg.type);
+      return url ? `${label}\n${url}` : label;
     }
     return msg.content || "";
   };
@@ -2424,6 +2509,45 @@ export default function Messages() {
     attachSwipeStart.current = null;
   };
 
+  const triggerAttachmentPicker = (ref) => {
+    setShowAttachMenu(false);
+    if (ref?.current) {
+      ref.current.value = "";
+      ref.current.click();
+    }
+  };
+
+  const handleAttachmentInput = (event, explicitType = null) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    uploadAttachment(file, explicitType);
+    event.target.value = "";
+  };
+
+  const shareLocation = () => {
+    setShowAttachMenu(false);
+    if (!navigator?.geolocation) {
+      setInfoBanner("La localisation n'est pas supportée sur cet appareil.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords || {};
+        if (typeof latitude !== "number" || typeof longitude !== "number") {
+          setInfoBanner("Impossible de récupérer la localisation.");
+          return;
+        }
+        const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        sendMessage(`Ma localisation : ${mapsUrl}`);
+      },
+      (err) => {
+        console.error("Erreur géolocalisation", err);
+        setInfoBanner("Impossible de récupérer la localisation.");
+      }
+    );
+  };
+
   useEffect(() => {
     const closeAttach = (e) => {
       if (
@@ -2601,9 +2725,52 @@ export default function Messages() {
     return preview.content || "Message";
   };
 
+  const renderAttachment = (msg) => {
+    if (!msg?.fileUrl) return null;
+    const url = resolveUrl(msg.fileUrl);
+
+    if (msg.type === "image") {
+      return (
+        <div className="message-attachment image">
+          <img src={url} alt={msg.fileName || "Image"} />
+          {msg.content && <div className="attachment-name">{msg.content}</div>}
+        </div>
+      );
+    }
+
+    if (msg.type === "video") {
+      return (
+        <div className="message-attachment video">
+          <video controls src={url} />
+          <div className="attachment-name">{msg.content || msg.fileName || "Vidéo"}</div>
+        </div>
+      );
+    }
+
+    return (
+      <a
+        className="message-attachment file"
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <div className="attachment-name">{msg.content || msg.fileName || "Fichier"}</div>
+        {msg.mimeType && <div className="attachment-meta">{msg.mimeType}</div>}
+      </a>
+    );
+  };
+
   const renderMessageContent = (msg) => {
     const preview = getReplyPreview(msg);
     const content = msg.type === "audio" ? renderAudioBubble(msg) : msg.content;
+    const attachment = renderAttachment(msg);
+
+    const renderBodyContent = () => {
+      if (typeof content === "string") {
+        return content ? <div className="message-text">{content}</div> : null;
+      }
+      return content;
+    };
 
     return (
       <div className="message-content">
@@ -2626,7 +2793,10 @@ export default function Messages() {
             </div>
           </div>
         )}
-        <div className="message-body">{content}</div>
+        <div className="message-body">
+          {attachment}
+          {renderBodyContent()}
+        </div>
         <div className="message-meta">
           <span className="message-time">{formatMessageTime(msg.createdAt)}</span>
           {msg.editedAt && <span className="message-edited">Modifié</span>}
@@ -3034,6 +3204,33 @@ export default function Messages() {
                 >
                   <PlusIcon />
                 </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
+                  onChange={(e) => handleAttachmentInput(e)}
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={imageInputRef}
+                  style={{ display: "none" }}
+                  onChange={(e) => handleAttachmentInput(e, "image")}
+                />
+                <input
+                  type="file"
+                  accept="video/*"
+                  ref={videoInputRef}
+                  style={{ display: "none" }}
+                  onChange={(e) => handleAttachmentInput(e, "video")}
+                />
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  ref={documentInputRef}
+                  style={{ display: "none" }}
+                  onChange={(e) => handleAttachmentInput(e, "file")}
+                />
               </div>
 
               {isRecording ? (
@@ -3125,22 +3322,53 @@ export default function Messages() {
               )}
             </div>
 
-            {showAttachMenu && (
-              <div
-                className="attach-sheet"
-                role="dialog"
-                onTouchStart={handleAttachTouchStart}
-                onTouchEnd={handleAttachTouchEnd}
-              >
-                <div className="attach-sheet-handle" />
-                <div className="attach-options">
-                  <button className="attach-item">Fichier</button>
-                  <button className="attach-item">Image</button>
-                  <button className="attach-item">Caméra</button>
-                  <button className="attach-item">Localisation</button>
+              {showAttachMenu && (
+                <div
+                  className="attach-sheet"
+                  role="dialog"
+                  onTouchStart={handleAttachTouchStart}
+                  onTouchEnd={handleAttachTouchEnd}
+                >
+                  <div className="attach-sheet-handle" />
+                  <div className="attach-options">
+                    <button
+                      className="attach-item"
+                      type="button"
+                      onClick={() => triggerAttachmentPicker(fileInputRef)}
+                    >
+                      Fichier
+                    </button>
+                    <button
+                      className="attach-item"
+                      type="button"
+                      onClick={() => triggerAttachmentPicker(imageInputRef)}
+                    >
+                      Image
+                    </button>
+                    <button
+                      className="attach-item"
+                      type="button"
+                      onClick={() => triggerAttachmentPicker(videoInputRef)}
+                    >
+                      Vidéo
+                    </button>
+                    <button
+                      className="attach-item"
+                      type="button"
+                      onClick={() => triggerAttachmentPicker(documentInputRef)}
+                    >
+                      Document
+                    </button>
+                    <button
+                      className="attach-item"
+                      type="button"
+                      onClick={shareLocation}
+                    >
+                      Localisation
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {reactionPicker.messageId && (
               <div className="reaction-picker">

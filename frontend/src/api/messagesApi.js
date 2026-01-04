@@ -150,3 +150,36 @@ export async function sendMessagePayload(payload) {
   const data = await parseJsonResponse(res);
   return { ok: res.ok, data };
 }
+
+export async function sendAttachmentMessage({
+  file,
+  receiver,
+  type,
+  content,
+  clientTempId,
+  replyTo,
+}) {
+  const token = getToken();
+  if (!token) {
+    throw new Error("Vous devez être connecté pour envoyer un fichier.");
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("receiver", receiver);
+  if (type) formData.append("type", type);
+  if (content) formData.append("content", content);
+  if (clientTempId) formData.append("clientTempId", clientTempId);
+  if (replyTo) formData.append("replyTo", replyTo);
+
+  const res = await fetch(`${API_URL}/messages/attachment`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  const data = await parseJsonResponse(res);
+  return { ok: res.ok, data };
+}
