@@ -19,6 +19,160 @@
 }
 
 /* =========================
+   MOBILE HEADER & FOOTER
+========================= */
+.mobile-navbar {
+  height: 65px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.nav-btn-round {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #111;
+  color: white;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-title-pill {
+  padding: 10px 20px;
+  background: #111;
+  border-radius: 25px;
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+}
+
+.nav-btn-pill {
+  padding: 10px 15px;
+  background: #111;
+  border-radius: 25px;
+  border: none;
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.mobile-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #000;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 999;
+}
+
+.bottom-plus-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #1a1a1a;
+  color: white;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 950px) {
+  .mobile-navbar,
+  .mobile-bottom-bar {
+    display: none;
+  }
+}
+
+.bottom-input-wrapper {
+  flex: 1;
+  background: #1a1a1a;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  padding-right: 5px;
+  transition: all 0.25s ease;
+}
+
+.bottom-input-wrapper.expanded {
+  transform: scale(1.05);
+}
+
+.bottom-input-wrapper input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  height: 42px;
+  outline: none;
+}
+
+.bottom-input-wrapper input::placeholder {
+  color: #888;
+}
+
+.bottom-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: black;
+  font-size: 18px;
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   MOBILE CONTENT WRAPPER
+========================= */
+@media (max-width: 950px) {
+  .messages-page {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    margin-top: 0;
+    padding-top: 65px;
+    padding-bottom: 85px;
+    background: #000;
+  }
+
+  .messages-wrapper {
+    flex: 1;
+    width: 100%;
+    padding: 12px;
+    height: calc(100vh - 65px - 85px);
+    overflow-y: auto;
+  }
+
+  .messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* =========================
    SIDEBAR (LEFT)
 ========================= */
 .messages-sidebar {
