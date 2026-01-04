@@ -17,7 +17,7 @@ function generateOTP() {
 ================================ */
 function createToken(user) {
   const payload = { id: user._id, email: user.email, role: user.role };
-  const jwtSecret = process.env.JWT_SECRET || "change_this_secret_now";
+  const jwtSecret = process.env.JWT_SECRET;
   return jwt.sign(payload, jwtSecret, { expiresIn: "30d" });
 }
 
