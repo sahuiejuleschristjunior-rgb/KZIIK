@@ -238,6 +238,7 @@ export default function Messages() {
 
   const [replyTo, setReplyTo] = useState(null);
   const [editingMessage, setEditingMessage] = useState(null);
+  const [pendingAttachments, setPendingAttachments] = useState([]);
   const [messageActions, setMessageActions] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [mediaViewer, setMediaViewer] = useState({ open: false, url: null, type: null });
@@ -297,6 +298,7 @@ export default function Messages() {
   const imageInputRef = useRef(null);
   const videoInputRef = useRef(null);
   const documentInputRef = useRef(null);
+  const pendingAttachmentsRef = useRef([]);
   const attachSwipeStart = useRef(null);
   const longPressTimer = useRef(null);
   const typingTimeoutRef = useRef(null);
@@ -334,6 +336,20 @@ export default function Messages() {
   }, [lockedConversationId]);
 
   const navigationHandledRef = useRef(null);
+
+  useEffect(() => {
+    pendingAttachmentsRef.current = pendingAttachments;
+  }, [pendingAttachments]);
+
+  useEffect(() => {
+    return () => {
+      pendingAttachmentsRef.current.forEach((item) => {
+        if (item?.previewUrl) {
+          URL.revokeObjectURL(item.previewUrl);
+        }
+      });
+    };
+  }, []);
 
   /* =====================================================
      HELPERS
@@ -1805,6 +1821,28 @@ export default function Messages() {
     }
   };
 
+  const resolveAttachmentType = (file, explicitType = null) => {
+    if (explicitType) return explicitType;
+    if (file?.type?.startsWith("image/")) return "image";
+    if (file?.type?.startsWith("video/")) return "video";
+    return "file";
+  };
+
+  const revokePreviewUrls = (items = []) => {
+    items.forEach((item) => {
+      if (item?.previewUrl) {
+        URL.revokeObjectURL(item.previewUrl);
+      }
+    });
+  };
+
+  const clearPendingAttachments = () => {
+    setPendingAttachments((prev) => {
+      revokePreviewUrls(prev);
+      return [];
+    });
+  };
+
   const uploadAttachment = async (file, explicitType = null) => {
     const receiverId = getConversationTargetId();
     if (!activeChat || !receiverId || !file || !token) {
@@ -1816,13 +1854,7 @@ export default function Messages() {
 
     const clientTempId = `temp-${Date.now()}`;
     const blobUrl = URL.createObjectURL(file);
-    const messageType =
-      explicitType ||
-      (file.type?.startsWith("image/")
-        ? "image"
-        : file.type?.startsWith("video/")
-        ? "video"
-        : "file");
+    const messageType = resolveAttachmentType(file, explicitType);
 
     const tempMessage = {
       _id: clientTempId,
@@ -1873,6 +1905,16 @@ export default function Messages() {
     }
   };
 
+  const sendPendingAttachments = async () => {
+    if (!pendingAttachments.length) return;
+    const attachmentsToSend = pendingAttachments;
+    clearPendingAttachments();
+
+    for (const attachment of attachmentsToSend) {
+      await uploadAttachment(attachment.file, attachment.type);
+    }
+  };
+
   const saveEditedMessage = async () => {
     if (!editingMessage || !input.trim()) return;
     const content = input.trim();
@@ -1908,6 +1950,7 @@ export default function Messages() {
     if (editingMessage) {
       await saveEditedMessage();
     } else {
+      await sendPendingAttachments();
       await sendMessage();
     }
   };
@@ -2543,6 +2586,35 @@ export default function Messages() {
   /* =====================================================
      ATTACH MENU
   ===================================================== */
+  const addPendingAttachments = (files, explicitType = null) => {
+    const fileArray = Array.from(files || []);
+    if (!fileArray.length) return;
+
+    const nextItems = fileArray.map((file, index) => {
+      const type = resolveAttachmentType(file, explicitType);
+      return {
+        id: `pending-${Date.now()}-${index}-${Math.random().toString(16).slice(2)}`,
+        file,
+        type,
+        previewUrl: URL.createObjectURL(file),
+        name: file.name || "Pièce jointe",
+        mimeType: file.type || null,
+      };
+    });
+
+    setPendingAttachments((prev) => [...prev, ...nextItems]);
+  };
+
+  const removePendingAttachment = (id) => {
+    setPendingAttachments((prev) => {
+      const target = prev.find((item) => item.id === id);
+      if (target?.previewUrl) {
+        URL.revokeObjectURL(target.previewUrl);
+      }
+      return prev.filter((item) => item.id !== id);
+    });
+  };
+
   const handleAttachTouchStart = (event) => {
     attachSwipeStart.current = event.touches?.[0]?.clientY || null;
   };
@@ -2564,9 +2636,7 @@ export default function Messages() {
   };
 
   const handleAttachmentInput = (event, explicitType = null) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    uploadAttachment(file, explicitType);
+    addPendingAttachments(event.target.files, explicitType);
     event.target.value = "";
   };
 
@@ -2675,6 +2745,10 @@ export default function Messages() {
 
   useEffect(() => {
     resetCallOverlay();
+  }, [activeChat?._id]);
+
+  useEffect(() => {
+    clearPendingAttachments();
   }, [activeChat?._id]);
 
   useEffect(() => {
@@ -3277,6 +3351,52 @@ export default function Messages() {
                 </button>
               </div>
             )}
+
+            {pendingAttachments.length > 0 && (
+              <div className="pending-attachments" role="list">
+                {pendingAttachments.map((attachment) => (
+                  <div
+                    className="pending-attachment-card"
+                    key={attachment.id}
+                    role="listitem"
+                  >
+                    <button
+                      className="pending-attachment-remove"
+                      type="button"
+                      onClick={() => removePendingAttachment(attachment.id)}
+                      aria-label="Retirer la pièce jointe"
+                    >
+                      <CloseIcon />
+                    </button>
+                    <div className="pending-attachment-preview">
+                      {attachment.type === "image" ? (
+                        <img
+                          src={attachment.previewUrl}
+                          alt={attachment.name || "Image"}
+                          loading="lazy"
+                        />
+                      ) : attachment.type === "video" ? (
+                        <video
+                          src={attachment.previewUrl}
+                          muted
+                          playsInline
+                          controls
+                        />
+                      ) : (
+                        <div className="pending-attachment-file">
+                          <span className="pending-attachment-file-icon" aria-hidden>
+                            📎
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="pending-attachment-name" title={attachment.name}>
+                      {attachment.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
             <div
               className="chat-input-bar"
               onMouseMove={updateRecordingDrag}
@@ -3303,6 +3423,7 @@ export default function Messages() {
                   ref={fileInputRef}
                   style={{ display: "none" }}
                   onChange={(e) => handleAttachmentInput(e)}
+                  multiple
                 />
                 <input
                   type="file"
@@ -3310,6 +3431,7 @@ export default function Messages() {
                   ref={imageInputRef}
                   style={{ display: "none" }}
                   onChange={(e) => handleAttachmentInput(e, "image")}
+                  multiple
                 />
                 <input
                   type="file"
@@ -3317,6 +3439,7 @@ export default function Messages() {
                   ref={videoInputRef}
                   style={{ display: "none" }}
                   onChange={(e) => handleAttachmentInput(e, "video")}
+                  multiple
                 />
                 <input
                   type="file"
@@ -3324,6 +3447,7 @@ export default function Messages() {
                   ref={documentInputRef}
                   style={{ display: "none" }}
                   onChange={(e) => handleAttachmentInput(e, "file")}
+                  multiple
                 />
               </div>
 
@@ -3397,7 +3521,7 @@ export default function Messages() {
                     <EmojiIcon />
                   </button>
 
-                  {input.trim().length > 0 ? (
+                  {input.trim().length > 0 || pendingAttachments.length > 0 ? (
                     <button className="chat-send-btn" onClick={submitMessage}>
                       <SendIcon />
                     </button>
