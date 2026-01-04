@@ -12,7 +12,7 @@ function convertAudioSafe(input, output) {
       input,
       "-vn",
       "-acodec",
-      "libmp3lame",
+      "libopus",
       "-ar",
       "44100",
       "-ac",
