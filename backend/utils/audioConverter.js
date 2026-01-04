@@ -1,51 +1,70 @@
-const fs = require("fs");
-const path = require("path");
-const { execFile } = require("child_process");
-const { promisify } = require("util");
+const { spawn } = require("child_process");
 const ffmpegPath = require("ffmpeg-static");
 
-const execFileAsync = promisify(execFile);
-const ffmpegExecutable = process.env.FFMPEG_PATH || ffmpegPath || "ffmpeg";
+function convertAudioSafe(input, output) {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const args = [
+      "-y",
+      "-i",
+      input,
+      "-vn",
+      "-acodec",
+      "libmp3lame",
+      "-ar",
+      "44100",
+      "-ac",
+      "2",
+      "-b:a",
+      "128k",
+      output,
+    ];
 
-function ensureDir(filePath) {
-  const dir = path.dirname(filePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-}
+    const ffmpeg = spawn(ffmpegPath || "ffmpeg", args, {
+      windowsHide: true,
+    });
 
-async function convertWebmToMp3(inputPath, outputPath) {
-  if (!inputPath || !outputPath) {
-    throw new Error("Chemins d'entrée et de sortie requis pour la conversion audio.");
-  }
+    let stderr = "";
+    let stdout = "";
+    const timeout = setTimeout(() => {
+      ffmpeg.kill("SIGKILL");
+      if (!settled) {
+        settled = true;
+        reject(new Error("ffmpeg conversion timed out"));
+      }
+    }, 10000);
 
-  ensureDir(outputPath);
+    ffmpeg.stdout.on("data", (chunk) => {
+      stdout += chunk;
+    });
 
-  const args = [
-    "-y",
-    "-i",
-    inputPath,
-    "-vn",
-    "-ar",
-    "44100",
-    "-ac",
-    "2",
-    "-b:a",
-    "128k",
-    "-f",
-    "mp3",
-    outputPath,
-  ];
+    ffmpeg.stderr.on("data", (chunk) => {
+      stderr += chunk;
+    });
 
-  try {
-    await execFileAsync(ffmpegExecutable, args);
-    return { success: true, outputPath };
-  } catch (error) {
-    const message = error?.stderr || error?.message || "Conversion audio échouée";
-    throw new Error(message);
-  }
+    ffmpeg.on("error", (err) => {
+      clearTimeout(timeout);
+      if (!settled) {
+        settled = true;
+        reject(err);
+      }
+    });
+
+    ffmpeg.on("close", (code) => {
+      clearTimeout(timeout);
+      if (settled) {
+        return;
+      }
+      settled = true;
+      if (code !== 0) {
+        reject(new Error(stderr || `ffmpeg exited with code ${code}`));
+        return;
+      }
+      resolve({ stdout, stderr });
+    });
+  });
 }
 
 module.exports = {
-  convertWebmToMp3,
+  convertAudioSafe,
 };
