@@ -17,7 +17,20 @@ import { fetchFriends } from "../api/socialApi";
 import { useActiveConversation } from "../context/ActiveConversationContext";
 import { useNotifications } from "../context/NotificationContext";
 import { getAvatarUrl } from "../utils/avatarUtils";
-const API_HOST = API_URL?.replace(/\/?api$/, "");
+
+const buildApiHost = () => {
+  if (!API_URL) return "";
+
+  try {
+    const parsed = new URL(API_URL);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch (err) {
+    // Fallback for relative API paths (dev server)
+    return API_URL.replace(/\/?api\/?$/, "").replace(/\/$/, "");
+  }
+};
+
+const API_HOST = buildApiHost();
 const SOCKET_URL = API_HOST || window.location.origin;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "😡"];
 const loadErrorMessage = "Impossible de charger vos conversations";
