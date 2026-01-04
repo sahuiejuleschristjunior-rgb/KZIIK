@@ -38,6 +38,96 @@ const getApiMeta = () => {
   }
 };
 
+const AttachmentComposerModal = ({
+  open,
+  attachments,
+  text,
+  onTextChange,
+  onClose,
+  onSend,
+  onRemove,
+  sending,
+  textareaRef,
+}) => {
+  if (!open) return null;
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      onSend?.();
+    }
+  };
+
+  return (
+    <div className="attachment-composer-backdrop" role="dialog" aria-modal="true">
+      <div className="attachment-composer" aria-label="Composer une pièce jointe">
+        <header className="attachment-composer__header">
+          <button className="attachment-composer__close" onClick={onClose} aria-label="Fermer">
+            ✕
+          </button>
+          <div className="attachment-composer__title">Nouvelle pièce jointe</div>
+          <button
+            className="attachment-composer__send"
+            type="button"
+            onClick={onSend}
+            disabled={!attachments.length || sending}
+          >
+            {sending ? "Envoi..." : "Envoyer"}
+          </button>
+        </header>
+
+        <div className="attachment-composer__body">
+          <div className="attachment-composer__grid" role="list">
+            {attachments.map((attachment) => (
+              <div className="attachment-composer__item" key={attachment.id} role="listitem">
+                <button
+                  className="attachment-composer__item-remove"
+                  type="button"
+                  onClick={() => onRemove?.(attachment.id)}
+                  aria-label={`Retirer ${attachment.name || "la pièce jointe"}`}
+                >
+                  ✕
+                </button>
+                <div className="attachment-composer__preview">
+                  {attachment.type === "image" ? (
+                    <img src={attachment.previewUrl} alt={attachment.name || "Aperçu image"} loading="lazy" />
+                  ) : attachment.type === "video" ? (
+                    <video src={attachment.previewUrl} muted controls playsInline />
+                  ) : attachment.type === "audio" ? (
+                    <audio src={attachment.previewUrl} controls />
+                  ) : (
+                    <div className="attachment-composer__file">
+                      <span className="attachment-composer__file-icon" aria-hidden>
+                        📎
+                      </span>
+                      <span className="attachment-composer__file-name">{attachment.name}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="attachment-composer__filename" title={attachment.name}>
+                  {attachment.name}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <footer className="attachment-composer__footer">
+          <textarea
+            ref={textareaRef}
+            value={text}
+            onChange={(e) => onTextChange?.(e.target.value)}
+            placeholder="Ajouter un message ou une légende"
+            className="attachment-composer__textarea"
+            onKeyDown={handleKeyDown}
+          />
+          <div className="attachment-composer__hint">Ctrl/⌘ + Entrée pour envoyer</div>
+        </footer>
+      </div>
+    </div>
+  );
+};
+
 const { origin: API_ORIGIN, path: API_BASE_PATH } = getApiMeta();
 const SOCKET_URL = API_ORIGIN || window.location.origin;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "😡"];
@@ -239,6 +329,9 @@ export default function Messages() {
   const [replyTo, setReplyTo] = useState(null);
   const [editingMessage, setEditingMessage] = useState(null);
   const [pendingAttachments, setPendingAttachments] = useState([]);
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [composerText, setComposerText] = useState("");
+  const [composerSending, setComposerSending] = useState(false);
   const [messageActions, setMessageActions] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [mediaViewer, setMediaViewer] = useState({ open: false, url: null, type: null });
@@ -305,6 +398,7 @@ export default function Messages() {
   const socketRef = useRef(null);
   const swipeDataRef = useRef({});
   const inputRef = useRef(null);
+  const composerTextareaRef = useRef(null);
   const messageRefs = useRef({});
   const [typingState, setTypingState] = useState({});
 
@@ -1825,6 +1919,7 @@ export default function Messages() {
     if (explicitType) return explicitType;
     if (file?.type?.startsWith("image/")) return "image";
     if (file?.type?.startsWith("video/")) return "video";
+    if (file?.type?.startsWith("audio/")) return "audio";
     return "file";
   };
 
@@ -1843,11 +1938,19 @@ export default function Messages() {
     });
   };
 
-  const uploadAttachment = async (file, explicitType = null) => {
+  const closeAttachmentComposer = () => {
+    setComposerOpen(false);
+    setComposerText("");
+    setComposerSending(false);
+    clearPendingAttachments();
+    setShowAttachMenu(false);
+  };
+
+  const uploadAttachment = async (file, explicitType = null, caption = "") => {
     const receiverId = getConversationTargetId();
     if (!activeChat || !receiverId || !file || !token) {
       setInfoBanner(loadErrorMessage);
-      return;
+      return false;
     }
 
     const { replyId, preview: replyPreview } = buildReplyData(replyTo);
@@ -1855,6 +1958,7 @@ export default function Messages() {
     const clientTempId = `temp-${Date.now()}`;
     const blobUrl = URL.createObjectURL(file);
     const messageType = resolveAttachmentType(file, explicitType);
+    const messageContent = caption?.trim?.() ? caption.trim() : file.name || getAttachmentLabel(messageType);
 
     const tempMessage = {
       _id: clientTempId,
@@ -1864,7 +1968,7 @@ export default function Messages() {
       fileUrl: blobUrl,
       fileName: file.name,
       mimeType: file.type || null,
-      content: file.name || getAttachmentLabel(messageType),
+      content: messageContent,
       clientTempId,
       replyTo: replyId,
       replyPreview,
@@ -1879,13 +1983,14 @@ export default function Messages() {
         file,
         receiver: receiverId,
         type: explicitType || undefined,
-        content: file.name,
+        content: messageContent,
         clientTempId,
         replyTo: replyId,
       });
 
       if (ok && data?.data) {
         upsertMessage(data.data);
+        return true;
       } else if (data?.message) {
         setInfoBanner(data.message);
       }
@@ -1903,17 +2008,70 @@ export default function Messages() {
     } finally {
       setReplyTo(null);
     }
+
+    return false;
   };
 
-  const sendPendingAttachments = async () => {
+  const sendPendingAttachments = async (caption = "") => {
     if (!pendingAttachments.length) return;
     const attachmentsToSend = pendingAttachments;
     clearPendingAttachments();
 
     for (const attachment of attachmentsToSend) {
-      await uploadAttachment(attachment.file, attachment.type);
+      await uploadAttachment(attachment.file, attachment.type, caption);
     }
   };
+
+  const sendComposerAttachments = async () => {
+    if (!pendingAttachments.length || composerSending) return;
+    setComposerSending(true);
+    const caption = composerText.trim();
+    const attachmentsToSend = [...pendingAttachments];
+    let allOk = true;
+
+    for (const attachment of attachmentsToSend) {
+      const success = await uploadAttachment(attachment.file, attachment.type, caption);
+      if (!success) {
+        allOk = false;
+      }
+    }
+
+    setComposerSending(false);
+
+    if (allOk) {
+      clearPendingAttachments();
+      setComposerText("");
+      setComposerOpen(false);
+      setTimeout(() => scrollToBottom(true), 20);
+    }
+  };
+
+  useEffect(() => {
+    if (!composerOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeydown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeAttachmentComposer();
+      }
+      if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        sendComposerAttachments();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeydown);
+    const focusTimeout = setTimeout(() => composerTextareaRef.current?.focus(), 50);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeydown);
+      clearTimeout(focusTimeout);
+    };
+  }, [composerOpen, closeAttachmentComposer, sendComposerAttachments]);
 
   const saveEditedMessage = async () => {
     if (!editingMessage || !input.trim()) return;
@@ -1947,6 +2105,7 @@ export default function Messages() {
   };
 
   const submitMessage = async () => {
+    if (composerOpen) return;
     if (editingMessage) {
       await saveEditedMessage();
     } else {
@@ -2599,10 +2758,12 @@ export default function Messages() {
         previewUrl: URL.createObjectURL(file),
         name: file.name || "Pièce jointe",
         mimeType: file.type || null,
+        size: file.size || 0,
       };
     });
 
     setPendingAttachments((prev) => [...prev, ...nextItems]);
+    setComposerOpen(true);
   };
 
   const removePendingAttachment = (id) => {
@@ -2985,225 +3146,232 @@ export default function Messages() {
             )}
           </div>
         </div>
-      )}
-
-      <div className={`messages-page ${activeChat ? "chat-open" : ""}`}>
-      {/* ================= LEFT — AMIS ================= */}
-      <aside className="messages-sidebar">
-        <div className="messages-sidebar-header">
-          <h2>Messages</h2>
-        </div>
-
-        <div className="messages-tabs">
-          <button
-            className={listTab === "conversations" ? "active" : ""}
-            onClick={() => setListTab("conversations")}
-          >
-            Conversations
-          </button>
-          <button
-            className={listTab === "requests" ? "active" : ""}
-            onClick={() => setListTab("requests")}
-          >
-            Demandes
-            {pendingRequestsCount > 0 && (
-              <span className="badge">{pendingRequestsCount}</span>
-            )}
-          </button>
-        </div>
-
-        {listTab === "conversations" && (
-          <div className="messages-search">
-            <input
-              type="text"
-              placeholder="Rechercher un ami"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
         )}
 
-        {infoBanner && <div className="messages-banner">{infoBanner}</div>}
+        <div className={`messages-page ${activeChat ? "chat-open" : ""}`}>
+          <AttachmentComposerModal
+            open={composerOpen}
+            attachments={pendingAttachments}
+            text={composerText}
+            onTextChange={setComposerText}
+            onClose={closeAttachmentComposer}
+            onSend={sendComposerAttachments}
+            onRemove={removePendingAttachment}
+            sending={composerSending}
+            textareaRef={composerTextareaRef}
+          />
+          {/* ================= LEFT — AMIS ================= */}
+          <aside className="messages-sidebar">
+            <div className="messages-sidebar-header">
+              <h2>Messages</h2>
+            </div>
 
-        <div className="messages-list">
-          {listTab === "conversations" ? (
-            <>
-              {loadingConversations ? (
-                <div className="messages-loading">
-                  Chargement des conversations…
-                </div>
-              ) : errorFriends ? (
-                <div className="messages-empty">{errorFriends}</div>
-              ) : displayedFriends.length === 0 && !isDirectConversation ? (
-                <div className="messages-empty">
-                  Aucune conversation pour l’instant
-                </div>
-              ) : (
-                displayedFriends.map((friend) => {
-                  const convId = getFriendId(friend);
-                  const isActive =
-                    activeChat?._id && getFriendId(activeChat) === convId;
-                  const hasUnread = friend.hasUnread ?? conversationHasUnread(friend);
-                  const isHighlighted = Boolean(friend.isHighlighted || friend.__uiHighlight);
-
-                  return (
-                    <div
-                      key={convId || friend._id}
-                      className={`conversation-item ${isActive ? "active" : ""} ${
-                        isHighlighted ? "is-highlighted" : ""
-                      }`}
-                      data-conversation-id={friend._id}
-                      data-conv-id={convId}
-                      onClick={() => handleConversationClick(friend)}
-                    >
-                      <Avatar
-                        avatar={friend.avatar}
-                        name={friend.name}
-                        className="conversation-avatar"
-                      />
-
-                      <div className="conversation-info">
-                        <div className="conversation-name">
-                          {friend.name}
-                          {hasUnread && <span className="inbox-badge-new">Nouveau</span>}
-                        </div>
-                        <div className="conversation-last-message">
-                          {getLastMessagePreview(friend)}
-                        </div>
-                      </div>
-
-                      {friend.unreadCount > 0 && (
-                        <div className="conv-unread-badge">{friend.unreadCount}</div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
-            </>
-          ) : (
-            <>
-              {loadingRequests && (
-                <div className="messages-empty">Chargement…</div>
-              )}
-              {!loadingRequests && requestsError && (
-                <div className="messages-empty">{requestsError}</div>
-              )}
-              {!loadingRequests && !requestsError && requests.length === 0 && (
-                <div className="messages-empty">Aucune demande reçue</div>
-              )}
-              {requests.map((req) => (
-                <div key={req._id} className="request-item">
-                  <div className="request-main">
-                    <Avatar
-                      avatar={req?.fromUser?.avatar}
-                      name={req?.fromUser?.name || "Utilisateur"}
-                      className="conversation-avatar"
-                    />
-                    <div className="request-info">
-                      <div className="conversation-name">
-                        {req?.fromUser?.name || "Utilisateur"}
-                      </div>
-                      <div className="request-message">
-                        {req.message || "Nouvelle demande de message"}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="request-actions">
-                    <button onClick={() => handleAcceptRequest(req)}>
-                      Accepter
-                    </button>
-                    <button
-                      className="ghost"
-                      onClick={() => handleDeclineRequest(req)}
-                    >
-                      Refuser
-                    </button>
-                    <button
-                      className="danger"
-                      onClick={() => handleBlockRequest(req)}
-                    >
-                      Bloquer
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </>
-          )}
-        </div>
-      </aside>
-
-      {/* ================= RIGHT — CHAT ================= */}
-      <main className="messages-content">
-        {!activeChat ? (
-          <div className="messages-placeholder">
-            <h3>Commence la conversation 👋</h3>
-          </div>
-        ) : (
-          <div className="chat-panel">
-            {/* HEADER */}
-            <div className="chat-header">
+            <div className="messages-tabs">
               <button
-                className="chat-back-btn"
-                onClick={() => {
-                  setActiveChat(null);
-                  setMessages([]);
-                  resetCallOverlay();
-                  setCallStatus({ type: null, startedAt: null, contact: null });
-                }}
+                className={listTab === "conversations" ? "active" : ""}
+                onClick={() => setListTab("conversations")}
               >
-                <BackIcon />
+                Conversations
               </button>
+              <button
+                className={listTab === "requests" ? "active" : ""}
+                onClick={() => setListTab("requests")}
+              >
+                Demandes
+                {pendingRequestsCount > 0 && (
+                  <span className="badge">{pendingRequestsCount}</span>
+                )}
+              </button>
+            </div>
 
-              <Avatar
-                avatar={activeChat.avatar}
-                name={activeChat.name}
-                className="chat-avatar"
-              />
-
-              <div className="chat-user-info">
-                <div className="chat-username">{activeChat.name}</div>
-                <div className="chat-status">
-                  {typingState[getConversationTargetId()]?.isTyping
-                    ? "En train d'écrire..."
-                    : "En ligne"}
-                </div>
+            {listTab === "conversations" && (
+              <div className="messages-search">
+                <input
+                  type="text"
+                  placeholder="Rechercher un ami"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
               </div>
-
-              <div className="chat-actions">
-                <button
-                  type="button"
-                  className="chat-action-btn"
-                  title="Appel audio"
-                  onClick={() => startCall("audio")}
-                >
-                  <PhoneIcon />
-                </button>
-
-                <button
-                  type="button"
-                  className="chat-action-btn"
-              title="Appel vidéo"
-              onClick={() => startCall("video")}
-            >
-              <VideoIcon />
-            </button>
-
-            {callOverlay.visible && (
-              <button
-                type="button"
-                className="chat-action-btn chat-action-btn--hangup"
-                title="Raccrocher"
-                onClick={endCall}
-              >
-                <PhoneDownIcon />
-              </button>
             )}
-          </div>
-        </div>
 
-            {/* BODY */}
-            <div className="chat-scroll" ref={chatBodyRef}>
-              <div className="chat-body">
+            {infoBanner && <div className="messages-banner">{infoBanner}</div>}
+
+            <div className="messages-list">
+              {listTab === "conversations" ? (
+                <>
+                  {loadingConversations ? (
+                    <div className="messages-loading">Chargement des conversations…</div>
+                  ) : errorFriends ? (
+                    <div className="messages-empty">{errorFriends}</div>
+                  ) : displayedFriends.length === 0 && !isDirectConversation ? (
+                    <div className="messages-empty">Aucune conversation pour l’instant</div>
+                  ) : (
+                    displayedFriends.map((friend) => {
+                      const convId = getFriendId(friend);
+                      const isActive =
+                        activeChat?._id && getFriendId(activeChat) === convId;
+                      const hasUnread = friend.hasUnread ?? conversationHasUnread(friend);
+                      const isHighlighted = Boolean(friend.isHighlighted || friend.__uiHighlight);
+
+                      return (
+                        <div
+                          key={convId || friend._id}
+                          className={`conversation-item ${isActive ? "active" : ""} ${
+                            isHighlighted ? "is-highlighted" : ""
+                          }`}
+                          data-conversation-id={friend._id}
+                          data-conv-id={convId}
+                          onClick={() => handleConversationClick(friend)}
+                        >
+                          <Avatar
+                            avatar={friend.avatar}
+                            name={friend.name}
+                            className="conversation-avatar"
+                          />
+
+                          <div className="conversation-info">
+                            <div className="conversation-name">
+                              {friend.name}
+                              {hasUnread && <span className="inbox-badge-new">Nouveau</span>}
+                            </div>
+                            <div className="conversation-last-message">
+                              {getLastMessagePreview(friend)}
+                            </div>
+                          </div>
+
+                          {friend.unreadCount > 0 && (
+                            <div className="conv-unread-badge">{friend.unreadCount}</div>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </>
+              ) : (
+                <>
+                  {loadingRequests && (
+                    <div className="messages-empty">Chargement…</div>
+                  )}
+                  {!loadingRequests && requestsError && (
+                    <div className="messages-empty">{requestsError}</div>
+                  )}
+                  {!loadingRequests && !requestsError && requests.length === 0 && (
+                    <div className="messages-empty">Aucune demande reçue</div>
+                  )}
+                  {requests.map((req) => (
+                    <div key={req._id} className="request-item">
+                      <div className="request-main">
+                        <Avatar
+                          avatar={req?.fromUser?.avatar}
+                          name={req?.fromUser?.name || "Utilisateur"}
+                          className="conversation-avatar"
+                        />
+                        <div className="request-info">
+                          <div className="conversation-name">
+                            {req?.fromUser?.name || "Utilisateur"}
+                          </div>
+                          <div className="request-message">
+                            {req.message || "Nouvelle demande de message"}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="request-actions">
+                        <button onClick={() => handleAcceptRequest(req)}>
+                          Accepter
+                        </button>
+                        <button
+                          className="ghost"
+                          onClick={() => handleDeclineRequest(req)}
+                        >
+                          Refuser
+                        </button>
+                        <button
+                          className="danger"
+                          onClick={() => handleBlockRequest(req)}
+                        >
+                          Bloquer
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          </aside>
+
+          {/* ================= RIGHT — CHAT ================= */}
+          <main className="messages-content">
+            {!activeChat ? (
+              <div className="messages-placeholder">
+                <h3>Commence la conversation 👋</h3>
+              </div>
+            ) : (
+              <div className="chat-panel">
+                {/* HEADER */}
+                <div className="chat-header">
+                  <button
+                    className="chat-back-btn"
+                    onClick={() => {
+                      setActiveChat(null);
+                      setMessages([]);
+                      resetCallOverlay();
+                      setCallStatus({ type: null, startedAt: null, contact: null });
+                    }}
+                  >
+                    <BackIcon />
+                  </button>
+
+                  <Avatar
+                    avatar={activeChat.avatar}
+                    name={activeChat.name}
+                    className="chat-avatar"
+                  />
+
+                  <div className="chat-user-info">
+                    <div className="chat-username">{activeChat.name}</div>
+                    <div className="chat-status">
+                      {typingState[getConversationTargetId()]?.isTyping
+                        ? "En train d'écrire..."
+                        : "En ligne"}
+                    </div>
+                  </div>
+
+                  <div className="chat-actions">
+                    <button
+                      type="button"
+                      className="chat-action-btn"
+                      title="Appel audio"
+                      onClick={() => startCall("audio")}
+                    >
+                      <PhoneIcon />
+                    </button>
+
+                    <button
+                      type="button"
+                      className="chat-action-btn"
+                      title="Appel vidéo"
+                      onClick={() => startCall("video")}
+                    >
+                      <VideoIcon />
+                    </button>
+
+                    {callOverlay.visible && (
+                      <button
+                        type="button"
+                        className="chat-action-btn chat-action-btn--hangup"
+                        title="Raccrocher"
+                        onClick={endCall}
+                      >
+                        <PhoneDownIcon />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* BODY */}
+                <div className="chat-scroll" ref={chatBodyRef}>
+                  <div className="chat-body">
                 {topPinnedMessage && (
                   <div className="pinned-banner">
                     <div className="pinned-label">Message épinglé</div>
@@ -3352,7 +3520,7 @@ export default function Messages() {
               </div>
             )}
 
-            {pendingAttachments.length > 0 && (
+            {!composerOpen && pendingAttachments.length > 0 && (
               <div className="pending-attachments" role="list">
                 {pendingAttachments.map((attachment) => (
                   <div
