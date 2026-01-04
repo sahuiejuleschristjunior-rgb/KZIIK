@@ -275,6 +275,7 @@ export default function Messages() {
   const audioRefs = useRef({});
   const currentAudioRef = useRef(null);
   const currentAudioIdRef = useRef(null);
+  const playRequestRef = useRef({});
 
   const loadedConversationIdRef = useRef(null);
   const lastReadConversationIdRef = useRef(null);
@@ -2165,17 +2166,33 @@ export default function Messages() {
   /* =====================================================
      AUDIO PLAYER
   ===================================================== */
+  const clearPendingPlayRequest = (messageId) => {
+    if (!messageId) return;
+    delete playRequestRef.current[messageId];
+  };
+
+  const isPlayRequestPending = (messageId) =>
+    Boolean(messageId && playRequestRef.current[messageId]);
+
+  const markPlayRequestPending = (messageId) => {
+    if (!messageId) return;
+    playRequestRef.current[messageId] = true;
+  };
+
   const togglePlay = (messageId) => {
     const audio = audioRefs.current[messageId];
     if (!audio) return;
 
     if (audio.paused) {
+      if (isPlayRequestPending(messageId)) return;
+
       const isSwitchingAudio =
         currentAudioRef.current &&
         currentAudioRef.current !== audio &&
         currentAudioIdRef.current;
 
       if (isSwitchingAudio) {
+        clearPendingPlayRequest(currentAudioIdRef.current);
         currentAudioRef.current.pause();
         currentAudioRef.current.currentTime = 0;
         setAudioStatus((prev) => ({
@@ -2199,14 +2216,27 @@ export default function Messages() {
       currentAudioIdRef.current = messageId;
       audio.volume = 1;
       audio.playbackRate = 1;
+      markPlayRequestPending(messageId);
       const playPromise = audio.play();
       if (playPromise?.catch) {
-        playPromise.catch((err) => {
-          if (err?.name === "AbortError") {
-            console.warn(
-              "Lecture audio interrompue avant démarrage (nouvelle requête de lecture)",
-              err
-            );
+        playPromise
+          .catch((err) => {
+            if (err?.name === "AbortError") {
+              console.warn(
+                "Lecture audio interrompue avant démarrage (nouvelle requête de lecture)",
+                err
+              );
+              setAudioStatus((prev) => ({
+                ...prev,
+                [messageId]: {
+                  ...(prev[messageId] || {}),
+                  playing: false,
+                },
+              }));
+              return;
+            }
+            console.error("Erreur lecture audio", err);
+            setInfoBanner("Impossible de lire la note vocale");
             setAudioStatus((prev) => ({
               ...prev,
               [messageId]: {
@@ -2214,20 +2244,13 @@ export default function Messages() {
                 playing: false,
               },
             }));
-            return;
-          }
-          console.error("Erreur lecture audio", err);
-          setInfoBanner("Impossible de lire la note vocale");
-          setAudioStatus((prev) => ({
-            ...prev,
-            [messageId]: {
-              ...(prev[messageId] || {}),
-              playing: false,
-            },
-          }));
-        });
+          })
+          .finally(() => clearPendingPlayRequest(messageId));
+      } else {
+        clearPendingPlayRequest(messageId);
       }
     } else {
+      clearPendingPlayRequest(messageId);
       audio.pause();
       currentAudioRef.current = audio;
       currentAudioIdRef.current = messageId;
@@ -2284,6 +2307,7 @@ export default function Messages() {
         currentAudioRef.current = null;
         currentAudioIdRef.current = null;
       }
+      clearPendingPlayRequest(msg._id);
       updateStatus();
     };
     node.onerror = (event) => {
