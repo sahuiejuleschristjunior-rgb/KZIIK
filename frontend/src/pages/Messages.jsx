@@ -2170,11 +2170,12 @@ export default function Messages() {
     if (!audio) return;
 
     if (audio.paused) {
-      if (
+      const isSwitchingAudio =
         currentAudioRef.current &&
         currentAudioRef.current !== audio &&
-        currentAudioIdRef.current
-      ) {
+        currentAudioIdRef.current;
+
+      if (isSwitchingAudio) {
         currentAudioRef.current.pause();
         currentAudioRef.current.currentTime = 0;
         setAudioStatus((prev) => ({
@@ -2186,6 +2187,14 @@ export default function Messages() {
           },
         }));
       }
+
+      // Reset playback on the target element to avoid AbortError when quickly
+      // switching sources or replaying an element whose previous play is still
+      // resolving.
+      audio.pause();
+      if (isSwitchingAudio || audio.ended) {
+        audio.currentTime = 0;
+      }
       currentAudioRef.current = audio;
       currentAudioIdRef.current = messageId;
       audio.volume = 1;
@@ -2193,6 +2202,20 @@ export default function Messages() {
       const playPromise = audio.play();
       if (playPromise?.catch) {
         playPromise.catch((err) => {
+          if (err?.name === "AbortError") {
+            console.warn(
+              "Lecture audio interrompue avant démarrage (nouvelle requête de lecture)",
+              err
+            );
+            setAudioStatus((prev) => ({
+              ...prev,
+              [messageId]: {
+                ...(prev[messageId] || {}),
+                playing: false,
+              },
+            }));
+            return;
+          }
           console.error("Erreur lecture audio", err);
           setInfoBanner("Impossible de lire la note vocale");
           setAudioStatus((prev) => ({
