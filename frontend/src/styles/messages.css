@@ -1698,28 +1698,60 @@
   padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
   padding-bottom: calc(90px + constant(safe-area-inset-bottom)) !important;
 }
-/* ==============================
-   DESKTOP ONLY — INPUT BAR LIMITÉ AU CHAT
-   (>= 769px)
+/* =========================================================
+   PATCH FINAL DESKTOP — CHAT INPUT & SCROLL
+   Objectif :
+   - Barre input limitée au panneau chat
+   - Scroll des messages jusqu’au bord de la barre
+   - ZÉRO vide noir
+========================================================= */
+
+/* Hauteur réelle de la barre input desktop */
+:root {
+  --chat-input-desktop-h: 64px;
+}
+
+/* ===============================
+   DESKTOP ONLY (>= 769px)
 ================================ */
 @media (min-width: 769px) {
+
+  /* Assure une base saine */
+  .messages-content,
+  .chat-panel {
+    min-height: 0;
+    position: relative;
+  }
+
+  /* ===============================
+     BARRE INPUT (DESKTOP)
+     -> reste dans la colonne chat
+  ================================ */
   .chat-input-bar {
-    position: sticky !important;   /* ou relative si tu préfères */
+    position: sticky !important;
     bottom: 0 !important;
 
     left: auto !important;
     right: auto !important;
 
-    width: 100% !important;        /* 100% du panneau chat */
+    width: 100% !important;
     max-width: 100% !important;
 
-    z-index: 6;
+    height: var(--chat-input-desktop-h);
+    padding: 10px 12px !important;
+    box-sizing: border-box;
+
     background: rgba(17, 17, 17, 0.98);
+    border-top: 1px solid #222;
+    z-index: 10;
   }
 
-  /* Optionnel : l'espace en bas des messages (si tu avais mis 120px partout) */
-  .chat-scroll,
-  .chat-body {
-    padding-bottom: 90px !important;
+  /* ===============================
+     SCROLL DES MESSAGES
+     -> descend EXACTEMENT sous la barre
+  ================================ */
+  .chat-body,
+  .chat-scroll {
+    padding-bottom: var(--chat-input-desktop-h) !important;
   }
 }
