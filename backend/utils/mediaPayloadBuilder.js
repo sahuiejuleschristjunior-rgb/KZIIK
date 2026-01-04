@@ -45,10 +45,14 @@ function buildMediaPayload(file) {
   if (mime.startsWith("image/")) {
     const targetName = `${path.parse(file.filename).name}.webp`;
     const targetPath = path.join(uploadsDir, targetName);
-    compressImageAsync(file, targetPath);
+    const isSamePath = path.resolve(file.path) === path.resolve(targetPath);
+
+    if (!isSamePath) {
+      compressImageAsync(file, targetPath);
+    }
 
     return {
-      url: `/uploads/${targetName}`,
+      url: `/uploads/${isSamePath ? file.filename : targetName}`,
       type: "image",
     };
   }
