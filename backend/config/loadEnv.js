@@ -43,6 +43,9 @@ const loadEnvFile = (filePath) => {
   });
 };
 
+// Avoid repeated warnings if loadEnv is required multiple times in the same process
+let hasWarnedForMissingJwtSecret = false;
+
 module.exports = () => {
   // Autorise un fichier .env à la racine du projet (ex: /var/www/kziik/.env)
   // puis un fichier spécifique au dossier backend (backend/.env). Le premier
@@ -57,7 +60,18 @@ module.exports = () => {
 
   // 🔐 Garantit qu'un secret JWT est toujours présent pour éviter les erreurs runtime
   if (!process.env.JWT_SECRET) {
+    const message =
+      "[config/loadEnv] JWT_SECRET manquant, définissez-le dans vos variables d'environnement";
+
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(`${message} (aucun fallback n'est appliqué en production).`);
+    }
+
     process.env.JWT_SECRET = "change_this_secret_now";
-    console.warn("[config/loadEnv] JWT_SECRET manquant, utilisation d'une valeur par défaut.");
+
+    if (!hasWarnedForMissingJwtSecret) {
+      console.warn(`${message}. Utilisation d'une valeur de secours pour le développement.`);
+      hasWarnedForMissingJwtSecret = true;
+    }
   }
 };
