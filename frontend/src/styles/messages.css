@@ -1872,3 +1872,64 @@
     overflow-y: auto;
   }
 }
+/* =========================================================
+   PATCH MOBILE V2 — LISTE PLEINE HAUTEUR + ZERO ESPACE VIDE
+   - Affiche 100% la sidebar (liste)
+   - Chat caché tant que .chat-open absent
+   - Supprime les hauteurs/margins qui cassent le mobile
+========================================================= */
+
+@media (max-width: 768px) {
+
+  /* 1) Annule les réglages desktop qui cassent le mobile */
+  .messages-page {
+    margin-top: 0 !important;                 /* annule -25px */
+    height: 100dvh !important;                /* vrai viewport mobile */
+    height: 100vh !important;                 /* fallback */
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  /* 2) Sidebar prend TOUT l’écran */
+  .messages-sidebar {
+    display: flex !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    max-height: none !important;              /* annule 50vh */
+    width: 100% !important;
+    overflow: hidden !important;              /* le scroll est sur la liste */
+    border-right: none !important;
+  }
+
+  /* 3) Le scroll doit être sur la liste */
+  .messages-list {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0 !important;             /* pas de réserve vide */
+  }
+
+  /* 4) Chat caché par défaut */
+  .messages-content {
+    display: none !important;
+    width: 100% !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+  }
+
+  /* 5) Ouvrir chat seulement quand .chat-open est actif */
+  .messages-page.chat-open .messages-sidebar {
+    display: none !important;
+  }
+  .messages-page.chat-open .messages-content {
+    display: flex !important;
+  }
+
+  /* 6) Quand chat fermé, on neutralise la barre input (évite espace réservé) */
+  .messages-page:not(.chat-open) .chat-input-bar {
+    display: none !important;
+  }
+}
