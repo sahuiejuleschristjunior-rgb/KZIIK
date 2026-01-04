@@ -10,6 +10,8 @@ const fs = require("fs");
 const ffmpegPath = require("ffmpeg-static");
 const { execFile } = require("child_process");
 const { promisify } = require("util");
+const { validateAudio } = require("../utils/audioValidator");
+const { convertWebmToMp3 } = require("../utils/audioConverter");
 
 const typingState = new Map();
 const execFileAsync = promisify(execFile);
@@ -706,6 +708,17 @@ function isFfmpegAvailable() {
   return Boolean(ffmpegPath && fs.existsSync(ffmpegPath));
 }
 
+function deleteFileQuietly(filePath) {
+  if (!filePath) return;
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  } catch (error) {
+    console.warn("⚠ Impossible de supprimer le fichier", { filePath, error: error.message });
+  }
+}
+
 async function enhanceAudioQuality(filePath) {
   if (!isFfmpegAvailable()) {
     console.warn("⚠ FFmpeg skipped — binary not found or not installed.");
@@ -747,9 +760,8 @@ async function enhanceAudioQuality(filePath) {
 }
 
 exports.sendAudioMessage = async (req, res) => {
+  let convertedPath = null;
   try {
-    ensureAudioDir();
-
     const sender = getSenderId(req);
     if (!sender) {
       return res.status(401).json({ message: "Authentification requise." });
@@ -758,6 +770,7 @@ exports.sendAudioMessage = async (req, res) => {
     const { receiver, content, clientTempId, replyTo } = req.body;
     const receiverId = receiver;
     const file = req.file;
+    const uploadDir = ensureAudioDir();
 
     if (receiverId === sender) {
       return res
@@ -782,10 +795,47 @@ exports.sendAudioMessage = async (req, res) => {
       return res.status(404).json({ message: "Destinataire introuvable." });
     }
 
-    await enhanceAudioQuality(file.path);
+    if (!file?.path || !fs.existsSync(file.path)) {
+      console.error("❌ Fichier audio introuvable sur le disque", { path: file?.path });
+      return res.status(400).json({ message: "Fichier audio introuvable." });
+    }
 
-    const audioUrl = `/uploads/audio/${file.filename}`;
-    console.log("✔ Audio saved", { path: file.path, url: audioUrl });
+    try {
+      await validateAudio(file.path);
+    } catch (validationError) {
+      console.error("❌ Validation audio échouée", {
+        path: file.path,
+        error: validationError.message,
+        context: validationError.context,
+      });
+      deleteFileQuietly(file.path);
+      return res.status(400).json({
+        message: "Audio invalide ou corrompu.",
+      });
+    }
+
+    const mp3Filename = `${path.parse(file.filename).name}.mp3`;
+    const mp3Path = path.join(uploadDir, mp3Filename);
+    convertedPath = mp3Path;
+
+    try {
+      await convertWebmToMp3(file.path, mp3Path);
+    } catch (conversionError) {
+      console.error("❌ Conversion audio échouée", {
+        input: file.path,
+        output: mp3Path,
+        error: conversionError.message,
+      });
+      deleteFileQuietly(mp3Path);
+      return res.status(500).json({
+        message: "Impossible de convertir l'audio.",
+      });
+    }
+
+    deleteFileQuietly(file.path);
+
+    const audioUrl = `/uploads/audio/${mp3Filename}`;
+    console.log("✔ Audio converti et sauvegardé", { path: mp3Path, url: audioUrl });
 
     let replyPreview = null;
     let replyMessageId = null;
@@ -853,6 +903,12 @@ exports.sendAudioMessage = async (req, res) => {
       data: populated,
     });
   } catch (error) {
+    if (error?.context?.filePath) {
+      deleteFileQuietly(error.context.filePath);
+    }
+    if (typeof convertedPath === "string") {
+      deleteFileQuietly(convertedPath);
+    }
     return res.status(500).json({
       error: "Erreur lors de l'envoi de l'audio.",
       details: error.message,
