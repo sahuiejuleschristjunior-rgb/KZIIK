@@ -711,6 +711,53 @@
 
 .message-body {
   word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message-text {
+  white-space: pre-wrap;
+}
+
+.message-attachment {
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.message-attachment.image img,
+.message-attachment.video video {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 260px;
+  object-fit: cover;
+}
+
+.message-attachment.file {
+  color: inherit;
+  text-decoration: none;
+  padding: 10px;
+}
+
+.attachment-name {
+  font-weight: 600;
+  padding: 0 10px 10px 10px;
+}
+
+.message-attachment.file .attachment-name {
+  padding: 0;
+}
+
+.attachment-meta {
+  font-size: 12px;
+  opacity: 0.8;
+  padding: 0 10px 10px 10px;
 }
 
 .message-meta {
