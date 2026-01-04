@@ -71,6 +71,35 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get("/uploads/audio/:file", (req, res) => {
+  const fs = require("fs");
+  const path = require("path");
+  const filePath = path.join(__dirname, "uploads/audio", req.params.file);
+  if (!fs.existsSync(filePath)) return res.sendStatus(404);
+  const stat = fs.statSync(filePath);
+  const range = req.headers.range;
+  if (!range) {
+    res.writeHead(200, {
+      "Content-Type": "audio/mpeg",
+      "Content-Length": stat.size
+    });
+    fs.createReadStream(filePath).pipe(res);
+    return;
+  }
+  const parts = range.replace(/bytes=/, "").split("-");
+  const start = parseInt(parts[0], 10);
+  const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
+  const chunkSize = end - start + 1;
+  const stream = fs.createReadStream(filePath, { start, end });
+  res.writeHead(206, {
+    "Content-Range": `bytes ${start}-${end}/${stat.size}`,
+    "Accept-Ranges": "bytes",
+    "Content-Length": chunkSize,
+    "Content-Type": "audio/mpeg"
+  });
+  stream.pipe(res);
+});
+
 app.use("/uploads", express.static(uploadsPath));
 app.use((req, res, next) => {
   if (req.url.endsWith(".mp3")) {
@@ -78,6 +107,35 @@ app.use((req, res, next) => {
     res.setHeader("Accept-Ranges", "bytes");
   }
   next();
+});
+
+app.get("/uploads/audio/:file", (req, res) => {
+  const fs = require("fs");
+  const path = require("path");
+  const filePath = path.join(__dirname, "uploads/audio", req.params.file);
+  if (!fs.existsSync(filePath)) return res.sendStatus(404);
+  const stat = fs.statSync(filePath);
+  const range = req.headers.range;
+  if (!range) {
+    res.writeHead(200, {
+      "Content-Type": "audio/mpeg",
+      "Content-Length": stat.size
+    });
+    fs.createReadStream(filePath).pipe(res);
+    return;
+  }
+  const parts = range.replace(/bytes=/, "").split("-");
+  const start = parseInt(parts[0], 10);
+  const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
+  const chunkSize = end - start + 1;
+  const stream = fs.createReadStream(filePath, { start, end });
+  res.writeHead(206, {
+    "Content-Range": `bytes ${start}-${end}/${stat.size}`,
+    "Accept-Ranges": "bytes",
+    "Content-Length": chunkSize,
+    "Content-Type": "audio/mpeg"
+  });
+  stream.pipe(res);
 });
 
 app.use("/api/uploads", express.static(uploadsPath));
