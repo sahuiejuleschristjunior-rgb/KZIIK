@@ -101,6 +101,7 @@ app.get("/uploads/audio/:file", (req, res) => {
 });
 
 app.use("/uploads", express.static(uploadsPath));
+app.use("/api/uploads", express.static(uploadsPath));
 app.use((req, res, next) => {
   if (req.url.endsWith(".mp3")) {
     res.setHeader("Content-Type", "audio/mpeg");
