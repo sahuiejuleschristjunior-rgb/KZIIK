@@ -652,38 +652,10 @@ export default function Messages() {
 
   const isMessageInActiveChat = (msg) => {
     if (!activeChat || !msg) return false;
-
-    const extractId = (value) => {
-      if (!value) return null;
-      if (typeof value === "string") return value;
-      if (typeof value === "object") return value._id || value.id || null;
-      return null;
-    };
-
-    const senderId = extractId(msg.sender ?? msg.from);
-    const receiverId = extractId(msg.receiver ?? msg.to);
-    const conversationId = extractId(msg.conversation);
+    const senderId = typeof msg.sender === "object" ? msg.sender?._id : msg.sender;
+    const receiverId =
+      typeof msg.receiver === "object" ? msg.receiver?._id : msg.receiver;
     const targetId = getConversationTargetId();
-    const activeConversationId =
-      extractId(activeChat.conversation) || activeChat.conversationId || null;
-
-    if (conversationId && activeConversationId && conversationId === activeConversationId) {
-      return true;
-    }
-
-    if (conversationId && activeChat?._id && conversationId === activeChat._id) {
-      return true;
-    }
-
-    if (
-      senderId &&
-      receiverId &&
-      ((senderId === targetId && receiverId === me?._id) ||
-        (senderId === me?._id && receiverId === targetId))
-    ) {
-      return true;
-    }
-
     return (
       senderId === targetId ||
       receiverId === targetId ||
@@ -691,20 +663,6 @@ export default function Messages() {
       receiverId === activeChat._id ||
       (senderId === me?._id && receiverId === me?._id)
     );
-  };
-
-  const cleanupAudioRefs = (id) => {
-    if (!id) return;
-    if (audioRefs.current[id]) {
-      delete audioRefs.current[id];
-    }
-    if (currentAudioIdRef.current === id) {
-      if (currentAudioRef.current?.pause) {
-        currentAudioRef.current.pause();
-      }
-      currentAudioRef.current = null;
-      currentAudioIdRef.current = null;
-    }
   };
 
   const upsertMessage = (incoming) => {
@@ -719,8 +677,6 @@ export default function Messages() {
       if (withTimestamp.clientTempId) {
         const idx = next.findIndex((m) => m.clientTempId === withTimestamp.clientTempId);
         if (idx >= 0) {
-          cleanupAudioRefs(next[idx]._id);
-          cleanupAudioRefs(next[idx].clientTempId);
           next.splice(idx, 1);
         }
       }
@@ -1137,6 +1093,7 @@ export default function Messages() {
     };
 
     socket.on("new_message", handleMessage);
+    socket.on("audio_message", handleMessage);
     socket.on("reaction_update", handleReactionUpdate);
     socket.on("call_offer", handleCallOffer);
     socket.on("message_updated", handleMessageUpdated);
@@ -1151,6 +1108,7 @@ export default function Messages() {
 
     return () => {
       socket.off("new_message", handleMessage);
+      socket.off("audio_message", handleMessage);
       socket.off("reaction_update", handleReactionUpdate);
       socket.off("call_offer", handleCallOffer);
       socket.off("message_updated", handleMessageUpdated);
@@ -2068,6 +2026,7 @@ export default function Messages() {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
         body: formData,
       });
