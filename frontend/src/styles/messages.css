@@ -626,13 +626,6 @@
     width: 100%;
   }
 
-  /* Fixe le header de la conversation en mobile */
-  .chat-header {
-    top: 0;
-    left: 0;
-    right: 0;
-  }
-
   .messages-page.chat-open .messages-sidebar {
     display: none;
   }
