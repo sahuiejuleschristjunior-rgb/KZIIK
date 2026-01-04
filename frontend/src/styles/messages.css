@@ -637,7 +637,8 @@
   /* input en mobile doit prendre tout */
   .chat-input-bar {
     left: 0;
-    padding: 8px 10px calc(12px + env(safe-area-inset-bottom));
+    bottom: env(safe-area-inset-bottom);
+    padding: 8px 10px calc(16px + env(safe-area-inset-bottom));
   }
 
   .chat-close-btn {
