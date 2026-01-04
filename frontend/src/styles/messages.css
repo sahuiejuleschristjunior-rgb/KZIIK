@@ -364,6 +364,9 @@
   border-bottom: 1px solid #2f3031;
   background: #18191a;
   flex-shrink: 0;
+  position: sticky;
+  top: var(--fb-header-height, 72px);
+  z-index: 5;
 }
 
 .chat-avatar {
