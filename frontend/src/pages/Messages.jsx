@@ -546,11 +546,12 @@ export default function Messages() {
 
   const resolveUrl = (url) => {
     if (!url) return "";
-    if (url.startsWith("blob:")) return url;
-    if (url.startsWith("http")) return url;
+    const trimmed = typeof url === "string" ? url.trim() : url;
+    if (trimmed.startsWith("blob:")) return trimmed;
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
 
     const origin = API_ORIGIN || window.location.origin;
-    const normalizedUrl = url.startsWith("/") ? url : `/${url}`;
+    const normalizedUrl = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
     const shouldPrefixApi =
       API_BASE_PATH &&
       API_BASE_PATH !== "/" &&
@@ -603,6 +604,26 @@ export default function Messages() {
     if (!date) return "";
     const d = typeof date === "string" || typeof date === "number" ? new Date(date) : date;
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const normalizeMediaFields = (msg) => {
+    if (!msg || typeof msg !== "object") return msg;
+
+    const normalized = { ...msg };
+
+    if (!normalized.fileUrl && msg?.media?.url) {
+      normalized.fileUrl = msg.media.url;
+    }
+
+    if (!normalized.mimeType && (msg?.media?.mimetype || msg?.media?.mimeType)) {
+      normalized.mimeType = msg.media.mimetype || msg.media.mimeType;
+    }
+
+    if (!normalized.audioUrl && msg?.audio?.url) {
+      normalized.audioUrl = msg.audio.url;
+    }
+
+    return normalized;
   };
 
   const getAudioDurationSeconds = (msg) => {
@@ -754,9 +775,10 @@ export default function Messages() {
 
   const upsertMessage = (incoming) => {
     if (!incoming) return;
+    const normalizedIncoming = normalizeMediaFields(incoming);
     const withTimestamp = {
-      createdAt: incoming.createdAt || new Date().toISOString(),
-      ...incoming,
+      createdAt: normalizedIncoming.createdAt || new Date().toISOString(),
+      ...normalizedIncoming,
     };
     setMessages((prev) => {
       const next = [...prev];
@@ -1046,8 +1068,9 @@ export default function Messages() {
     socketRef.current = socket;
 
     const handleMessage = (payload) => {
-      const message = payload?.message || payload;
-      if (!message) return;
+      const rawMessage = payload?.message || payload;
+      if (!rawMessage) return;
+      const message = normalizeMediaFields(rawMessage);
 
       const extractId = (value) => {
         if (!value) return null;
@@ -1412,7 +1435,8 @@ export default function Messages() {
       }
       const list = Array.isArray(data) ? data : [];
       list.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      setMessages(list);
+      const normalizedList = list.map(normalizeMediaFields);
+      setMessages(normalizedList);
     } catch (err) {
       console.error("Erreur conversation", err);
       setMessages([]);
@@ -1468,7 +1492,8 @@ export default function Messages() {
           const sorted = [...convMessages].sort(
             (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
           );
-          setMessages(sorted);
+          const normalizedMessages = sorted.map(normalizeMediaFields);
+          setMessages(normalizedMessages);
         }
 
         setReplyTo(null);
@@ -1572,7 +1597,8 @@ export default function Messages() {
             const sorted = [...convMessages].sort(
               (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
             );
-            setMessages(sorted);
+            const normalizedMessages = sorted.map(normalizeMediaFields);
+            setMessages(normalizedMessages);
           } else {
             setMessages([]);
           }
