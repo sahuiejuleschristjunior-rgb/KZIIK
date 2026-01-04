@@ -1,9 +1,11 @@
-const ffmpegPath = "/usr/bin/ffmpeg";
 const { spawn } = require("child_process");
+
+const FFMPEG_PATH = "/usr/bin/ffmpeg";
 
 function convertAudioSafe(input, output) {
   return new Promise((resolve, reject) => {
     let settled = false;
+
     const args = [
       "-y",
       "-i",
@@ -20,26 +22,20 @@ function convertAudioSafe(input, output) {
       output,
     ];
 
-    const ffmpeg = spawn(ffmpegPath || "ffmpeg", args, {
-      windowsHide: true,
-    });
+    const ffmpeg = spawn(FFMPEG_PATH, args, { windowsHide: true });
 
     let stderr = "";
-    let stdout = "";
+
     const timeout = setTimeout(() => {
       ffmpeg.kill("SIGKILL");
       if (!settled) {
         settled = true;
         reject(new Error("ffmpeg conversion timed out"));
       }
-    }, 10000);
-
-    ffmpeg.stdout.on("data", (chunk) => {
-      stdout += chunk;
-    });
+    }, 15000);
 
     ffmpeg.stderr.on("data", (chunk) => {
-      stderr += chunk;
+      stderr += chunk.toString();
     });
 
     ffmpeg.on("error", (err) => {
@@ -52,15 +48,16 @@ function convertAudioSafe(input, output) {
 
     ffmpeg.on("close", (code) => {
       clearTimeout(timeout);
-      if (settled) {
-        return;
-      }
+      if (settled) return;
+
       settled = true;
+
       if (code !== 0) {
         reject(new Error(stderr || `ffmpeg exited with code ${code}`));
         return;
       }
-      resolve({ stdout, stderr });
+
+      resolve(true);
     });
   });
 }
@@ -69,6 +66,7 @@ async function convertWebmToMp3(input, output) {
   return convertAudioSafe(input, output);
 }
 
-module.exports = { convertAudioSafe, convertWebmToMp3 };
+module.exports = {
   convertAudioSafe,
+  convertWebmToMp3,
 };
