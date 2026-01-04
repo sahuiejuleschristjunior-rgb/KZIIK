@@ -4,20 +4,29 @@ const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
 const ffmpeg = require("fluent-ffmpeg");
+const {
+  ffmpegPath,
+  ffprobePath,
+  isExecutableAvailable,
+  logExecutableAvailability,
+} = require("../utils/ffmpeg");
 
 /**
  * ===============================
  * FFmpeg / FFprobe (SYSTEM)
  * ===============================
  */
-const FFMPEG_PATH = "/usr/bin/ffmpeg";
-const FFPROBE_PATH = "/usr/bin/ffprobe";
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
 
-ffmpeg.setFfmpegPath(FFMPEG_PATH);
-ffmpeg.setFfprobePath(FFPROBE_PATH);
+logExecutableAvailability("FFmpeg", ffmpegPath, "FFMPEG_PATH");
+logExecutableAvailability("FFprobe", ffprobePath, "FFPROBE_PATH");
 
-console.log("✅ FFmpeg configuré :", FFMPEG_PATH);
-console.log("✅ FFprobe configuré :", FFPROBE_PATH);
+if (!isExecutableAvailable(ffmpegPath) || !isExecutableAvailable(ffprobePath)) {
+  console.warn(
+    "⚠ FFmpeg/FFprobe manquant : l'upload vidéo/audio pourrait échouer."
+  );
+}
 
 /**
  * ===============================

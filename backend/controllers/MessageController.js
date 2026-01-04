@@ -11,6 +11,7 @@ const { execFile } = require("child_process");
 const { promisify } = require("util");
 const { validateAudioStrict } = require("../utils/audioValidator");
 const { convertWebmToMp3 } = require("../utils/audioConverter");
+const { ffmpegPath, isExecutableAvailable } = require("../utils/ffmpeg");
 
 const typingState = new Map();
 const execFileAsync = promisify(execFile);
@@ -704,7 +705,7 @@ function ensureAudioDir() {
 }
 
 function isFfmpegAvailable() {
-  return Boolean(ffmpegPath && fs.existsSync(ffmpegPath));
+  return isExecutableAvailable(ffmpegPath);
 }
 
 function deleteFileQuietly(filePath) {
@@ -818,6 +819,11 @@ exports.sendAudioMessage = async (req, res) => {
     convertedPath = mp3Path;
 
     try {
+      if (!isFfmpegAvailable()) {
+        throw new Error(
+          `FFmpeg introuvable (FFMPEG_PATH=${ffmpegPath || "non défini"})`
+        );
+      }
       await convertWebmToMp3(file.path, mp3Path);
     } catch (conversionError) {
       console.error("❌ Conversion audio échouée", {
@@ -827,7 +833,7 @@ exports.sendAudioMessage = async (req, res) => {
       });
       deleteFileQuietly(mp3Path);
       return res.status(500).json({
-        message: "Impossible de convertir l'audio.",
+        message: "Impossible de convertir l'audio (FFmpeg absent ou en erreur).",
       });
     }
 
