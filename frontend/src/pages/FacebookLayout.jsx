@@ -204,7 +204,6 @@ export default function FacebookLayout({ headerOnly = false, children }) {
   useEffect(() => {
     if (isPublicMessagesRoute) {
       publicMessageIdsRef.current.clear();
-      setLastUnreadConversationId(null);
     }
   }, [isPublicMessagesRoute]);
 
