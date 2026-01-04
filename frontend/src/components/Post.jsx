@@ -11,13 +11,14 @@ import TextClamp from "./TextClamp";
 
 const API_BASE = API_URL;
 const API_HOST = API_BASE.replace(/\/api\/?$/, "");
+const API_STATIC = API_URL.replace(/\/$/, "");
 
 const fixUrl = (path) => {
   if (!path) return "";
   if (path.startsWith("http")) return path;
-  if (path.startsWith("/uploads")) return `${API_HOST}${path}`;
-  if (path.startsWith("uploads")) return `${API_HOST}/${path}`;
-  if (path.startsWith("/default")) return `${API_HOST}/uploads${path}`;
+  if (path.startsWith("/uploads")) return `${API_STATIC}${path}`;
+  if (path.startsWith("uploads")) return `${API_STATIC}/${path}`;
+  if (path.startsWith("/default")) return `${API_STATIC}/uploads${path}`;
   return `${API_HOST}${path}`;
 };
 

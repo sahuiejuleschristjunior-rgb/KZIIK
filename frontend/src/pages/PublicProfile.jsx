@@ -12,6 +12,7 @@ import { fetchInbox, sendMessagePayload } from "../api/messagesApi";
 import { API_URL } from "../api/config";
 
 const API_ROOT = API_URL;
+const API_STATIC = API_URL.replace(/\/$/, "");
 
 /* ================================================
    FIX URL IMAGES – VERSION PROPRE
@@ -19,7 +20,9 @@ const API_ROOT = API_URL;
 const fixUrl = (path) => {
   if (!path) return "";
   if (path.startsWith("http")) return path;
-  return `${API_ROOT.replace("/api", "")}${path.startsWith("/") ? "" : "/"}${path}`;
+  if (path.startsWith("/uploads")) return `${API_STATIC}${path}`;
+  if (path.startsWith("uploads")) return `${API_STATIC}/${path}`;
+  return `${API_STATIC}${path.startsWith("/") ? "" : "/"}${path}`;
 };
 
 export default function PublicProfile() {

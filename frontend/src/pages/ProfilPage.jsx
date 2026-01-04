@@ -15,15 +15,21 @@ const withCacheBuster = (url) => {
   return `${url}${separator}cb=${Date.now()}`;
 };
 
+const API_STATIC = API_URL.replace(/\/$/, "");
+
 const fixUrl = (path) => {
   if (!path) return "";
   if (path.startsWith("http")) return path;
 
   if (path.startsWith("/uploads")) {
-    return `${API_URL.replace("/api", "")}${path}`;
+    return `${API_STATIC}${path}`;
   }
 
-  return path;
+  if (path.startsWith("uploads")) {
+    return `${API_STATIC}/${path}`;
+  }
+
+  return `${API_STATIC}${path.startsWith("/") ? "" : "/"}${path}`;
 };
 
 export default function ProfilPage() {
