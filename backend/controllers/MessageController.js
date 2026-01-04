@@ -808,10 +808,18 @@ exports.sendAudioMessage = async (req, res) => {
       message: populated,
     };
 
-    getIO()
-      .to(receiverId.toString())
+    const io = getIO();
+
+    // Garder la compatibilité avec les clients qui écoutent encore
+    // l'ancien event `audio_message`
+    io.to(receiverId.toString())
       .to(sender.toString())
       .emit("new_message", payload);
+
+    io
+      .to(receiverId.toString())
+      .to(sender.toString())
+      .emit("audio_message", payload);
 
     await pushNotification(receiverId, {
       from: sender,
