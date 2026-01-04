@@ -9,21 +9,17 @@
    LAYOUT GLOBAL
 ========================= */
 .messages-page {
-  height: calc(100vh - 72px);
-  min-height: calc(100vh - 72px);
+  --appHeaderH: var(--fb-header-height, 72px);
+  height: calc(var(--messages-viewport-height, 100dvh) - var(--appHeaderH));
+  min-height: calc(var(--messages-viewport-height, 100dvh) - var(--appHeaderH));
   width: 100%;
   display: flex;
   background: #18191a;
   color: #e4e6eb;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  margin-top: -25px;
-}
-
-@supports (height: 100dvh) {
-  .messages-page {
-    height: calc(100dvh - 72px);
-    min-height: calc(100dvh - 72px);
-  }
+  margin-top: 0;
+  overflow: hidden;
+  min-height: 0;
 }
 
 /* =========================
@@ -373,7 +369,7 @@
   background: #18191a;
   flex-shrink: 0;
   position: sticky;
-  top: var(--fb-header-height, 72px);
+  top: var(--appHeaderH, 72px);
   z-index: 5;
 }
 
@@ -499,6 +495,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Placeholder */
@@ -582,7 +579,7 @@
   display: flex;
   gap: 10px;
   align-items: center;
-  z-index: 3;
+  z-index: 6;
 }
 
 .chat-input {
@@ -1073,13 +1070,13 @@
 ========================= */
 .messages-page {
   flex-direction: column;
-  height: 100vh;
+  height: var(--messages-viewport-height, 100dvh);
 }
 
 .messages-sidebar {
   width: 100%;
   min-width: 0;
-  max-height: 50vh;
+  max-height: 50dvh;
 }
 
 .messages-content {
@@ -1475,7 +1472,7 @@
 .vc-call {
   position: relative;
   width: min(100%, 980px);
-  height: min(100vh, 640px);
+  height: min(var(--messages-viewport-height, 100dvh), 640px);
   background: #0f1012;
   border-radius: 18px;
   overflow: hidden;
