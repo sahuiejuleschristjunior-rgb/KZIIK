@@ -800,18 +800,22 @@ exports.sendAudioMessage = async (req, res) => {
     conversation.updatedAt = new Date();
     await conversation.save();
 
-    const populated = await populateMessage(message);
-
-    const payload = {
+    getIO().to(receiverId.toString()).emit("new_message", {
       from: sender,
       to: receiverId,
-      message: populated,
-    };
+      message,
+    });
+
+    getIO().to(sender.toString()).emit("new_message", {
+      from: sender,
+      to: receiverId,
+      message,
+    });
 
     getIO()
       .to(receiverId.toString())
       .to(sender.toString())
-      .emit("new_message", payload);
+      .emit("audio_message", { message });
 
     await pushNotification(receiverId, {
       from: sender,
@@ -822,7 +826,7 @@ exports.sendAudioMessage = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Note vocale envoyée.",
-      data: populated,
+      data: message,
     });
   } catch (error) {
     return res.status(500).json({
