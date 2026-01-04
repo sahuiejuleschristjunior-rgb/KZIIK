@@ -740,6 +740,17 @@ exports.sendAudioMessage = async (req, res) => {
     const receiverId = receiver;
     const file = req.file;
 
+    console.log(
+      "[messages/audio] incoming",
+      JSON.stringify({
+        sender,
+        receiver: receiverId,
+        hasFile: !!file,
+        filename: file?.originalname,
+        size: file?.size,
+      })
+    );
+
     if (receiverId === sender) {
       return res
         .status(400)
@@ -800,6 +811,16 @@ exports.sendAudioMessage = async (req, res) => {
     conversation.updatedAt = new Date();
     await conversation.save();
 
+    console.log(
+      "[messages/audio] stored",
+      JSON.stringify({
+        messageId: message._id,
+        conversation: conversation._id,
+        receiver: receiverId,
+        url: audioUrl,
+      })
+    );
+
     getIO().to(receiverId.toString()).emit("new_message", {
       from: sender,
       to: receiverId,
@@ -829,6 +850,7 @@ exports.sendAudioMessage = async (req, res) => {
       data: message,
     });
   } catch (error) {
+    console.error("[messages/audio] error", error);
     return res.status(500).json({
       error: "Erreur lors de l'envoi de l'audio.",
       details: error.message,
