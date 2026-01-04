@@ -1820,3 +1820,55 @@
     margin-bottom: 0 !important;
   }
 }
+/* =========================================================
+   FIX MOBILE — AFFICHER LISTE SEULEMENT
+   ET OUVRIR LE CHAT UNIQUEMENT AVEC .chat-open
+========================================================= */
+
+@media (max-width: 768px) {
+  /* Layout mobile */
+  .messages-page {
+    height: 100dvh;
+    height: 100vh; /* fallback */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Par défaut: LISTE visible, CHAT caché */
+  .messages-sidebar {
+    display: flex !important;
+    width: 100% !important;
+    max-height: 100% !important;
+  }
+
+  .messages-content {
+    display: none !important;
+    width: 100% !important;
+    min-height: 0;
+  }
+
+  /* Quand une conversation est ouverte */
+  .messages-page.chat-open .messages-sidebar {
+    display: none !important;
+  }
+
+  .messages-page.chat-open .messages-content {
+    display: flex !important;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Le scroll du chat */
+  .chat-panel {
+    min-height: 0;
+    flex: 1;
+  }
+
+  .chat-scroll,
+  .chat-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
