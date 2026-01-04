@@ -815,7 +815,9 @@ exports.sendAudioMessage = async (req, res) => {
 
     await pushNotification(receiverId, {
       from: sender,
-      type: "message",
+      type: "public",
+      actionType: "message",
+      relatedId: message._id,
       text: "Nouvelle note vocale",
     });
 
