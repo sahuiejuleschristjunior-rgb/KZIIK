@@ -19,20 +19,27 @@ import { useActiveConversation } from "../context/ActiveConversationContext";
 import { useNotifications } from "../context/NotificationContext";
 import { getAvatarUrl } from "../utils/avatarUtils";
 
-const buildApiHost = () => {
-  if (!API_URL) return "";
+const getApiMeta = () => {
+  if (!API_URL) {
+    return { origin: window.location.origin, path: "" };
+  }
 
   try {
-    const parsed = new URL(API_URL);
-    return `${parsed.protocol}//${parsed.host}`;
+    const parsed = new URL(API_URL, window.location.origin);
+    return {
+      origin: `${parsed.protocol}//${parsed.host}`,
+      path: parsed.pathname.replace(/\/$/, ""),
+    };
   } catch (err) {
-    // Fallback for relative API paths (dev server)
-    return API_URL.replace(/\/?api\/?$/, "").replace(/\/$/, "");
+    const normalizedPath = API_URL.startsWith("/")
+      ? API_URL.replace(/\/$/, "")
+      : `/${API_URL.replace(/\/$/, "")}`;
+    return { origin: window.location.origin, path: normalizedPath };
   }
 };
 
-const API_HOST = buildApiHost();
-const SOCKET_URL = API_HOST || window.location.origin;
+const { origin: API_ORIGIN, path: API_BASE_PATH } = getApiMeta();
+const SOCKET_URL = API_ORIGIN || window.location.origin;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "😡"];
 const loadErrorMessage = "Impossible de charger vos conversations";
 
@@ -539,9 +546,22 @@ export default function Messages() {
 
   const resolveUrl = (url) => {
     if (!url) return "";
-    if (url.startsWith("blob:")) return url;
-    if (url.startsWith("http")) return url;
-    return `${API_HOST || ""}${url.startsWith("/") ? "" : "/"}${url}`;
+    const trimmed = typeof url === "string" ? url.trim() : url;
+    if (trimmed.startsWith("blob:")) return trimmed;
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+
+    const origin = API_ORIGIN || window.location.origin;
+    const normalizedUrl = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+    const shouldPrefixApi =
+      API_BASE_PATH &&
+      API_BASE_PATH !== "/" &&
+      normalizedUrl.startsWith("/uploads/");
+
+    if (shouldPrefixApi) {
+      return `${origin}${API_BASE_PATH}${normalizedUrl}`;
+    }
+
+    return `${origin}${normalizedUrl}`;
   };
 
   const copyToClipboard = async (text) => {
@@ -584,6 +604,26 @@ export default function Messages() {
     if (!date) return "";
     const d = typeof date === "string" || typeof date === "number" ? new Date(date) : date;
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const normalizeMediaFields = (msg) => {
+    if (!msg || typeof msg !== "object") return msg;
+
+    const normalized = { ...msg };
+
+    if (!normalized.fileUrl && msg?.media?.url) {
+      normalized.fileUrl = msg.media.url;
+    }
+
+    if (!normalized.mimeType && (msg?.media?.mimetype || msg?.media?.mimeType)) {
+      normalized.mimeType = msg.media.mimetype || msg.media.mimeType;
+    }
+
+    if (!normalized.audioUrl && msg?.audio?.url) {
+      normalized.audioUrl = msg.audio.url;
+    }
+
+    return normalized;
   };
 
   const getAudioDurationSeconds = (msg) => {
@@ -735,9 +775,10 @@ export default function Messages() {
 
   const upsertMessage = (incoming) => {
     if (!incoming) return;
+    const normalizedIncoming = normalizeMediaFields(incoming);
     const withTimestamp = {
-      createdAt: incoming.createdAt || new Date().toISOString(),
-      ...incoming,
+      createdAt: normalizedIncoming.createdAt || new Date().toISOString(),
+      ...normalizedIncoming,
     };
     setMessages((prev) => {
       const next = [...prev];
@@ -1027,8 +1068,9 @@ export default function Messages() {
     socketRef.current = socket;
 
     const handleMessage = (payload) => {
-      const message = payload?.message || payload;
-      if (!message) return;
+      const rawMessage = payload?.message || payload;
+      if (!rawMessage) return;
+      const message = normalizeMediaFields(rawMessage);
 
       const extractId = (value) => {
         if (!value) return null;
@@ -1393,7 +1435,8 @@ export default function Messages() {
       }
       const list = Array.isArray(data) ? data : [];
       list.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      setMessages(list);
+      const normalizedList = list.map(normalizeMediaFields);
+      setMessages(normalizedList);
     } catch (err) {
       console.error("Erreur conversation", err);
       setMessages([]);
@@ -1449,7 +1492,8 @@ export default function Messages() {
           const sorted = [...convMessages].sort(
             (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
           );
-          setMessages(sorted);
+          const normalizedMessages = sorted.map(normalizeMediaFields);
+          setMessages(normalizedMessages);
         }
 
         setReplyTo(null);
@@ -1553,7 +1597,8 @@ export default function Messages() {
             const sorted = [...convMessages].sort(
               (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
             );
-            setMessages(sorted);
+            const normalizedMessages = sorted.map(normalizeMediaFields);
+            setMessages(normalizedMessages);
           } else {
             setMessages([]);
           }
