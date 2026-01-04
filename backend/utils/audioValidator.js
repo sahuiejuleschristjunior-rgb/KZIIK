@@ -1,93 +1,116 @@
 const fs = require("fs");
-const { execFile } = require("child_process");
-const { promisify } = require("util");
+const { spawn } = require("child_process");
+const ffmpegPath = require("ffmpeg-static");
 
-const execFileAsync = promisify(execFile);
+const ffprobePath = ffmpegPath
+  ? ffmpegPath.replace(/ffmpeg(\.exe)?$/, (match, ext) => `ffprobe${ext || ""}`)
+  : "ffprobe";
 
-const DEFAULT_MIN_SIZE_BYTES = 5 * 1024; // 5 KB
-const DEFAULT_MIN_DURATION_SECONDS = 0.5;
-const ffprobeExecutable = process.env.FFPROBE_PATH || "ffprobe";
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function throwDetailed(message, context = {}) {
-  const error = new Error(message);
-  error.context = context;
-  throw error;
+async function waitForFileStability(filePath) {
+  let stableCount = 0;
+  let lastSize = -1;
+
+  while (stableCount < 3) {
+    const stats = await fs.promises.stat(filePath);
+    const currentSize = stats.size;
+
+    if (currentSize === lastSize) {
+      stableCount += 1;
+    } else {
+      stableCount = 0;
+      lastSize = currentSize;
+    }
+
+    if (stableCount < 3) {
+      await wait(200);
+    }
+  }
+
+  return true;
 }
 
-async function probeAudio(filePath) {
-  const args = [
-    "-v",
-    "error",
-    "-select_streams",
-    "a:0",
-    "-show_entries",
-    "stream=codec_type,duration",
-    "-of",
-    "json",
-    filePath,
-  ];
-
-  const { stdout } = await execFileAsync(ffprobeExecutable, args);
-  let parsed = {};
-
-  try {
-    parsed = JSON.parse(stdout || "{}");
-  } catch (error) {
-    throwDetailed("Réponse ffprobe invalide", { error: error.message, stdout });
-  }
-  const streams = parsed.streams || [];
-  return streams.find((s) => s.codec_type === "audio") || null;
-}
-
-async function validateAudio(
-  filePath,
-  {
-    minSizeBytes = DEFAULT_MIN_SIZE_BYTES,
-    minDurationSeconds = DEFAULT_MIN_DURATION_SECONDS,
-  } = {}
-) {
-  if (!filePath) {
-    throwDetailed("Chemin du fichier audio manquant");
-  }
-
-  if (!fs.existsSync(filePath)) {
-    throwDetailed("Fichier audio introuvable", { filePath });
-  }
-
-  const stats = fs.statSync(filePath);
-  if (!stats.isFile()) {
-    throwDetailed("Chemin fourni n'est pas un fichier", { filePath });
-  }
-
-  if (stats.size < minSizeBytes) {
-    throwDetailed("Fichier audio trop petit", { filePath, size: stats.size });
-  }
-
-  let stream;
-  try {
-    stream = await probeAudio(filePath);
-  } catch (error) {
-    throwDetailed("Analyse audio impossible (ffprobe)", {
+function runFfprobe(filePath) {
+  return new Promise((resolve, reject) => {
+    const args = [
+      "-v",
+      "error",
+      "-print_format",
+      "json",
+      "-show_format",
+      "-show_streams",
       filePath,
-      error: error.message,
+    ];
+
+    const probe = spawn(ffprobePath, args, { windowsHide: true });
+
+    let stdout = "";
+    let stderr = "";
+
+    probe.stdout.on("data", (chunk) => {
+      stdout += chunk;
     });
+
+    probe.stderr.on("data", (chunk) => {
+      stderr += chunk;
+    });
+
+    probe.on("error", (err) => {
+      reject(err);
+    });
+
+    probe.on("close", (code) => {
+      if (code !== 0) {
+        reject(new Error(stderr || `ffprobe exited with code ${code}`));
+        return;
+      }
+
+      try {
+        const data = JSON.parse(stdout || "{}");
+        resolve(data);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  });
+}
+
+async function validateAudioStrict(filePath) {
+  const exists = await fs.promises
+    .access(filePath, fs.constants.R_OK)
+    .then(() => true)
+    .catch(() => false);
+
+  if (!exists) {
+    throw new Error(`Audio file not accessible: ${filePath}`);
   }
 
-  if (!stream) {
-    throwDetailed("Flux audio introuvable", { filePath });
+  const metadata = await runFfprobe(filePath);
+  const streams = metadata.streams || [];
+  const audioStream = streams.find((stream) => stream.codec_type === "audio");
+
+  if (!audioStream) {
+    throw new Error("No audio stream detected");
   }
 
-  const duration = parseFloat(stream.duration || "0");
-  if (!Number.isFinite(duration) || duration < minDurationSeconds) {
-    throwDetailed("Durée audio insuffisante", { filePath, duration });
+  const duration = Number(metadata?.format?.duration || audioStream?.duration || 0);
+
+  if (!Number.isFinite(duration) || duration < 0.8) {
+    throw new Error("Audio too short (< 0.8s)");
   }
 
   return {
     duration,
-    size: stats.size,
+    codec: audioStream.codec_name || "unknown",
+    sampleRate: Number(audioStream.sample_rate) || null,
+    channels: Number(audioStream.channels) || null,
   };
 }
 
 module.exports = {
-  validateAudio,
+  waitForFileStability,
+  validateAudioStrict,
+  runFfprobe,
+  ffprobePath,
 };

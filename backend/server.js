@@ -21,6 +21,7 @@ const pagePostsRoutes = require("./routes/pagePosts");
 const searchRoutes = require("./routes/SearchRoutes");
 
 const adsRoutes = require("./routes/ads");
+const audioUploadRoutes = require("./routes/audioUpload");
 
 // ⭐ SOCIAL SYSTEM (amis + follow)
 const socialRoutes = require("./routes/socialRoutes");
@@ -83,6 +84,7 @@ apiRouter.use("/messages", messageRoutes);
 apiRouter.use("/search", searchRoutes);
 apiRouter.use("/social", socialRoutes);
 apiRouter.use("/ads", adsRoutes);
+apiRouter.use("/audio", audioUploadRoutes);
 
 // ⭐ PAGES
 apiRouter.use("/pages", pagesRoutes);
