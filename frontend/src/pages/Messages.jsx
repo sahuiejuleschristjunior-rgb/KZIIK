@@ -1002,9 +1002,73 @@ export default function Messages() {
 
     const handleMessage = (payload) => {
       const message = payload?.message || payload;
-      if (!isMessageInActiveChat(message)) return;
+      if (!message) return;
+
+      const extractId = (value) => {
+        if (!value) return null;
+        if (typeof value === "object") return value?._id || value?.id || null;
+        return value;
+      };
+
+      const senderId = extractId(message.sender ?? message.from);
+      const receiverId = extractId(message.receiver ?? message.to);
+      const conversationId = extractId(message.conversation);
+      const isActiveConversation = isMessageInActiveChat(message);
+      const otherUserId = senderId === me?._id ? receiverId : senderId;
+      const otherUser = senderId === me?._id ? message.receiver : message.sender;
+      const isIncoming = Boolean(senderId && senderId !== me?._id);
+
+      setFriends((prev) => {
+        const conversationKey = otherUserId || conversationId;
+        if (!conversationKey) return prev;
+        const keyAsString = String(conversationKey);
+        const idx = prev.findIndex((f) => getFriendId(f) === keyAsString);
+        const base = idx >= 0 ? prev[idx] : {};
+        const unreadCount = isActiveConversation
+          ? 0
+          : isIncoming
+          ? (Number(base.unreadCount) || 0) + 1
+          : Number(base.unreadCount) || 0;
+
+        const updatedFriend = {
+          ...base,
+          _id: base._id || otherUserId || conversationId || base.conversationId,
+          name:
+            base.name ||
+            (typeof otherUser === "object" ? otherUser?.name : null) ||
+            "Contact",
+          avatar: getAvatarUrl(
+            base.avatar || (typeof otherUser === "object" ? otherUser?.avatar : null)
+          ),
+          role:
+            base.role ||
+            (typeof otherUser === "object" ? otherUser?.role : null) ||
+            null,
+          isProfessional:
+            typeof base.isProfessional === "boolean"
+              ? base.isProfessional
+              : typeof otherUser === "object"
+              ? otherUser?.isProfessional
+              : base.isProfessional,
+          conversationId: base.conversationId || conversationId || null,
+          lastMessage: message,
+          unreadCount,
+          hasNewBadge:
+            !isActiveConversation && isIncoming
+              ? true
+              : base.hasNewBadge ?? false,
+          __uiNew:
+            !isActiveConversation && isIncoming ? true : base.__uiNew,
+        };
+
+        const filtered =
+          idx >= 0 ? prev.filter((_, position) => position !== idx) : prev;
+
+        return [updatedFriend, ...filtered];
+      });
+
+      if (!isActiveConversation) return;
       upsertMessage(message);
-      const senderId = typeof message.sender === "object" ? message.sender?._id : message.sender;
       if (message?._id && senderId !== me?._id) {
         fetch(`${API_URL}/messages/${message._id}/read`, {
           method: "PATCH",
@@ -1138,6 +1202,7 @@ export default function Messages() {
 
     socket.on("new_message", handleMessage);
     socket.on("reaction_update", handleReactionUpdate);
+    socket.on("audio_message", handleMessage);
     socket.on("call_offer", handleCallOffer);
     socket.on("message_updated", handleMessageUpdated);
     socket.on("message_pinned", handleMessagePinned);
@@ -1152,6 +1217,7 @@ export default function Messages() {
     return () => {
       socket.off("new_message", handleMessage);
       socket.off("reaction_update", handleReactionUpdate);
+      socket.off("audio_message", handleMessage);
       socket.off("call_offer", handleCallOffer);
       socket.off("message_updated", handleMessageUpdated);
       socket.off("message_pinned", handleMessagePinned);
