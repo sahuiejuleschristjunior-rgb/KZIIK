@@ -7,6 +7,7 @@ const { getIO } = require("../socket");
 const Notification = require("../models/Notification");
 const path = require("path");
 const fs = require("fs");
+const ffmpegPath = require("ffmpeg-static");
 const { execFile } = require("child_process");
 const { promisify } = require("util");
 
@@ -702,6 +703,8 @@ function ensureAudioDir() {
 }
 
 async function enhanceAudioQuality(filePath) {
+  if (!ffmpegPath) return;
+
   const outputPath = `${filePath}.tmp.webm`;
   const filters =
     "loudnorm=I=-16:LRA=11:TP=-1.5,agate=threshold=-55dB:ratio=1.2:attack=5:release=100";
@@ -723,8 +726,15 @@ async function enhanceAudioQuality(filePath) {
     outputPath,
   ];
 
-  await execFileAsync("ffmpeg", args);
-  fs.renameSync(outputPath, filePath);
+  try {
+    await execFileAsync(ffmpegPath, args);
+    fs.renameSync(outputPath, filePath);
+  } catch (error) {
+    console.error("FFmpeg enhancement failed", error.message);
+    if (fs.existsSync(outputPath)) {
+      fs.unlinkSync(outputPath);
+    }
+  }
 }
 
 exports.sendAudioMessage = async (req, res) => {
