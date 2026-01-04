@@ -239,6 +239,7 @@ export default function Messages() {
   const [replyTo, setReplyTo] = useState(null);
   const [editingMessage, setEditingMessage] = useState(null);
   const [pendingAttachments, setPendingAttachments] = useState([]);
+  const [isAttachmentModalOpen, setIsAttachmentModalOpen] = useState(false);
   const [messageActions, setMessageActions] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [mediaViewer, setMediaViewer] = useState({ open: false, url: null, type: null });
@@ -340,6 +341,22 @@ export default function Messages() {
   useEffect(() => {
     pendingAttachmentsRef.current = pendingAttachments;
   }, [pendingAttachments]);
+
+  useEffect(() => {
+    if (isAttachmentModalOpen) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+  }, [isAttachmentModalOpen]);
+
+  useEffect(() => {
+    if (!pendingAttachments.length) {
+      setIsAttachmentModalOpen(false);
+    }
+  }, [pendingAttachments.length]);
 
   useEffect(() => {
     return () => {
@@ -1843,7 +1860,13 @@ export default function Messages() {
     });
   };
 
-  const uploadAttachment = async (file, explicitType = null) => {
+  const cancelPendingAttachments = () => {
+    setShowAttachMenu(false);
+    setIsAttachmentModalOpen(false);
+    clearPendingAttachments();
+  };
+
+  const uploadAttachment = async (file, explicitType = null, caption = "") => {
     const receiverId = getConversationTargetId();
     if (!activeChat || !receiverId || !file || !token) {
       setInfoBanner(loadErrorMessage);
@@ -1852,9 +1875,13 @@ export default function Messages() {
 
     const { replyId, preview: replyPreview } = buildReplyData(replyTo);
 
+    const captionText = typeof caption === "string" ? caption.trim() : "";
+
     const clientTempId = `temp-${Date.now()}`;
     const blobUrl = URL.createObjectURL(file);
     const messageType = resolveAttachmentType(file, explicitType);
+    const messageContent =
+      captionText || file.name || getAttachmentLabel(messageType);
 
     const tempMessage = {
       _id: clientTempId,
@@ -1864,7 +1891,7 @@ export default function Messages() {
       fileUrl: blobUrl,
       fileName: file.name,
       mimeType: file.type || null,
-      content: file.name || getAttachmentLabel(messageType),
+      content: messageContent,
       clientTempId,
       replyTo: replyId,
       replyPreview,
@@ -1879,7 +1906,7 @@ export default function Messages() {
         file,
         receiver: receiverId,
         type: explicitType || undefined,
-        content: file.name,
+        content: messageContent,
         clientTempId,
         replyTo: replyId,
       });
@@ -1907,12 +1934,17 @@ export default function Messages() {
 
   const sendPendingAttachments = async () => {
     if (!pendingAttachments.length) return;
+    const caption = input.trim();
     const attachmentsToSend = pendingAttachments;
     clearPendingAttachments();
+    setIsAttachmentModalOpen(false);
+    setInput("");
 
     for (const attachment of attachmentsToSend) {
-      await uploadAttachment(attachment.file, attachment.type);
+      await uploadAttachment(attachment.file, attachment.type, caption);
     }
+
+    setTimeout(() => scrollToBottom(true), 10);
   };
 
   const saveEditedMessage = async () => {
@@ -2603,6 +2635,8 @@ export default function Messages() {
     });
 
     setPendingAttachments((prev) => [...prev, ...nextItems]);
+    setShowAttachMenu(false);
+    setIsAttachmentModalOpen(true);
   };
 
   const removePendingAttachment = (id) => {
@@ -2987,6 +3021,78 @@ export default function Messages() {
         </div>
       )}
 
+      {isAttachmentModalOpen && (
+        <div className="attachment-modal-overlay" role="dialog" aria-modal="true">
+          <div className="attachment-modal">
+            <header className="attachment-modal-header">
+              <button
+                type="button"
+                className="attachment-modal-close"
+                onClick={cancelPendingAttachments}
+                aria-label="Fermer le modal des pièces jointes"
+              >
+                <BackIcon />
+              </button>
+              <div className="attachment-modal-title">Nouvelle pièce jointe</div>
+            </header>
+
+            <div className="attachment-modal-body">
+              <div className="attachment-preview-grid" role="list">
+                {pendingAttachments.map((attachment) => (
+                  <div className="attachment-preview-card" key={attachment.id} role="listitem">
+                    <div className="attachment-preview-media">
+                      {attachment.type === "image" ? (
+                        <img
+                          src={attachment.previewUrl}
+                          alt={attachment.name || "Image"}
+                          loading="lazy"
+                        />
+                      ) : attachment.type === "video" ? (
+                        <video src={attachment.previewUrl} muted controls playsInline />
+                      ) : (
+                        <div className="attachment-file-icon" aria-hidden>
+                          📎
+                        </div>
+                      )}
+                    </div>
+                    <div className="attachment-preview-name" title={attachment.name}>
+                      {attachment.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <footer className="attachment-modal-footer">
+              <textarea
+                className="attachment-caption-input"
+                placeholder="Ajouter une légende ou un message commun"
+                value={input}
+                onChange={(e) => handleInputChange(e.target.value)}
+                rows={3}
+              />
+              <div className="attachment-modal-actions">
+                <button
+                  type="button"
+                  className="attachment-cancel-btn"
+                  onClick={cancelPendingAttachments}
+                >
+                  ANNULER
+                </button>
+                <button
+                  type="button"
+                  className="attachment-send-btn"
+                  disabled={!pendingAttachments.length}
+                  onClick={sendPendingAttachments}
+                >
+                  ENVOYER
+                </button>
+              </div>
+            </footer>
+          </div>
+        </div>
+      )}
+
       <div className={`messages-page ${activeChat ? "chat-open" : ""}`}>
       {/* ================= LEFT — AMIS ================= */}
       <aside className="messages-sidebar">
@@ -3352,7 +3458,7 @@ export default function Messages() {
               </div>
             )}
 
-            {pendingAttachments.length > 0 && (
+            {pendingAttachments.length > 0 && !isAttachmentModalOpen && (
               <div className="pending-attachments" role="list">
                 {pendingAttachments.map((attachment) => (
                   <div
