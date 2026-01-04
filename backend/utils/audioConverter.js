@@ -1,18 +1,10 @@
 const { spawn } = require("child_process");
-const { ffmpegPath, isExecutableAvailable } = require("./ffmpeg");
+
+const FFMPEG_PATH = "/usr/bin/ffmpeg";
 
 function convertAudioSafe(input, output) {
   return new Promise((resolve, reject) => {
     let settled = false;
-
-    if (!isExecutableAvailable(ffmpegPath)) {
-      reject(
-        new Error(
-          `ffmpeg introuvable (FFMPEG_PATH=${ffmpegPath || "non défini"})`
-        )
-      );
-      return;
-    }
 
     const args = [
       "-y",
@@ -30,7 +22,7 @@ function convertAudioSafe(input, output) {
       output,
     ];
 
-    const ffmpeg = spawn(ffmpegPath, args, { windowsHide: true });
+    const ffmpeg = spawn(FFMPEG_PATH, args, { windowsHide: true });
 
     let stderr = "";
 
