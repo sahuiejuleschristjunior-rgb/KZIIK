@@ -37,6 +37,23 @@ const audioUpload = multer({
   },
 });
 
+const attachmentStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(__dirname, "../uploads/messages");
+    fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`);
+  },
+});
+
+const attachmentUpload = multer({
+  storage: attachmentStorage,
+  limits: { fileSize: 100 * 1024 * 1024 },
+});
+
 const sendRateTracker = new Map();
 const SEND_WINDOW_MS = 60 * 1000;
 const SEND_MAX = 15;
@@ -85,6 +102,14 @@ router.post(
   isAuthenticated,
   audioUpload.single("audio"),
   MessageController.sendAudioMessage
+);
+
+router.post(
+  "/attachment",
+  isAuthenticated,
+  rateLimitSend,
+  attachmentUpload.single("file"),
+  MessageController.sendAttachmentMessage
 );
 
 router.post(

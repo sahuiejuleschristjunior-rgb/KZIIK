@@ -19,6 +19,22 @@ const REQUEST_MESSAGE_MAX = 500;
 const REQUEST_COOLDOWN_MS = 15 * 60 * 1000;
 const requestRateMap = new Map();
 
+const ATTACHMENT_MIMES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "video/mp4",
+  "video/webm",
+  "video/quicktime",
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "text/plain",
+]);
+
 function isUserParticipant(message, userId) {
   if (!message || !userId) return false;
   return (
@@ -54,6 +70,25 @@ function isBlocked(user, otherUserId) {
 function containsLink(text) {
   if (!text) return false;
   return /(https?:\/\/|www\.)/i.test(text);
+}
+
+function resolveMessageType({ explicitType, mimeType }) {
+  if (explicitType && Message.schema.path("type").enumValues.includes(explicitType)) {
+    return explicitType;
+  }
+
+  if (mimeType?.startsWith("image/")) return "image";
+  if (mimeType?.startsWith("video/")) return "video";
+  return "file";
+}
+
+function buildFileMetaFromUpload(file) {
+  if (!file) return {};
+  return {
+    fileUrl: `/uploads/messages/${file.filename}`,
+    fileName: file.originalname || file.filename,
+    mimeType: file.mimetype || null,
+  };
 }
 
 function enforceRequestRateLimit(userId) {
@@ -188,10 +223,63 @@ async function buildMessageRequest({ senderUser, receiverUser, content }) {
     return { request: populated };
   }
 
-/* ============================================================
-POST /api/messages
-➤ Envoyer un message
-============================================================ */
+  /* ============================================================
+  POST /api/messages
+  ➤ Envoyer un message
+  ============================================================ */
+async function createAndDispatchMessage({
+  sender,
+  receiverId,
+  conversation,
+  content,
+  type,
+  clientTempId,
+  replyMessageId,
+  replyPreview,
+  fileMeta = {},
+}) {
+  const message = await Message.create({
+    sender,
+    receiver: receiverId,
+    conversation: conversation._id,
+    content,
+    type: type || "text",
+    clientTempId: clientTempId || null,
+    replyTo: replyMessageId,
+    replyPreview,
+    isRead: false,
+    ...fileMeta,
+  });
+
+  conversation.lastMessage = message._id;
+  conversation.updatedAt = new Date();
+  await conversation.save();
+
+  const populated = await populateMessage(message);
+
+  getIO().to(receiverId.toString()).emit("new_message", {
+    from: sender,
+    to: receiverId,
+    message: populated,
+  });
+
+  getIO().to(sender.toString()).emit("new_message", {
+    from: sender,
+    to: receiverId,
+    message: populated,
+  });
+
+  await pushNotification(receiverId, {
+    from: sender,
+    type: "public",
+    actionType: "message",
+    relatedId: message._id,
+    text: "Nouveau message reçu",
+  });
+
+  return message;
+}
+
 exports.sendMessage = async (req, res) => {
   try {
     const sender = getSenderId(req);
@@ -199,14 +287,18 @@ exports.sendMessage = async (req, res) => {
       return res.status(401).json({ message: "Authentification requise." });
     }
 
-    const { receiver, content, type, clientTempId, replyTo } = req.body;
+    const { receiver, content, type, clientTempId, replyTo, fileUrl, fileName, mimeType } =
+      req.body;
 
     const receiverId = receiver;
 
-    if (!receiverId || !content) {
+    const hasTextContent = typeof content === "string" && content.trim() !== "";
+    const hasFile = Boolean(fileUrl);
+
+    if (!receiverId || (!hasTextContent && !hasFile)) {
       return res
         .status(400)
-        .json({ message: "Receiver et content sont requis." });
+        .json({ message: "Destinataire ou contenu manquant." });
     }
 
     if (receiverId === sender) {
@@ -248,7 +340,7 @@ exports.sendMessage = async (req, res) => {
     // MESSAGE REQUEST FLOW
     // =====================
     if (!isFriend && !existingConversation) {
-      if (type && type !== "text") {
+      if ((type && type !== "text") || hasFile) {
         return res
           .status(400)
           .json({ message: "Seuls les messages textes sont autorisés." });
@@ -308,42 +400,33 @@ exports.sendMessage = async (req, res) => {
       conversation = await findOrCreateConversation(sender, receiverId);
     }
 
-    const message = await Message.create({
+    const messageType = resolveMessageType({
+      explicitType: type,
+      mimeType,
+    });
+
+    const finalContent = hasTextContent
+      ? content
+      : fileName || "Pièce jointe";
+
+    const fileMeta = hasFile
+      ? {
+          fileUrl,
+          fileName: fileName || null,
+          mimeType: mimeType || null,
+        }
+      : {};
+
+    const message = await createAndDispatchMessage({
       sender,
-      receiver: receiverId,
-      conversation: conversation._id,
-      content,
-      type: type || "text",
-      clientTempId: clientTempId || null,
-      replyTo: replyMessageId,
+      receiverId,
+      conversation,
+      content: finalContent,
+      type: messageType,
+      clientTempId,
+      replyMessageId,
       replyPreview,
-      isRead: false,
-    });
-
-    conversation.lastMessage = message._id;
-    conversation.updatedAt = new Date();
-    await conversation.save();
-
-    /* 🔥 SOCKET.IO — MESSAGE TEMPS RÉEL */
-    getIO().to(receiverId.toString()).emit("new_message", {
-      from: sender,
-      to: receiverId,
-      message,
-    });
-
-    getIO().to(sender.toString()).emit("new_message", {
-      from: sender,
-      to: receiverId,
-      message,
-    });
-
-    /* 🔥 NOTIFICATION */
-    await pushNotification(receiverId, {
-      from: sender,
-      type: "public",
-      actionType: "message",
-      relatedId: message._id,
-      text: "Nouveau message reçu",
+      fileMeta,
     });
 
     return res.status(201).json({
@@ -354,6 +437,109 @@ exports.sendMessage = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       error: "Erreur lors de l'envoi du message.",
+      details: error.message,
+    });
+  }
+};
+
+/* ============================================================
+POST /api/messages/attachment
+➤ Envoyer un fichier (image / vidéo / document)
+============================================================ */
+exports.sendAttachmentMessage = async (req, res) => {
+  try {
+    const sender = getSenderId(req);
+    const { receiver, content, type, clientTempId, replyTo } = req.body || {};
+    const receiverId = receiver;
+    const file = req.file;
+
+    if (!sender) {
+      return res.status(401).json({ message: "Authentification requise." });
+    }
+
+    if (!receiverId || !mongoose.Types.ObjectId.isValid(receiverId)) {
+      return res.status(400).json({ message: "Destinataire invalide." });
+    }
+
+    if (!file) {
+      return res.status(400).json({ message: "Aucun fichier reçu." });
+    }
+
+    if (
+      file.mimetype &&
+      !ATTACHMENT_MIMES.has(file.mimetype) &&
+      !file.mimetype.startsWith("image/") &&
+      !file.mimetype.startsWith("video/")
+    ) {
+      return res.status(400).json({
+        message: "Type de fichier non supporté pour les messages.",
+      });
+    }
+
+    const [receiverUser, senderUser] = await Promise.all([
+      User.findById(receiverId),
+      User.findById(sender),
+    ]);
+
+    if (!receiverUser || !senderUser) {
+      return res.status(404).json({ message: "Destinataire introuvable." });
+    }
+
+    if (isBlocked(receiverUser, sender) || isBlocked(senderUser, receiverId)) {
+      return res.status(403).json({ message: "Interaction non autorisée." });
+    }
+
+    const isFriend =
+      areFriends(senderUser, receiverId) && areFriends(receiverUser, sender);
+
+    let conversation = await findExistingConversation(sender, receiverId);
+    if (!conversation) {
+      if (!isFriend) {
+        return res.status(403).json({
+          message:
+            "Impossible d'envoyer un fichier sans accepter la demande de message.",
+        });
+      }
+      conversation = await findOrCreateConversation(sender, receiverId);
+    }
+
+    let replyPreview = null;
+    let replyMessageId = null;
+    if (replyTo) {
+      const repliedMessage = await Message.findById(replyTo);
+      if (repliedMessage) {
+        replyMessageId = repliedMessage._id;
+        replyPreview = {
+          messageId: replyMessageId,
+          content: repliedMessage.content || "",
+          type: repliedMessage.type || "text",
+        };
+      }
+    }
+
+    const fileMeta = buildFileMetaFromUpload(file);
+    const hasCaption = typeof content === "string" && content.trim() !== "";
+
+    const message = await createAndDispatchMessage({
+      sender,
+      receiverId,
+      conversation,
+      content: hasCaption ? content : fileMeta.fileName || "Pièce jointe",
+      type: resolveMessageType({ explicitType: type, mimeType: file.mimetype }),
+      clientTempId,
+      replyMessageId,
+      replyPreview,
+      fileMeta,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Pièce jointe envoyée.",
+      data: message,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: "Erreur lors de l'envoi de la pièce jointe.",
       details: error.message,
     });
   }
