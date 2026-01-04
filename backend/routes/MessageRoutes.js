@@ -17,7 +17,10 @@ const audioStorage = multer.diskStorage({
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname) || ".webm";
+    // 🔊 Force a .webm extension to match the transcoding output and avoid
+    // browsers treating re-encoded files as the wrong format (e.g. .mp3
+    // extension with WebM/Opus content).
+    const ext = ".webm";
     cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`);
   },
 });
