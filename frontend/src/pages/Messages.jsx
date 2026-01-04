@@ -19,20 +19,27 @@ import { useActiveConversation } from "../context/ActiveConversationContext";
 import { useNotifications } from "../context/NotificationContext";
 import { getAvatarUrl } from "../utils/avatarUtils";
 
-const buildApiHost = () => {
-  if (!API_URL) return "";
+const getApiMeta = () => {
+  if (!API_URL) {
+    return { origin: window.location.origin, path: "" };
+  }
 
   try {
-    const parsed = new URL(API_URL);
-    return `${parsed.protocol}//${parsed.host}`;
+    const parsed = new URL(API_URL, window.location.origin);
+    return {
+      origin: `${parsed.protocol}//${parsed.host}`,
+      path: parsed.pathname.replace(/\/$/, ""),
+    };
   } catch (err) {
-    // Fallback for relative API paths (dev server)
-    return API_URL.replace(/\/?api\/?$/, "").replace(/\/$/, "");
+    const normalizedPath = API_URL.startsWith("/")
+      ? API_URL.replace(/\/$/, "")
+      : `/${API_URL.replace(/\/$/, "")}`;
+    return { origin: window.location.origin, path: normalizedPath };
   }
 };
 
-const API_HOST = buildApiHost();
-const SOCKET_URL = API_HOST || window.location.origin;
+const { origin: API_ORIGIN, path: API_BASE_PATH } = getApiMeta();
+const SOCKET_URL = API_ORIGIN || window.location.origin;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "😡"];
 const loadErrorMessage = "Impossible de charger vos conversations";
 
@@ -541,7 +548,19 @@ export default function Messages() {
     if (!url) return "";
     if (url.startsWith("blob:")) return url;
     if (url.startsWith("http")) return url;
-    return `${API_HOST || ""}${url.startsWith("/") ? "" : "/"}${url}`;
+
+    const origin = API_ORIGIN || window.location.origin;
+    const normalizedUrl = url.startsWith("/") ? url : `/${url}`;
+    const shouldPrefixApi =
+      API_BASE_PATH &&
+      API_BASE_PATH !== "/" &&
+      normalizedUrl.startsWith("/uploads/");
+
+    if (shouldPrefixApi) {
+      return `${origin}${API_BASE_PATH}${normalizedUrl}`;
+    }
+
+    return `${origin}${normalizedUrl}`;
   };
 
   const copyToClipboard = async (text) => {
