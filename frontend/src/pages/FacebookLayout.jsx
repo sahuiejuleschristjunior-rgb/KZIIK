@@ -266,7 +266,7 @@ export default function FacebookLayout({ headerOnly = false, children }) {
     const SOCKET_URL = API_URL.replace(/\/api\/?$/, "") || "/";
 
     const s = io(SOCKET_URL, {
-      path: "/socket.io",
+      path: "/socket.io/",
       auth: { token: authToken || "" },
       transports: ["polling", "websocket"],
       reconnection: true,
@@ -382,12 +382,10 @@ export default function FacebookLayout({ headerOnly = false, children }) {
 
     const handler = (p) => pushRealtimeMessage(p);
 
-    s.on("message:new", handler);
     s.on("new_message", handler);
 
     return () => {
       try {
-        s.off("message:new", handler);
         s.off("new_message", handler);
       } catch {}
     };
