@@ -240,6 +240,7 @@ export default function Messages() {
   const [editingMessage, setEditingMessage] = useState(null);
   const [messageActions, setMessageActions] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [mediaViewer, setMediaViewer] = useState({ open: false, url: null, type: null });
 
   const token = localStorage.getItem("token");
   const me = JSON.parse(localStorage.getItem("user"));
@@ -2770,6 +2771,15 @@ export default function Messages() {
     return preview.content || "Message";
   };
 
+  const openMediaViewer = useCallback((url, type = "image") => {
+    if (!url) return;
+    setMediaViewer({ open: true, url, type });
+  }, []);
+
+  const closeMediaViewer = useCallback(() => {
+    setMediaViewer({ open: false, url: null, type: null });
+  }, []);
+
   const renderAttachment = (msg) => {
     if (!msg?.fileUrl) return null;
     const url = resolveUrl(msg.fileUrl);
@@ -2782,7 +2792,11 @@ export default function Messages() {
     if (isImage) {
       return (
         <div className="message-attachment image">
-          <img src={url} alt={attachmentLabel || "Image"} />
+          <img
+            src={url}
+            alt={attachmentLabel || "Image"}
+            onClick={() => openMediaViewer(url, "image")}
+          />
           {attachmentLabel && <div className="attachment-name">{attachmentLabel}</div>}
         </div>
       );
@@ -2869,7 +2883,37 @@ export default function Messages() {
   }
 
   return (
-    <div className={`messages-page ${activeChat ? "chat-open" : ""}`}>
+    <>
+      {mediaViewer.open && (
+        <div
+          className="media-viewer-overlay"
+          onClick={closeMediaViewer}
+          role="presentation"
+        >
+          <div
+            className="media-viewer-content"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+          >
+            <button
+              className="media-viewer-close"
+              onClick={(e) => {
+                e.stopPropagation();
+                closeMediaViewer();
+              }}
+              aria-label="Fermer le média"
+            >
+              ✕
+            </button>
+            {mediaViewer.type === "image" && (
+              <img src={mediaViewer.url} alt="Media" />
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className={`messages-page ${activeChat ? "chat-open" : ""}`}>
       {/* ================= LEFT — AMIS ================= */}
       <aside className="messages-sidebar">
         <div className="messages-sidebar-header">
@@ -3565,5 +3609,6 @@ export default function Messages() {
         }}
       />
     </div>
+    </>
   );
 }
