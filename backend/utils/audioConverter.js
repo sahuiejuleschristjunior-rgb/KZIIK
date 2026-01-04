@@ -1,3 +1,4 @@
+const ffmpegPath = "/usr/bin/ffmpeg";
 const { spawn } = require("child_process");
 
 function convertAudioSafe(input, output) {
