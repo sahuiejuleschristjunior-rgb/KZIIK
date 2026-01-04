@@ -65,6 +65,10 @@ function convertAudioSafe(input, output) {
   });
 }
 
-module.exports = {
+async function convertWebmToMp3(input, output) {
+  return convertAudioSafe(input, output);
+}
+
+module.exports = { convertAudioSafe, convertWebmToMp3 };
   convertAudioSafe,
 };
