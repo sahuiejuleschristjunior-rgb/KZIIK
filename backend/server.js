@@ -100,6 +100,9 @@ app.get("/uploads/audio/:file", (req, res) => {
   stream.pipe(res);
 });
 
+app.use("/uploads/audio", express.static(path.join(__dirname, "uploads/audio")));
+
+// JWT volontairement désactivé pour la lecture audio
 app.use("/uploads", express.static(uploadsPath));
 app.use("/api/uploads", express.static(uploadsPath));
 app.use((req, res, next) => {
