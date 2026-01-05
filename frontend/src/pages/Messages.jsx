@@ -2424,7 +2424,7 @@ const resolveUrl = (url) => {
     audioRefs.current[msg._id] = node;
 
     node.preload = "auto";
-    node.crossOrigin = "anonymous";
+    
     node.volume = 1;
 
     const persistDuration = () => {
