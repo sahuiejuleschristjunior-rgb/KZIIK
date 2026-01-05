@@ -139,6 +139,17 @@
   color: #e4e6eb;
 }
 
+.fb-post-card,
+.fb-post-media-wrapper,
+.fb-post-media,
+.fb-post-media-video {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+}
+
 .fb-post-media {
   width: 100%;
   max-width: 100%;
@@ -154,13 +165,13 @@
   display: grid;
   gap: 6px;
   width: 100%;
-  min-height: 220px;
-  height: clamp(220px, 60vw, 420px);
-  max-height: 420px;
-  overflow: hidden;
+  min-height: auto;
+  height: auto;
+  max-height: none;
+  overflow: visible;
   border-radius: 12px;
   background: #000;
-  grid-auto-rows: 1fr;
+  grid-auto-rows: auto;
 }
 
 .fb-post-media-grid.single {
@@ -214,8 +225,8 @@
   cursor: pointer;
   display: block;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  height: auto;
+  overflow: visible;
   position: relative;
 }
 
@@ -229,6 +240,7 @@
 .fb-post-video {
   width: 100%;
   height: auto;
+  max-height: none;
   object-fit: contain;
   display: block;
   border-radius: 0;
@@ -241,7 +253,7 @@
 
 .fb-post-image-cover {
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   border-radius: 0;
 }
@@ -278,14 +290,14 @@
 @media (max-width: 480px) {
   .fb-post-media-grid {
     gap: 4px;
-    height: clamp(200px, 72vw, 340px);
-    max-height: 340px;
+    height: auto;
+    max-height: none;
   }
 }
 
 @media (min-width: 768px) {
   .fb-post-media-grid {
-    max-height: 420px;
+    max-height: none;
   }
 }
 
