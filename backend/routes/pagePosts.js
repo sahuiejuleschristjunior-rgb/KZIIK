@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const auth = require("../middlewares/authMiddleware");
 const ctrl = require("../controllers/pagesController");
+const { MAX_UPLOAD_BYTES } = require("../config/uploadLimits");
 
 const uploadDir = path.join(__dirname, "..", "uploads");
 if (!fs.existsSync(uploadDir)) {
@@ -57,7 +58,7 @@ function fileFilter(req, file, cb) {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 500 * 1024 * 1024 },
+  limits: { fileSize: MAX_UPLOAD_BYTES },
 });
 
 router.post("/:slug", auth, upload.array("files", 10), ctrl.createPagePost);

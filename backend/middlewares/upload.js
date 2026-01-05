@@ -1,6 +1,7 @@
 const path = require("path");
 const multer = require("multer");
 const fs = require('fs');
+const { MAX_UPLOAD_BYTES } = require("../config/uploadLimits");
 
 // Définir le chemin d'upload et s'assurer que le dossier existe.
 // Le chemin est maintenant: backend/uploads (si ce fichier est dans backend/middlewares)
@@ -63,7 +64,7 @@ function fileFilter(req, file, cb) {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 500 * 1024 * 1024 }, // 500 Mo
+  limits: { fileSize: MAX_UPLOAD_BYTES }, // configurable (par défaut 2 Go)
 });
 
 module.exports = upload;

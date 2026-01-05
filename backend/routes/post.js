@@ -7,6 +7,7 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const postCtrl = require("../controllers/postController");
+const { MAX_UPLOAD_BYTES } = require("../config/uploadLimits");
 
 /* =====================================================
    📁 Création automatique du dossier uploads
@@ -68,7 +69,7 @@ function fileFilter(req, file, cb) {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
+  limits: { fileSize: MAX_UPLOAD_BYTES },
 });
 
 /* =====================================================
