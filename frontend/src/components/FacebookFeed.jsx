@@ -174,7 +174,13 @@ function FeedVideoMedia({ media, onClick, onExpand }) {
   );
 }
 
-export default function FacebookFeed() {
+export default function FacebookFeed({
+  profileId = null,
+  showComposer = true,
+  showStories = true,
+  enableInfiniteScroll = true,
+  onPostsChange,
+}) {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
@@ -229,6 +235,12 @@ export default function FacebookFeed() {
   useEffect(() => {
     setPosts((prev) => filterVisiblePosts(prev));
   }, [filterVisiblePosts]);
+
+  useEffect(() => {
+    if (typeof onPostsChange === "function") {
+      onPostsChange(posts);
+    }
+  }, [posts, onPostsChange]);
 
   /* Nouveau système modal commentaires */
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
@@ -391,21 +403,32 @@ export default function FacebookFeed() {
       if (isInitial) setLoadingInitial(true);
       else setLoadingMore(true);
 
-      const res = await fetch(
-        `${API_URL}/posts/paginated?page=${pageToLoad}&limit=${limit}&includeAds=1`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const endpoint = profileId
+        ? `${API_URL}/posts/user/${profileId}?page=${pageToLoad}&limit=${limit}&includeAds=1`
+        : `${API_URL}/posts/paginated?page=${pageToLoad}&limit=${limit}&includeAds=1`;
+
+      const res = await fetch(endpoint, { headers: { Authorization: `Bearer ${token}` } });
 
       const data = await res.json();
-      if (!res.ok || !Array.isArray(data.posts)) {
+      const fetchedPosts = profileId
+        ? Array.isArray(data?.posts)
+          ? data.posts
+          : Array.isArray(data)
+          ? data
+          : []
+        : Array.isArray(data?.posts)
+        ? data.posts
+        : [];
+
+      if (!res.ok) {
         if (isInitial) setPosts([]);
         return;
       }
 
-      if (isInitial) setPosts(filterVisiblePosts(data.posts));
-      else setPosts((prev) => filterVisiblePosts([...prev, ...data.posts]));
+      if (isInitial) setPosts(filterVisiblePosts(fetchedPosts));
+      else setPosts((prev) => filterVisiblePosts([...prev, ...fetchedPosts]));
 
-      setHasMore(Boolean(data.hasMore));
+      setHasMore(profileId ? fetchedPosts.length >= limit : Boolean(data.hasMore));
       setPage(pageToLoad);
     } catch (err) {
       console.error("LOAD POSTS ERROR:", err);
@@ -416,7 +439,7 @@ export default function FacebookFeed() {
 
   useEffect(() => {
     loadPosts(1, true);
-  }, []);
+  }, [profileId]);
 
   useEffect(() => {
     if (!notifPayload?.postId) return;
@@ -518,6 +541,7 @@ export default function FacebookFeed() {
         SCROLL INFINI
   ================================================================= */
   const handleScroll = useCallback(() => {
+    if (!enableInfiniteScroll) return;
     if (loadingMore || !hasMore) return;
 
     if (
@@ -526,13 +550,14 @@ export default function FacebookFeed() {
     ) {
       loadPosts(page + 1);
     }
-  }, [loadingMore, hasMore, page]);
+  }, [enableInfiniteScroll, loadingMore, hasMore, page]);
 
   useEffect(() => {
+    if (!enableInfiniteScroll) return undefined;
     window.addEventListener("scroll", handleScroll);
     return () =>
       window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+  }, [handleScroll, enableInfiniteScroll]);
 
   useEffect(() => {
     const closeMenusOnClickOutside = (e) => {
@@ -850,12 +875,14 @@ export default function FacebookFeed() {
   ================================================================= */
   return (
     <div className="fb-feed">
-      <CreatePostFB
-        onOptimisticPost={addOptimisticPost}
-        onPostCreated={replaceOptimisticPost}
-        onPostError={removeOptimisticPost}
-      />
-      <StoriesFB />
+      {showComposer && (
+        <CreatePostFB
+          onOptimisticPost={addOptimisticPost}
+          onPostCreated={replaceOptimisticPost}
+          onPostError={removeOptimisticPost}
+        />
+      )}
+      {showStories && <StoriesFB />}
 
       {/* LOADER INITIAL */}
       {loadingInitial &&
