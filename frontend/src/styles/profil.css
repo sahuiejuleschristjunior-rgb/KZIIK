@@ -636,70 +636,9 @@
     border-radius: 12px;
   }
 
-.profil-tabs {
-  gap: 4px;
-}
-
-/*
-  =========================================================
-  OVERRIDE FEED PADDING/BACKGROUND ON PROFILE POSTS
-  Objectif : supprimer tout espace noir autour des médias
-  =========================================================
-*/
-.profil-posts .fb-feed {
-  padding: 0;
-  margin: 0;
-  max-width: 100%;
-}
-
-.profil-posts .fb-post-wrapper,
-.profil-posts .fb-post,
-.profil-posts .post,
-.profil-posts .post-wrapper,
-.profil-posts .post-card {
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  border-radius: 0;
-  border: none;
-  box-shadow: none;
-}
-
-.profil-posts .fb-post-media-wrapper,
-.profil-posts .fb-post-media,
-.profil-posts .fb-post-media-video,
-.profil-posts .media-wrapper,
-.profil-posts .post-media {
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  border-radius: 0;
-  line-height: 0;
-}
-
-.profil-posts .fb-post-media-video video,
-.profil-posts .fb-post video,
-.profil-posts .fb-post-media video,
-.profil-posts video {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin: 0;
-  padding: 0;
-  background: black;
-}
-
-.profil-posts .fb-post img,
-.profil-posts .fb-post-media img,
-.profil-posts .fb-post-media-video img,
-.profil-posts img {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-}
+  .profil-tabs {
+    gap: 4px;
+  }
 
   .profil-tabs button {
     padding: 10px 8px;
