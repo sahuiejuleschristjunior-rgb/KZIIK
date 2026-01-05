@@ -1,9 +1,8 @@
 import { useEffect, useState, useId } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Post from "../components/Post";
+import FacebookFeed from "../components/FacebookFeed";
 import ProfilePhotoViewer from "../components/ProfilePhotoViewer";
 import "../styles/profil.css";
-import { filterHiddenPosts, rememberHiddenPost } from "../utils/hiddenPosts";
 import { API_URL } from "../api/config";
 
 /* ================================================
@@ -70,8 +69,9 @@ export default function ProfilPage() {
     if (!token) return nav("/login");
     if (!profileId) return;
 
+    setLoading(true);
+    setPosts([]);
     loadProfile(profileId);
-    loadUserPosts(profileId);
   }, [profileId]); // 👈 recharge lors d'un changement d'URL
 
   useEffect(() => {
@@ -197,45 +197,29 @@ export default function ProfilPage() {
       }
     } catch (err) {
       console.error("PROFILE ERROR:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   /* ================================================
      LOAD POSTS (CORRIGÉ)
   ================================================ */
-  const loadUserPosts = async (targetId) => {
-    if (!targetId) return;
-    try {
-      const res = await fetch(
-        `${API_URL}/posts/user/${targetId}?includeAds=1`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      const list = await res.json();
-
-      if (res.ok && Array.isArray(list)) {
-        const normalized = list.map((p) => ({
-          ...p,
-          media: p.media?.map((m) => ({
-            ...m,
-            url: fixUrl(m.url),
-          })),
-        }));
-
-        setPosts(filterHiddenPosts(normalized, currentUser?._id));
-      }
-    } catch (err) {
-      console.error("POST ERROR:", err);
+  const handleFeedPosts = (list) => {
+    if (!Array.isArray(list)) {
+      setPosts([]);
+      return;
     }
 
-    setLoading(false);
-  };
+    const normalized = list.map((p) => ({
+      ...p,
+      media: p.media?.map((m) => ({
+        ...m,
+        url: fixUrl(m.url),
+      })),
+    }));
 
-  const handleHidePost = (postId) => {
-    rememberHiddenPost(postId, currentUser?._id);
-    setPosts((prev) => filterHiddenPosts(prev, currentUser?._id));
+    setPosts(normalized);
   };
 
   const photoItems = posts
@@ -482,19 +466,12 @@ export default function ProfilPage() {
 
             <div className="profil-col">
               <div className="profil-posts">
-                {posts.length === 0 ? (
-                  <div className="profil-empty">Aucune publication.</div>
-                ) : (
-                  posts.map((p) => (
-                    <Post
-                      key={p._id}
-                      post={p}
-                      currentUser={currentUser}
-                      onMediaClick={(items, start) => openPhotoViewer(items, start)}
-                      onHidePost={handleHidePost}
-                    />
-                  ))
-                )}
+                <FacebookFeed
+                  profileId={profileId}
+                  showComposer={isOwner}
+                  showStories={false}
+                  onPostsChange={handleFeedPosts}
+                />
               </div>
             </div>
           </div>
