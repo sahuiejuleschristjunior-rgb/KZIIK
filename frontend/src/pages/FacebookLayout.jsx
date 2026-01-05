@@ -27,8 +27,7 @@ export default function FacebookLayout({ headerOnly = false, children }) {
     if (typeof window === "undefined") return false;
     return window.matchMedia("(max-width: 768px)").matches;
   });
-  const isFullLayout =
-    location.pathname.startsWith("/fb") || location.pathname.startsWith("/profil");
+  const isFullLayout = location.pathname.startsWith("/fb");
   const isHeaderOnly = headerOnly || isCompleteProfile;
   const isCompactLayout = isHeaderOnly || !isFullLayout;
   const isPagesFeed = location.pathname.startsWith("/fb/pages-feed");
