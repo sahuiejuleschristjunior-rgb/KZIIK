@@ -63,27 +63,7 @@ const svgThumb = (
 let activeVideoRef = null;
 
 function FeedVideoMedia({ media, onClick, onExpand }) {
-  const MIN_FEED_VIDEO_RATIO = 4 / 5; // Empêche les vidéos trop hautes
-  const MAX_FEED_VIDEO_RATIO = 16 / 9; // Empêche les bandes noires horizontales
-
-  const [aspectRatio, setAspectRatio] = useState(1);
   const videoRef = useRef(null);
-
-  const handleMetadata = (event) => {
-    const videoEl = event?.target;
-    const videoWidth = videoEl?.videoWidth;
-    const videoHeight = videoEl?.videoHeight;
-
-    if (videoWidth && videoHeight) {
-      const rawRatio = videoWidth / videoHeight;
-      const clampedRatio = Math.min(
-        Math.max(rawRatio, MIN_FEED_VIDEO_RATIO),
-        MAX_FEED_VIDEO_RATIO
-      );
-
-      setAspectRatio(clampedRatio);
-    }
-  };
 
   const pauseVideo = useCallback(() => {
     const videoEl = videoRef.current;
@@ -143,8 +123,14 @@ function FeedVideoMedia({ media, onClick, onExpand }) {
     };
   }, [pauseVideo, playVideo]);
 
-  const containerStyle = { aspectRatio };
-  const videoStyle = { width: "100%", height: "100%", objectFit: "cover" };
+  const containerStyle = { width: "100%", display: "block" };
+  const videoStyle = {
+    width: "100%",
+    height: "auto",
+    maxHeight: "none",
+    objectFit: "contain",
+    display: "block",
+  };
 
   return (
     <div
@@ -167,7 +153,6 @@ function FeedVideoMedia({ media, onClick, onExpand }) {
         enableIntersectionObserver={false}
         autoPlayOnLoad={false}
         onExpand={onExpand}
-        onLoadedMetadata={handleMetadata}
         style={videoStyle}
       />
     </div>

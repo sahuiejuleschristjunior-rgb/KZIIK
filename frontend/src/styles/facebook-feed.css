@@ -123,7 +123,7 @@
   margin: 0;
   padding: 0;
   background: #000;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   display: block;
   line-height: 0;
@@ -132,7 +132,8 @@
 
 .fb-feed .fb-post-media-video .media-renderer {
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-height: none;
   position: relative;
   line-height: 0;
   border-radius: 0;
@@ -141,12 +142,13 @@
 .fb-feed .fb-post-video.media-element,
 .fb-feed .fb-post-media-video video {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
   display: block;
   background: #000;
-  position: absolute;
-  inset: 0;
+  position: relative;
+  inset: auto;
   margin: 0;
   padding: 0;
   border-radius: 0;
@@ -155,32 +157,32 @@
 .fb-feed .fb-post-media-video .media-element,
 .fb-feed .fb-post-media-video .media-skeleton {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
 }
 
 .fbVideoWrap {
   width: 100%;
   max-width: 100%;
   background: #000;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   line-height: 0;
 }
 
 .fbVideoWrap .media-renderer {
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-height: none;
   position: relative;
 }
 
 .fbVideo {
-  position: absolute;
-  inset: 0;
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .fb-post-media-wrapper {
@@ -2154,7 +2156,7 @@
   max-width: 180px;
   max-height: 180px;
   border-radius: 10px;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   background: #111;
 }
@@ -2671,17 +2673,18 @@
 
 .fb-preview-item {
   width: 100%;
-  height: 110px;
+  height: auto;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
   background: #111;
   position: relative;
 }
 
 .fb-preview-img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
 }
 
 /* ========================================================= */
@@ -3080,13 +3083,14 @@
 .fb-preview-item {
   background: #111;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .fb-preview-img {
   width: 100%;
-  height: 140px;
-  object-fit: cover;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
 }
 
 
@@ -3537,16 +3541,17 @@
 
 .fb-preview-item {
   width: 100%;
-  height: 110px;
+  height: auto;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   background: #111;
 }
 
 .fb-preview-img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
 }
 
 /* ============================================
@@ -3745,16 +3750,17 @@
 
 .fb-preview-item {
     width: 100%;
-    height: 120px;
+    height: auto;
     border-radius: 12px;
     background: #111;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .fb-preview-img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
 }
 
 /***************************************************
@@ -4247,16 +4253,17 @@
 .fb-media-item {
   position: relative;
   background: #000;
-  padding-top: 100%;
-  overflow: hidden;
+  padding-top: 0;
+  overflow: visible;
 }
 
 .fb-media-item img {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  inset: auto;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
 }
 
 /* Badge +X pour les nombreuses images */
@@ -4757,9 +4764,10 @@
 
 .fb-feed .fb-post-media-video .media-renderer,
 .fb-feed .fb-post-media-video video {
-  height: 100%;
+  height: auto;
   width: 100%;
-  object-fit: cover;
+  max-height: none;
+  object-fit: contain;
 }
 
 /* ===================================================== */
