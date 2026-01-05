@@ -51,7 +51,7 @@ const attachmentStorage = multer.diskStorage({
 
 const attachmentUpload = multer({
   storage: attachmentStorage,
-  limits: { fileSize: 100 * 1024 * 1024 },
+  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
 });
 
 const sendRateTracker = new Map();
