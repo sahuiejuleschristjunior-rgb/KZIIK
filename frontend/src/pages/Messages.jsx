@@ -2818,6 +2818,7 @@ const resolveUrl = (url) => {
         </div>
 
         <audio
+          key={url}
           ref={(node) => bindAudioRef(msg, node)}
           src={url}
           preload="metadata"
