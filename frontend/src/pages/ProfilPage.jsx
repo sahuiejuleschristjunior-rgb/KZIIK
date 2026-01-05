@@ -4,6 +4,7 @@ import FacebookFeed from "../components/FacebookFeed";
 import ProfilePhotoViewer from "../components/ProfilePhotoViewer";
 import "../styles/profil.css";
 import { API_URL } from "../api/config";
+import { getImageUrl } from "../utils/imageUtils";
 
 /* ================================================
    FIX DES URL IMAGES / UPLOAD
@@ -213,10 +214,17 @@ export default function ProfilPage() {
 
     const normalized = list.map((p) => ({
       ...p,
-      media: p.media?.map((m) => ({
-        ...m,
-        url: fixUrl(m.url),
-      })),
+      media: (p.media || []).map((m) => {
+        const rawUrl = m.resolvedUrl || m.previewUrl || m.url || "";
+        const safeUrl = getImageUrl(rawUrl) || fixUrl(rawUrl);
+
+        return {
+          ...m,
+          url: safeUrl,
+          mimeType: m.mimeType || m.type,
+          type: m.type || m.mimeType,
+        };
+      }),
     }));
 
     setPosts(normalized);
