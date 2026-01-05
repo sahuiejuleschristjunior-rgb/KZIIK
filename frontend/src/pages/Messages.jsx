@@ -561,25 +561,13 @@ export default function Messages() {
     };
   }, [activeChat, isMobileView]);
 
-  const resolveUrl = (url) => {
-    if (!url) return "";
-    const trimmed = typeof url === "string" ? url.trim() : url;
-    if (trimmed.startsWith("blob:")) return trimmed;
-    if (/^https?:\/\//i.test(trimmed)) return trimmed;
-
-    const origin = API_ORIGIN || window.location.origin;
-    const normalizedUrl = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
-    const shouldPrefixApi =
-      API_BASE_PATH &&
-      API_BASE_PATH !== "/" &&
-      normalizedUrl.startsWith("/uploads/");
-
-    if (shouldPrefixApi) {
-      return `${origin}${API_BASE_PATH}${normalizedUrl}`;
-    }
-
-    return `${origin}${normalizedUrl}`;
-  };
+const resolveUrl = (url) => {
+  if (!url) return "";
+  if (url.startsWith("blob:")) return url;
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/uploads/")) return "https://kaziik.com" + url;
+  return "https://kaziik.com/" + url.replace(/^\/+/, "");
+};
 
   const copyToClipboard = async (text) => {
     if (!text) return false;
