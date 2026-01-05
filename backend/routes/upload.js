@@ -94,9 +94,9 @@ const upload = multer({
  */
 const JOB_MEDIA = {
   imageMimes: new Set(["image/jpeg", "image/png", "image/webp", "image/jpg"]),
-  videoMimes: new Set(["video/mp4"]),
+  videoMimes: new Set(["video/mp4", "video/webm"]),
   imageExtensions: new Set([".jpg", ".jpeg", ".png", ".webp"]),
-  videoExtensions: new Set([".mp4"]),
+  videoExtensions: new Set([".mp4", ".webm"]),
   maxImages: 5,
   maxVideos: 1,
   maxVideoSeconds: 3600,
