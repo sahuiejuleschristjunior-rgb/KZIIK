@@ -565,5 +565,5 @@ export default function PublicProfile() {
     );
   };
 
-  return <FacebookLayout headerOnly>{renderContent()}</FacebookLayout>;
+  return <FacebookLayout>{renderContent()}</FacebookLayout>;
 }
