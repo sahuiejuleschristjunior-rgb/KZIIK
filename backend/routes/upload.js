@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
 const ffmpeg = require("fluent-ffmpeg");
+const { MAX_UPLOAD_BYTES } = require("../config/uploadLimits");
 
 /**
  * ===============================
@@ -83,7 +84,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
+  limits: { fileSize: MAX_UPLOAD_BYTES },
 });
 
 /**

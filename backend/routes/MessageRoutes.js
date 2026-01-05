@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const { MAX_UPLOAD_BYTES } = require("../config/uploadLimits");
 
 // Controller
 const MessageController = require("../controllers/MessageController");
@@ -51,7 +52,7 @@ const attachmentStorage = multer.diskStorage({
 
 const attachmentUpload = multer({
   storage: attachmentStorage,
-  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
+  limits: { fileSize: MAX_UPLOAD_BYTES },
 });
 
 const sendRateTracker = new Map();
