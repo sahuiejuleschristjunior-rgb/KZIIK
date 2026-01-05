@@ -4,11 +4,20 @@ import React, { useState } from "react";
 import "../styles/post-edit-modal.css";
 
 /* Fonction pour corriger les URL */
+const API_STATIC = API_URL.replace(/\/$/, "");
+
 const fixUrl = (path) => {
   if (!path) return "";
-  if (path.startsWith("http")) return path;
-  if (path.startsWith("/uploads")) return `${API_URL}${path}`;
-  return `${API_URL}/${path}`;
+
+  if (path.startsWith("http://")) {
+    return `https://${path.slice("http://".length)}`;
+  }
+
+  if (path.startsWith("https://")) return path;
+  if (path.startsWith("/uploads")) return `${API_STATIC}${path}`;
+  if (path.startsWith("uploads")) return `${API_STATIC}/${path}`;
+  if (path.startsWith("/default")) return `${API_STATIC}/uploads${path}`;
+  return `${API_STATIC}${path.startsWith("/") ? "" : "/"}${path}`;
 };
 
 export default function PostEditModal({ post, onClose, onPostUpdated }) {
