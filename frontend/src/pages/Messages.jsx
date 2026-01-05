@@ -2490,8 +2490,6 @@ const resolveUrl = (url) => {
     };
     node.onerror = (event) => {
       console.error("Erreur média audio", event?.error || event);
-      setInfoBanner("Audio indisponible ou corrompu");
-      updateStatus();
     };
 
     if (Number.isFinite(node.duration) && node.duration > 0) {
@@ -2793,6 +2791,10 @@ const resolveUrl = (url) => {
   };
 
   const renderAudioBubble = (msg) => {
+    if (!msg.audioUrl || !msg.audioUrl.endsWith(".mp3")) {
+      return <div className="audio-pending">🎙️ Audio en cours de traitement…</div>;
+    }
+
     const audioKey = msg.clientTempId || msg._id;
     const status = audioStatus[audioKey] || {};
     const progress = status.duration
@@ -2818,7 +2820,7 @@ const resolveUrl = (url) => {
         </div>
 
         <audio
-          key={url}
+          key={msg.audioUrl}
           ref={(node) => bindAudioRef(msg, node)}
           src={url}
           preload="metadata"
