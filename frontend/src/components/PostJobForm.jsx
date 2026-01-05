@@ -4,7 +4,7 @@ import "../styles/JobForm.css";
 
 export default function PostJobForm({ onJobPosted }) {
     const maxImages = 5;
-    const maxVideoSeconds = 300;
+    const maxVideoSeconds = 3600;
     const [form, setForm] = useState({
         title: '',
         description: '',
@@ -92,7 +92,7 @@ export default function PostJobForm({ onJobPosted }) {
             });
 
             if (duration > maxVideoSeconds) {
-                setMediaError("La vidéo dépasse 5 minutes.");
+                setMediaError("La vidéo dépasse 60 minutes.");
                 return;
             }
 
