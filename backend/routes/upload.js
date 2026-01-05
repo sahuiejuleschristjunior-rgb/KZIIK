@@ -98,7 +98,7 @@ const JOB_MEDIA = {
   videoExtensions: new Set([".mp4"]),
   maxImages: 5,
   maxVideos: 1,
-  maxVideoSeconds: 300,
+  maxVideoSeconds: 3600,
 };
 
 const generateName = (extension) =>
@@ -279,7 +279,7 @@ router.post("/job-media", upload.array("files", 6), async (req, res) => {
         await cleanupUploadedFiles(files);
         return res.status(400).json({
           success: false,
-          error: "Vidéo trop longue (max 5 minutes).",
+          error: "Vidéo trop longue (max 60 minutes).",
         });
       }
     } catch (err) {
