@@ -1028,7 +1028,7 @@ exports.sendAudioMessage = async (req, res) => {
       });
     }
 
-    const mp3Filename = `${path.parse(file.filename).name}.ogg`;
+    const mp3Filename = `${path.parse(file.filename).name}.mp3`;
     const mp3Path = path.join(uploadDir, mp3Filename);
     convertedPath = mp3Path;
 
