@@ -7,17 +7,60 @@ const ffmpeg = require("fluent-ffmpeg");
 
 /**
  * ===============================
+ * Résolution des binaires FFmpeg/FFprobe
+ * ===============================
+ *
+ * Dans certains environnements (containers, prod), les binaires système ne
+ * sont pas forcément présents. On s'appuie d'abord sur les packages
+ * @ffmpeg-installer/ffmpeg et @ffprobe-installer/ffprobe, puis on retombe sur
+ * les chemins système historiques pour ne jamais bloquer l'upload vidéo.
+ */
+const resolveBinaryPath = (envVar, installerModule, fallbackPath) => {
+  if (envVar) return envVar;
+
+  try {
+    // eslint-disable-next-line global-require
+    const installer = require(installerModule);
+    if (installer?.path) return installer.path;
+  } catch (err) {
+    console.warn(`[upload] ${installerModule} introuvable (${err.message}).`);
+  }
+
+  return fallbackPath;
+};
+
+/**
+ * ===============================
  * FFmpeg / FFprobe (SYSTEM)
  * ===============================
  */
-const FFMPEG_PATH = "/usr/bin/ffmpeg";
-const FFPROBE_PATH = "/usr/bin/ffprobe";
+const FFMPEG_PATH = resolveBinaryPath(
+  process.env.FFMPEG_PATH,
+  "@ffmpeg-installer/ffmpeg",
+  "/usr/bin/ffmpeg"
+);
+const FFPROBE_PATH = resolveBinaryPath(
+  process.env.FFPROBE_PATH,
+  "@ffprobe-installer/ffprobe",
+  "/usr/bin/ffprobe"
+);
 
-ffmpeg.setFfmpegPath(FFMPEG_PATH);
-ffmpeg.setFfprobePath(FFPROBE_PATH);
+const ffmpegAvailable = fs.existsSync(FFMPEG_PATH);
+const ffprobeAvailable = fs.existsSync(FFPROBE_PATH);
 
-console.log("✅ FFmpeg configuré :", FFMPEG_PATH);
-console.log("✅ FFprobe configuré :", FFPROBE_PATH);
+if (ffmpegAvailable) {
+  ffmpeg.setFfmpegPath(FFMPEG_PATH);
+  console.log("✅ FFmpeg configuré :", FFMPEG_PATH);
+} else {
+  console.warn("⚠️ FFmpeg introuvable, compression vidéo désactivée.");
+}
+
+if (ffprobeAvailable) {
+  ffmpeg.setFfprobePath(FFPROBE_PATH);
+  console.log("✅ FFprobe configuré :", FFPROBE_PATH);
+} else {
+  console.warn("⚠️ FFprobe introuvable, durée vidéo non vérifiée.");
+}
 
 /**
  * ===============================
@@ -89,6 +132,11 @@ const processImageAsync = (file, targetPath) => {
 };
 
 const processVideoAsync = (file, targetPath, thumbnailPath) => {
+  if (!ffmpegAvailable) {
+    setImmediate(() => ensureFileCopied(file.path, targetPath));
+    return;
+  }
+
   setImmediate(() => {
     ffmpeg(file.path)
       .videoCodec("libx264")
@@ -144,6 +192,8 @@ const cleanupUploadedFiles = async (files = []) => {
 
 const getVideoDuration = (filePath) =>
   new Promise((resolve, reject) => {
+    if (!ffprobeAvailable) return resolve(null);
+
     ffmpeg.ffprobe(filePath, (err, metadata) => {
       if (err) return reject(err);
       const duration = metadata?.format?.duration;
@@ -222,10 +272,10 @@ router.post("/job-media", upload.array("files", 6), async (req, res) => {
     });
   }
 
-  if (videos.length === 1) {
+  if (videos.length === 1 && ffprobeAvailable) {
     try {
       const duration = await getVideoDuration(videos[0].path);
-      if (!duration || duration > JOB_MEDIA.maxVideoSeconds) {
+      if (duration !== null && duration > JOB_MEDIA.maxVideoSeconds) {
         await cleanupUploadedFiles(files);
         return res.status(400).json({
           success: false,
