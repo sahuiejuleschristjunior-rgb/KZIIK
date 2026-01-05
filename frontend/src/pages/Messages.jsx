@@ -2792,7 +2792,11 @@ const resolveUrl = (url) => {
 
   const renderAudioBubble = (msg) => {
     if (!msg.audioUrl || !msg.audioUrl.endsWith(".mp3")) {
-      return <div className="audio-pending">🎙️ Audio en cours de traitement…</div>;
+      return (
+        <div className="audio-bubble audio-pending">
+          🎙️ Audio en cours de traitement…
+        </div>
+      );
     }
 
     const audioKey = msg.clientTempId || msg._id;
@@ -2823,6 +2827,7 @@ const resolveUrl = (url) => {
           key={msg.audioUrl}
           ref={(node) => bindAudioRef(msg, node)}
           src={url}
+          controls
           preload="metadata"
           playsInline
           webkit-playsinline="true"
