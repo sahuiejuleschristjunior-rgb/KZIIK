@@ -638,7 +638,8 @@ const resolveUrl = (url) => {
 
   const getAudioDurationSeconds = (msg) => {
     if (!msg || msg.type !== "audio") return null;
-    const status = audioStatus[msg._id] || {};
+    const audioKey = msg.clientTempId || msg._id;
+    const status = audioStatus[audioKey] || {};
     const duration =
       status.duration || msg.audioDuration || msg.duration || msg.length || msg.audioLength;
     if (!duration || Number.isNaN(Number(duration))) return null;
@@ -801,6 +802,9 @@ const resolveUrl = (url) => {
           next.splice(idx, 1);
         }
       }
+
+      cleanupAudioRefs(withTimestamp._id);
+      cleanupAudioRefs(withTimestamp.clientTempId);
 
       const sameIdIdx = next.findIndex((m) => m._id === withTimestamp._id);
       if (sameIdIdx >= 0) {
@@ -2346,12 +2350,15 @@ const resolveUrl = (url) => {
     playRequestRef.current[messageId] = true;
   };
 
-  const togglePlay = (messageId) => {
-    const audio = audioRefs.current[messageId];
-    if (!audio) return;
+  const togglePlay = (audioKey) => {
+    const audio = audioRefs.current[audioKey];
+    if (!audio) {
+      console.warn("Aucun élément audio trouvé pour", audioKey);
+      return;
+    }
 
     if (audio.paused) {
-      if (isPlayRequestPending(messageId)) return;
+      if (isPlayRequestPending(audioKey)) return;
 
       const isSwitchingAudio =
         currentAudioRef.current &&
@@ -2380,13 +2387,13 @@ const resolveUrl = (url) => {
         audio.currentTime = 0;
       }
       currentAudioRef.current = audio;
-      currentAudioIdRef.current = messageId;
+      currentAudioIdRef.current = audioKey;
       audio.volume = 1;
       audio.playbackRate = 1;
       audio.muted = false;
       audio.setAttribute("playsinline", "true");
       audio.setAttribute("webkit-playsinline", "true");
-      markPlayRequestPending(messageId);
+      markPlayRequestPending(audioKey);
       const playPromise = audio.play();
       if (playPromise?.catch) {
         playPromise
@@ -2398,8 +2405,8 @@ const resolveUrl = (url) => {
               );
               setAudioStatus((prev) => ({
                 ...prev,
-                [messageId]: {
-                  ...(prev[messageId] || {}),
+                [audioKey]: {
+                  ...(prev[audioKey] || {}),
                   playing: false,
                 },
               }));
@@ -2409,27 +2416,28 @@ const resolveUrl = (url) => {
             setInfoBanner("Impossible de lire la note vocale");
             setAudioStatus((prev) => ({
               ...prev,
-              [messageId]: {
-                ...(prev[messageId] || {}),
+              [audioKey]: {
+                ...(prev[audioKey] || {}),
                 playing: false,
               },
             }));
           })
-          .finally(() => clearPendingPlayRequest(messageId));
+          .finally(() => clearPendingPlayRequest(audioKey));
       } else {
-        clearPendingPlayRequest(messageId);
+        clearPendingPlayRequest(audioKey);
       }
     } else {
-      clearPendingPlayRequest(messageId);
+      clearPendingPlayRequest(audioKey);
       audio.pause();
       currentAudioRef.current = audio;
-      currentAudioIdRef.current = messageId;
+      currentAudioIdRef.current = audioKey;
     }
   };
 
   const bindAudioRef = (msg, node) => {
     if (!node) return;
-    audioRefs.current[msg._id] = node;
+    const audioKey = msg.clientTempId || msg._id;
+    audioRefs.current[audioKey] = node;
 
     node.preload = "metadata";
     
@@ -2455,8 +2463,8 @@ const resolveUrl = (url) => {
     const updateStatus = () => {
       setAudioStatus((prev) => ({
         ...prev,
-        [msg._id]: {
-          ...(prev[msg._id] || {}),
+        [audioKey]: {
+          ...(prev[audioKey] || {}),
           duration: node.duration || 0,
           currentTime: node.currentTime || 0,
           playing: !node.paused,
@@ -2477,7 +2485,7 @@ const resolveUrl = (url) => {
         currentAudioRef.current = null;
         currentAudioIdRef.current = null;
       }
-      clearPendingPlayRequest(msg._id);
+      clearPendingPlayRequest(audioKey);
       updateStatus();
     };
     node.onerror = (event) => {
@@ -2488,8 +2496,6 @@ const resolveUrl = (url) => {
 
     if (Number.isFinite(node.duration) && node.duration > 0) {
       updateStatus();
-    } else {
-      node.load();
     }
   };
 
@@ -2787,7 +2793,8 @@ const resolveUrl = (url) => {
   };
 
   const renderAudioBubble = (msg) => {
-    const status = audioStatus[msg._id] || {};
+    const audioKey = msg.clientTempId || msg._id;
+    const status = audioStatus[audioKey] || {};
     const progress = status.duration
       ? Math.min((status.currentTime / status.duration) * 100, 100)
       : 0;
@@ -2797,7 +2804,7 @@ const resolveUrl = (url) => {
       <div className="audio-bubble">
         <button
           className={`audio-play ${status.playing ? "playing" : ""}`}
-          onClick={() => togglePlay(msg._id)}
+          onClick={() => togglePlay(audioKey)}
         >
           {status.playing ? <PauseIcon /> : <PlayIcon />}
         </button>
