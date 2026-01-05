@@ -660,6 +660,16 @@
     width: 100%;
   }
 
+  /* Rapproche les cartes de posts en mobile */
+  .profil-posts .fb-feed {
+    padding: 0 0 64px;
+  }
+
+  .profil-posts .fb-post,
+  .profil-posts .fb-post-card {
+    margin-bottom: 12px;
+  }
+
   /* Align intro / info column with feed on narrow screens */
   .profil-grid {
     display: flex;
