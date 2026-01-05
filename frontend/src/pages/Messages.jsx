@@ -2383,6 +2383,9 @@ const resolveUrl = (url) => {
       currentAudioIdRef.current = messageId;
       audio.volume = 1;
       audio.playbackRate = 1;
+      audio.muted = false;
+      audio.setAttribute("playsinline", "true");
+      audio.setAttribute("webkit-playsinline", "true");
       markPlayRequestPending(messageId);
       const playPromise = audio.play();
       if (playPromise?.catch) {
@@ -2428,7 +2431,7 @@ const resolveUrl = (url) => {
     if (!node) return;
     audioRefs.current[msg._id] = node;
 
-    node.preload = "auto";
+    node.preload = "metadata";
     
     node.volume = 1;
 
@@ -2807,8 +2810,14 @@ const resolveUrl = (url) => {
           {formatTime(status.currentTime)} / {formatTime(status.duration)}
         </div>
 
-      <audio ref={(node) => bindAudioRef(msg, node)} src={url} preload="metadata" />
-    </div>
+        <audio
+          ref={(node) => bindAudioRef(msg, node)}
+          src={url}
+          preload="metadata"
+          playsInline
+          webkit-playsinline="true"
+        />
+      </div>
     );
   };
 
