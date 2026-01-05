@@ -153,12 +153,13 @@
 .fb-post-media {
   width: 100%;
   max-width: 100%;
-  background: #000;
+  background: transparent;
   display: flex;
   justify-content: center;
-  align-items: center;
-  overflow: visible;
+  align-items: stretch;
+  overflow: hidden;
   margin-top: 4px;
+  border-radius: 12px;
 }
 
 .fb-post-media-grid {
@@ -168,9 +169,9 @@
   min-height: auto;
   height: auto;
   max-height: none;
-  overflow: visible;
+  overflow: hidden;
   border-radius: 12px;
-  background: #000;
+  background: transparent;
   grid-auto-rows: auto;
 }
 
@@ -226,8 +227,9 @@
   display: block;
   width: 100%;
   height: auto;
-  overflow: visible;
+  overflow: hidden;
   position: relative;
+  border-radius: 12px;
 }
 
 .fb-post-image-btn:focus-visible {
@@ -241,10 +243,10 @@
   width: 100%;
   height: auto;
   max-height: none;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
-  border-radius: 0;
-  background: #000;
+  border-radius: 12px;
+  background: transparent;
 }
 
 .fb-post-card video.fb-post-video {
