@@ -238,13 +238,35 @@ export default function ProfilPage() {
     setPosts(normalized);
   };
 
+  const normalizeMediaList = (post) => {
+    const sources = [post?.media, post?.images, post?.files, post?.attachments].filter(
+      Array.isArray
+    );
+
+    return sources.flatMap((list = []) =>
+      list.map((item = {}, idx) => ({ ...item, key: `${post?._id || "post"}-${idx}` }))
+    );
+  };
+
+  const resolvePhotoUrl = (media = {}) => {
+    const rawUrl =
+      media.resolvedUrl || media.previewUrl || media.url || media.path || media.location;
+
+    if (!rawUrl) return "";
+
+    const fullUrl = getImageUrl(rawUrl) || fixUrl(rawUrl);
+    return fullUrl || "";
+  };
+
   const photoItems = posts
     .flatMap((p) =>
-      (p.media || [])
+      normalizeMediaList(p)
+        .map((media) => ({ ...media, url: resolvePhotoUrl(media) }))
         .filter((m) => {
           if (!m?.url) return false;
-          if (m.type) return m.type.startsWith("image");
-          return /(png|jpe?g|webp|gif)$/i.test(m.url);
+          const mime = (m.type || m.mimeType || m.mediaType || "").toLowerCase();
+          if (mime.startsWith("image")) return true;
+          return /(png|jpe?g|webp|gif|avif|heic|heif)$/i.test(m.url);
         })
         .map((m, idx) => ({ ...m, key: `${p._id || idx}-${idx}`, fromPost: p?._id }))
     )
@@ -466,11 +488,11 @@ export default function ProfilPage() {
                       return (
                         <button
                           key={m.key}
-                          className="profil-photo-thumb"
-                          style={{ backgroundImage: `url(${m.url})` }}
+                          className="profil-photo-thumb photo-grid-item"
                           onClick={() => openPhotoViewer(photoItems, idx)}
                           aria-label="Ouvrir la photo"
                         >
+                          <img src={m.url} alt="Photo" loading="lazy" />
                           {showOverlay && <span className="profil-photo-overlay">+{remainingPhotos}</span>}
                         </button>
                       );
@@ -557,11 +579,11 @@ export default function ProfilPage() {
                   {photoItems.map((m, idx) => (
                     <button
                       key={m.key}
-                      className="profil-photo-cell"
+                      className="profil-photo-cell photo-grid-item"
                       onClick={() => openPhotoViewer(photoItems, idx)}
                       aria-label={`Ouvrir la photo ${idx + 1}`}
                     >
-                      <img src={m.url} alt="Publication" loading="lazy" />
+                      <img src={m.url} alt="Photo" loading="lazy" />
                     </button>
                   ))}
                 </div>
