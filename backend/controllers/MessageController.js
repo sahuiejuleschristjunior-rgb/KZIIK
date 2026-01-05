@@ -1074,6 +1074,7 @@ exports.sendAudioMessage = async (req, res) => {
       content: content || "",
       type: "audio",
       audioUrl,
+      mimeType: "audio/mpeg",
       clientTempId: clientTempId || null,
       replyTo: replyMessageId,
       replyPreview,
