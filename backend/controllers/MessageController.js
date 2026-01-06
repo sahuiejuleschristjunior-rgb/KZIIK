@@ -270,7 +270,6 @@ async function createAndDispatchMessage({
   const io = getIO();
   io.to(receiverId.toString()).emit("new_message", payload);
   io.to(sender.toString()).emit("new_message", payload);
-  io.emit("new_message", payload);
   console.log("[messages] événement émis", {
     to: receiverId,
     from: sender,

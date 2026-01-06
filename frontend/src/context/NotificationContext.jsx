@@ -1,16 +1,14 @@
 import { API_URL } from "../api/config";
 // src/context/NotificationContext.jsx
 import { useCallback, createContext, useContext, useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { useSocket } from "./SocketContext";
 import { useActiveConversation } from "./ActiveConversationContext";
 
 const API_ROOT = API_URL;
-const SOCKET_URL = API_URL.replace(/\/api\/?$/, "") || "/";
-
 const NotificationContext = createContext(null);
 
 export function NotificationProvider({ children }) {
-  const [socket, setSocket] = useState(null);
+  const sharedSocket = useSocket();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -62,24 +60,16 @@ export function NotificationProvider({ children }) {
   }, [activeConversationId, removeNotifications]);
 
   /* ============================================================
-     INIT SOCKET + FETCH NOTIFICATIONS 
+     INIT SOCKET + FETCH NOTIFICATIONS
   ============================================================ */
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       setLoading(false);
-      return;
+      return undefined;
     }
 
-    // 1) Connexion socket.io
-    const s = io(SOCKET_URL, {
-      transports: ["websocket"],
-      auth: { token },
-    });
-
-    setSocket(s);
-
-    // 2) Charger compteur non lus
+    // 1) Charger compteur non lus
     const fetchUnread = async () => {
       try {
         const res = await fetch(`${API_ROOT}/notifications/unread/count`, {
@@ -93,7 +83,7 @@ export function NotificationProvider({ children }) {
       }
     };
 
-    // 3) Charger toutes les notifications
+    // 2) Charger toutes les notifications
     const fetchList = async () => {
       try {
         const res = await fetch(`${API_ROOT}/notifications`, {
@@ -116,7 +106,9 @@ export function NotificationProvider({ children }) {
     fetchUnread();
     fetchList();
 
-    // 4) Écouter notifications en temps réel
+    if (!sharedSocket) return undefined;
+
+    // 3) Écouter notifications en temps réel
     const handleIncoming = (notif) => {
       if (!notif) return;
 
@@ -148,13 +140,13 @@ export function NotificationProvider({ children }) {
       });
     };
 
-    s.on("notification:new", handleIncoming);
+    sharedSocket.on("notification:new", handleIncoming);
+    console.log("🔔 socket notifications ready");
 
     return () => {
-      s.off("notification:new", handleIncoming);
-      s.disconnect(); // 🔥 Correction
+      sharedSocket.off("notification:new", handleIncoming);
     };
-  }, []);
+  }, [sharedSocket, removeNotifications, setNotificationsAndUnread]);
 
   /* ============================================================
      MARQUER TOUT COMME LU
@@ -246,7 +238,7 @@ export function NotificationProvider({ children }) {
   );
 
   const value = {
-    socket,
+    socket: sharedSocket,
     notifications,
     unreadCount,
     loading,

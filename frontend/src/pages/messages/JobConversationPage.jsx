@@ -255,6 +255,7 @@ export default function JobConversationPage() {
       if (message?._id && messageIdsRef.current.has(message._id)) return;
       if (message?._id) messageIdsRef.current.add(message._id);
 
+      console.log("💬 job message received", message?._id || message?.id);
       setMessages((prev) => [...prev, message]);
     };
 
@@ -299,13 +300,7 @@ export default function JobConversationPage() {
         }
       }
 
-      if (socket) {
-        socket.emit("message:send", data?.data || null);
-        socket.emit("send_message", {
-          receiver: getId(otherParticipant),
-          content,
-        });
-      }
+      console.log("📤 job message sent", data?.data?._id || data?.data?.id);
     } catch (err) {
       setError(err.message || "Impossible d'envoyer le message.");
     }

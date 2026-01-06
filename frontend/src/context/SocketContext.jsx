@@ -13,13 +13,17 @@ export function SocketProvider({ children }) {
     const token = localStorage.getItem("token");
     if (!token) return undefined;
 
-    const SOCKET_URL = API_URL.replace(/\/api\/?$/, "") || "/";
+    const SOCKET_URL =
+      (import.meta.env.VITE_SOCKET_URL || API_URL || "")
+        .replace(/\/api\/?$/, "")
+        .replace(/\/$/, "") || "https://kziik.com";
 
     const socket = io(SOCKET_URL, {
       auth: { token },
       path: "/socket.io",
-      transports: ["polling", "websocket"],
+      transports: ["websocket", "polling"],
       reconnection: true,
+      reconnectionAttempts: 5,
     });
 
     socketRef.current = socket;
@@ -29,10 +33,16 @@ export function SocketProvider({ children }) {
       console.log("🌐 SOCKET GLOBAL CONNECTÉ :", socket.id);
     };
 
+    const handleError = (err) => {
+      console.warn("⚠️ socket connection issue", err?.message || err);
+    };
+
     socket.on("connect", handleConnect);
+    socket.on("connect_error", handleError);
 
     return () => {
       socket.off("connect", handleConnect);
+      socket.off("connect_error", handleError);
       socket.disconnect();
       socketRef.current = null;
       setSocket(null);
