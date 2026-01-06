@@ -2873,9 +2873,11 @@ const resolveUrl = (url) => {
   };
 
   const renderAudioBubble = (msg) => {
+    if (!msg || msg.type !== "audio") return null;
+
     const safeAudioUrl = sanitizeAudioUrl(msg?.audioUrl);
 
-    if (msg.type !== "audio" || !safeAudioUrl) {
+    if (!safeAudioUrl) {
       return (
         <div className="audio-bubble audio-pending">
           🎙️ Audio en cours de traitement…
