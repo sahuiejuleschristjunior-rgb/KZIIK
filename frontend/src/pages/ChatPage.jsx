@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import io from "socket.io-client";
 import { useNotifications } from "../context/NotificationContext";
 import { API_URL } from "../api/config";
+import { useSocket } from "../context/SocketContext";
 
 const API_ROOT = API_URL;
 const API_BASE = API_ROOT.replace("/api", "");
@@ -20,6 +20,7 @@ export default function ChatPage() {
   const { id } = useParams();
   const token = localStorage.getItem("token");
   const { deleteByType } = useNotifications() || {};
+  const socket = useSocket();
 
   const [viewer, setViewer] = useState(null);
   const [partner, setPartner] = useState(null);
@@ -28,7 +29,6 @@ export default function ChatPage() {
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
 
-  const socketRef = useRef(null);
   const messageIdsRef = useRef(new Set());
 
   const addMessage = (message) => {
@@ -61,36 +61,31 @@ export default function ChatPage() {
   }, [id, token]);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || !socket) return undefined;
 
-    const socket = io(API_BASE, {
-      auth: { token },
-    });
-
-    socketRef.current = socket;
-
-    socket.emit("join_room", { userId: id });
-
-    socket.on("new_message", ({ message }) => {
+    const handleMessage = ({ message }) => {
       if (!message) return;
       const otherId = message?.sender?._id || message?.sender;
       const targetId = message?.receiver?._id || message?.receiver;
       if (otherId === id || targetId === id) {
+        console.log("💬 message received", message?._id || message?.id);
         addMessage(message);
       }
-    });
+    };
 
-    socket.on("connect_error", () => {
+    const handleError = (err) => {
+      console.warn("⚠️ socket message error", err?.message || err);
       setError(loadErrorMessage);
-    });
+    };
+
+    socket.on("new_message", handleMessage);
+    socket.on("connect_error", handleError);
 
     return () => {
-      socket.off("new_message");
-      socket.off("connect_error");
-      socket.disconnect();
-      socketRef.current = null;
+      socket.off("new_message", handleMessage);
+      socket.off("connect_error", handleError);
     };
-  }, [id, token]);
+  }, [id, socket, token]);
 
   const loadViewer = async () => {
     try {

@@ -61,6 +61,7 @@ function initSocket(server) {
       if (!token) {
         const err = new Error("Token obligatoire");
         err.data = { code: "NO_TOKEN" };
+        console.warn("❌ socket auth failed (missing token)");
         return next(err);
       }
 
@@ -74,15 +75,18 @@ function initSocket(server) {
       if (!hasValidParts || rawToken === "null" || rawToken === "undefined") {
         const err = new Error("Token invalide");
         err.data = { code: "INVALID_TOKEN" };
+        console.warn("❌ socket auth failed (invalid token format)");
         return next(err);
       }
 
       const decoded = jwt.verify(rawToken, process.env.JWT_SECRET);
       socket.userId = decoded.id;
+      console.log("✔ socket connected", decoded.id);
       return next();
     } catch (err) {
       const error = new Error("Token invalide");
       error.data = { code: "INVALID_TOKEN" };
+      console.warn("❌ socket auth failed", err?.message || err);
       return next(error);
     }
   });
@@ -95,23 +99,6 @@ function initSocket(server) {
     socket.join(String(userId));
 
     console.log("🔌 Socket connecté :", userId, "| ID :", socket.id);
-
-    /* ============================================================
-       MESSAGES — TEMPS RÉEL
-    ============================================================ */
-    socket.on("send_message", ({ receiver, content }) => {
-      if (!receiver || !content) return;
-
-      const payload = {
-        sender: userId,
-        receiver,
-        content,
-        createdAt: new Date(),
-      };
-
-      io.to(String(receiver)).emit("new_message", payload);
-      io.to(String(userId)).emit("new_message", payload);
-    });
 
     /* ============================================================
        TYPING

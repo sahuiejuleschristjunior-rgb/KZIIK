@@ -5,7 +5,7 @@ import "../styles/facebook-layout.css";
 import { getAvatarStyle, getImageUrl } from "../utils/imageUtils";
 import FBIcon from "../components/FBIcon";
 import { useAuth } from "../context/AuthContext";
-import { io } from "socket.io-client";
+import { useSocket } from "../context/SocketContext";
 import PagesFeedSidebar from "../components/PagesFeedSidebar";
 import {
   fetchRelationStatus,
@@ -68,7 +68,7 @@ export default function FacebookLayout({ headerOnly = false, children }) {
   const [pages, setPages] = useState([]);
   const [loadingPages, setLoadingPages] = useState(false);
 
-  const socketRef = useRef(null);
+  const socket = useSocket();
   const notifIdsRef = useRef(new Set());
   const publicMessageIdsRef = useRef(new Set());
   const [toast, setToast] = useState(null);
@@ -254,43 +254,21 @@ export default function FacebookLayout({ headerOnly = false, children }) {
      🔥 SOCKET
   ============================================================ */
   useEffect(() => {
-    if (socketRef.current) {
-      try {
-        socketRef.current.disconnect();
-      } catch {}
-      socketRef.current = null;
-    }
+    if (!authToken || !socket) return undefined;
 
-    if (!authToken) return;
-
-    const SOCKET_URL = API_URL.replace(/\/api\/?$/, "") || "/";
-
-    const s = io(SOCKET_URL, {
-      path: "/socket.io",
-      auth: { token: authToken || "" },
-      transports: ["polling", "websocket"],
-      reconnection: true,
-      reconnectionDelay: 500,
-      reconnectionAttempts: 20,
-    });
-
-    const handleConnect = () => console.log("📡 Socket connecté :", s.id);
+    const handleConnect = () => console.log("📡 Socket connecté :", socket.id);
     const handleDisconnect = () => console.log("📡 Socket déconnecté");
 
-    s.on("connect", handleConnect);
-    s.on("disconnect", handleDisconnect);
-
-    socketRef.current = s;
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
 
     return () => {
       try {
-        s.off("connect", handleConnect);
-        s.off("disconnect", handleDisconnect);
-        socketRef.current?.disconnect();
+        socket.off("connect", handleConnect);
+        socket.off("disconnect", handleDisconnect);
       } catch {}
-      socketRef.current = null;
     };
-  }, [authToken]);
+  }, [authToken, socket]);
 
   /* ============================================================
      🔥 REALTIME NOTIFS — (Version corrigée : anti-duplicat & anti-retour)
@@ -331,8 +309,8 @@ export default function FacebookLayout({ headerOnly = false, children }) {
   );
 
   useEffect(() => {
-    const s = socketRef.current;
-    if (!s) return;
+    const s = socket;
+    if (!s) return undefined;
 
     const handler = (n) => pushRealtimeNotification(n);
 
@@ -345,7 +323,7 @@ export default function FacebookLayout({ headerOnly = false, children }) {
         s.off("notification", handler);
       } catch {}
     };
-  }, [pushRealtimeNotification]);
+  }, [pushRealtimeNotification, socket]);
 
   /* ============================================================
      🔥 REALTIME MESSAGES
@@ -377,8 +355,8 @@ export default function FacebookLayout({ headerOnly = false, children }) {
   );
 
   useEffect(() => {
-    const s = socketRef.current;
-    if (!s) return;
+    const s = socket;
+    if (!s) return undefined;
 
     const handler = (p) => pushRealtimeMessage(p);
 
@@ -391,14 +369,14 @@ export default function FacebookLayout({ headerOnly = false, children }) {
         s.off("new_message", handler);
       } catch {}
     };
-  }, [pushRealtimeMessage]);
+  }, [pushRealtimeMessage, socket]);
 
   /* ============================================================
      🔥 REALTIME FRIEND REQUESTS (SOCKET)
   ============================================================ */
   useEffect(() => {
-    const s = socketRef.current;
-    if (!s) return;
+    const s = socket;
+    if (!s) return undefined;
 
     const handleFriendRequest = () => {
       setPendingRequestsCount((prev) => prev + 1);
@@ -412,7 +390,7 @@ export default function FacebookLayout({ headerOnly = false, children }) {
         s.off("friend_request", handleFriendRequest);
       } catch {}
     };
-  }, [showToast]);
+  }, [showToast, socket]);
 
   /* ============================================================
      🔍 SEARCH

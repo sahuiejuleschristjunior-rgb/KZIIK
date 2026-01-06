@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
-import { io } from "socket.io-client";
 import "../styles/messages.css";
 import VideoCallOverlay from "../components/VideoCallOverlay";
 import { API_URL } from "../api/config";
@@ -17,6 +16,7 @@ import {
 import { fetchFriends } from "../api/socialApi";
 import { useActiveConversation } from "../context/ActiveConversationContext";
 import { useNotifications } from "../context/NotificationContext";
+import { useSocket } from "../context/SocketContext";
 import { getAvatarUrl } from "../utils/avatarUtils";
 
 const getApiMeta = () => {
@@ -39,7 +39,6 @@ const getApiMeta = () => {
 };
 
 const { origin: API_ORIGIN, path: API_BASE_PATH } = getApiMeta();
-const SOCKET_URL = API_ORIGIN || window.location.origin;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "😡"];
 const loadErrorMessage = "Impossible de charger vos conversations";
 
@@ -209,6 +208,7 @@ export default function Messages() {
 
   const token = localStorage.getItem("token");
   const me = JSON.parse(localStorage.getItem("user"));
+  const socket = useSocket();
   const { setActiveConversationId, setIsUserTyping } = useActiveConversation() || {};
 
   useEffect(() => {
@@ -240,7 +240,6 @@ export default function Messages() {
   const attachSwipeStart = useRef(null);
   const longPressTimer = useRef(null);
   const typingTimeoutRef = useRef(null);
-  const socketRef = useRef(null);
   const swipeDataRef = useRef({});
   const inputRef = useRef(null);
   const messageRefs = useRef({});
@@ -960,18 +959,8 @@ const resolveUrl = (url) => {
      SOCKET IO
   ===================================================== */
   useEffect(() => {
-    if (!token) return undefined;
-    const socket = io(SOCKET_URL, {
-      path: "/socket.io/",
-      auth: { token },
-      transports: ["websocket", "polling"],
-    });
-
-    if (!socket.connected) {
-      socket.connect();
-    }
-
-    socketRef.current = socket;
+    if (!token || !socket) return undefined;
+    console.log("🔗 messages socket ready", socket.id);
 
     const handleMessage = (payload) => {
       const rawMessage = payload?.message || payload;
@@ -1042,6 +1031,7 @@ const resolveUrl = (url) => {
       });
 
       if (!isActiveConversation) return;
+      console.log("💬 message received", message?._id || message?.id);
       upsertMessage(message);
       if (message?._id && senderId !== me?._id) {
         fetch(`${API_URL}/messages/${message._id}/read`, {
@@ -1200,10 +1190,8 @@ const resolveUrl = (url) => {
       socket.off("conversation_created", handleConversationCreated);
       socket.off("typing", handleTyping);
       socket.off("call_hangup", handleCallHangup);
-      socket.disconnect();
-      socketRef.current = null;
     };
-  }, [activeChat, friends, loadFriendsAndConversations, loadRequests, token]);
+  }, [activeChat, friends, loadFriendsAndConversations, loadRequests, socket, token]);
 
   /* =====================================================
      LOAD CONVERSATION
@@ -2153,7 +2141,7 @@ const resolveUrl = (url) => {
     setIsUserTyping?.(Boolean(flag && activeChat));
     const targetId = getConversationTargetId();
     if (!activeChat || !targetId || !token) return;
-    socketRef.current?.emit("typing", { to: targetId, isTyping: flag });
+    socket?.emit("typing", { to: targetId, isTyping: flag });
     fetch(`${API_URL}/messages/typing`, {
       method: "POST",
       headers: {
@@ -2200,8 +2188,8 @@ const resolveUrl = (url) => {
   };
 
   const endCall = () => {
-    if (socketRef.current && callOverlay.otherUser?._id) {
-      socketRef.current.emit("call_hangup", { to: callOverlay.otherUser._id });
+    if (socket && callOverlay.otherUser?._id) {
+      socket.emit("call_hangup", { to: callOverlay.otherUser._id });
     }
     resetCallOverlay();
   };
@@ -3074,7 +3062,7 @@ const resolveUrl = (url) => {
         visible={callOverlay.visible}
         mode={callOverlay.mode}
         callType={callOverlay.callType}
-        socket={socketRef.current}
+        socket={socket}
         me={me}
         otherUser={callOverlay.otherUser}
         incomingOffer={callOverlay.offer}
