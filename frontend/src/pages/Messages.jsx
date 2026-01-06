@@ -564,18 +564,17 @@ export default function Messages() {
 
 const sanitizeAudioUrl = (url) => {
   if (typeof url !== "string") return null;
-  const u = url.trim();
-  if (!u) return null;
-  if (u.startsWith("http")) return u;
-  if (u.includes("/uploads/audio/")) return u.startsWith("/") ? u : `/${u}`;
-  return null;
+  const trimmed = url.trim();
+  if (!trimmed || !trimmed.startsWith("/uploads/audio/")) return null;
+  return trimmed;
 };
 
 const resolveUrl = (url) => {
   if (!url || typeof url !== "string") return "";
   if (url.startsWith("blob:")) return url;
   if (url.startsWith("http")) return url;
-  return `https://kziik.com${url.startsWith("/") ? "" : "/"}${url}`;
+  if (url.startsWith("/uploads/")) return "https://kaziik.com" + url;
+  return "https://kaziik.com/" + url.replace(/^\/+/, "");
 };
 
   const copyToClipboard = async (text) => {
@@ -2459,17 +2458,15 @@ const resolveUrl = (url) => {
         }));
       }
 
-      const shouldResetTime = isSwitchingAudio || audio.ended;
-
       // Reset playback on the target element to avoid AbortError when quickly
       // switching sources or replaying an element whose previous play is still
       // resolving.
       audio.pause();
-      audio.currentTime = shouldResetTime ? 0 : audio.currentTime;
+      if (isSwitchingAudio || audio.ended) {
+        audio.currentTime = 0;
+      }
       currentAudioRef.current = audio;
       currentAudioIdRef.current = audioKey;
-      audio.pause();
-      audio.currentTime = audio.ended ? 0 : audio.currentTime;
       audio.volume = 1;
       audio.playbackRate = 1;
       audio.muted = false;
@@ -2891,7 +2888,7 @@ const resolveUrl = (url) => {
       ? Math.min((status.currentTime / status.duration) * 100, 100)
       : 0;
     const url = resolveUrl(safeAudioUrl);
-    const mimeType = pickPlayableMimeType(url, msg.mimeType) || "audio/webm";
+    const mimeType = pickPlayableMimeType(url, msg.mimeType);
 
     const handleAudioError = () => {
       setAudioStatus((prev) => ({
@@ -2926,11 +2923,12 @@ const resolveUrl = (url) => {
           key={safeAudioUrl}
           ref={(node) => bindAudioRef(msg, node)}
           src={url}
+          controls
           preload="metadata"
           playsInline
           onError={handleAudioError}
         >
-          <source src={url} type={mimeType} />
+          <source src={url} type={mimeType || undefined} />
         </audio>
       </div>
     );
