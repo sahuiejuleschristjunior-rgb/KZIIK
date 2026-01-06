@@ -21,7 +21,6 @@ const pagePostsRoutes = require("./routes/pagePosts");
 const searchRoutes = require("./routes/SearchRoutes");
 
 const adsRoutes = require("./routes/ads");
-const audioUploadRoutes = require("./routes/audioUpload");
 
 // ⭐ SOCIAL SYSTEM (amis + follow)
 const socialRoutes = require("./routes/socialRoutes");
@@ -63,20 +62,6 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 ============================================================ */
 // Serve uploaded files under both /uploads and /api/uploads for backward compatibility
 const uploadsPath = path.join(__dirname, "uploads");
-const audioPath = path.join(uploadsPath, "audio");
-
-// 🔊 Audio : une seule façon de servir les MP3, avec des headers explicites
-app.use(
-  "/uploads/audio",
-  (req, res, next) => {
-    res.setHeader("Content-Type", "audio/mpeg");
-    res.setHeader("Accept-Ranges", "bytes");
-    next();
-  },
-  express.static(audioPath)
-);
-
-// JWT volontairement désactivé pour la lecture audio
 app.use("/uploads", express.static(uploadsPath));
 app.use("/api/uploads", express.static(uploadsPath));
 
@@ -99,7 +84,6 @@ apiRouter.use("/messages", messageRoutes);
 apiRouter.use("/search", searchRoutes);
 apiRouter.use("/social", socialRoutes);
 apiRouter.use("/ads", adsRoutes);
-apiRouter.use("/audio", audioUploadRoutes);
 
 // ⭐ PAGES
 apiRouter.use("/pages", pagesRoutes);

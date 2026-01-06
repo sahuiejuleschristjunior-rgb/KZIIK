@@ -12,8 +12,6 @@ export default function Feed() {
   const [expanded, setExpanded] = useState({});
   const navigate = useNavigate();
 
-  const isValidAudioUrl = (url) => typeof url === "string" && url.trim().startsWith("/uploads/audio/");
-
   useEffect(() => {
     fetch(`${API_URL}/post`, {
       headers: { Authorization: `Bearer ${token}`
@@ -141,20 +139,7 @@ export default function Feed() {
 
               {/* MÉDIAS */}
               {post.media?.map((m, idx) => {
-                if (m.type === "audio") {
-                  if (!isValidAudioUrl(m.url)) return null;
-                  return (
-                    <audio
-                      key={idx}
-                      className="post-audio"
-                      controls
-                      src={m.url}
-                      onError={(e) => {
-                        e.currentTarget.pause();
-                      }}
-                    ></audio>
-                  );
-                }
+                if (m.type === "audio") return null;
 
                 if (!m?.url) return null;
 

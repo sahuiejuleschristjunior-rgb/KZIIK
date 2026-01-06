@@ -57,13 +57,13 @@ export default function VideoCallOverlay({
   me,
   otherUser,
   incomingOffer,
-  callType = "video", // "video" | "audio"
+  callType = "video",
   onClose,
 }) {
   /* ============================================================
      HOOKS
   ============================================================ */
-  const isVideoCall = callType !== "audio";
+  const isVideoCall = true;
 
   const [status, setStatus] = useState("idle");          // "idle" | "calling" | "in-call"
   const [accepted, setAccepted] = useState(mode === "caller");
@@ -179,12 +179,12 @@ export default function VideoCallOverlay({
       setStatus(mode === "caller" ? "calling" : "in-call");
 
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: isVideoCall,
+        video: true,
         audio: true,
       });
 
       localStreamRef.current = stream;
-      if (isVideoCall && localVideoRef.current) {
+      if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
 
@@ -304,34 +304,21 @@ export default function VideoCallOverlay({
 
   const title =
     mode === "caller"
-      ? `${callType === "audio" ? "Appel audio" : "Appel vidéo"} avec ${
-          otherUser.name
-        }`
+      ? `Appel vidéo avec ${otherUser.name}`
       : !accepted
       ? `${otherUser.name} vous appelle…`
-      : `${callType === "audio" ? "Appel audio" : "Appel vidéo"} avec ${
-          otherUser.name
-        }`;
+      : `Appel vidéo avec ${otherUser.name}`;
 
   return (
     <div className="vc-overlay">
       <div className="vc-call">
         {/* Vidéo distante en fond plein écran */}
-        {isVideoCall ? (
-          <video
-            ref={remoteVideoRef}
-            autoPlay
-            playsInline
-            className="vc-video-remote"
-          />
-        ) : (
-          <audio
-            ref={remoteVideoRef}
-            autoPlay
-            className="vc-audio-remote"
-            controls={false}
-          />
-        )}
+        <video
+          ref={remoteVideoRef}
+          autoPlay
+          playsInline
+          className="vc-video-remote"
+        />
 
         {/* Barre haute */}
         <div className="vc-top-bar">
@@ -349,17 +336,13 @@ export default function VideoCallOverlay({
 
         {/* Votre vidéo en petit carré */}
         <div className="vc-local-wrapper">
-          {isVideoCall ? (
-            <video
-              ref={localVideoRef}
-              autoPlay
-              muted
-              playsInline
-              className="vc-video-local"
-            />
-          ) : (
-            <div className="vc-audio-local">🎧 Vous</div>
-          )}
+          <video
+            ref={localVideoRef}
+            autoPlay
+            muted
+            playsInline
+            className="vc-video-local"
+          />
           <div className="vc-local-label">Vous</div>
         </div>
 
@@ -371,15 +354,13 @@ export default function VideoCallOverlay({
           >
             <Icon name={isMicOn ? "micOn" : "micOff"} />
           </button>
-          {isVideoCall && (
-            <button
-              className={`vc-round-btn ${isCamOn ? "" : "vc-btn-off"}`}
-              onClick={toggleCamera}
-              aria-label={isCamOn ? "Couper la caméra" : "Réactiver la caméra"}
-            >
-              <Icon name={isCamOn ? "videoOn" : "videoOff"} />
-            </button>
-          )}
+          <button
+            className={`vc-round-btn ${isCamOn ? "" : "vc-btn-off"}`}
+            onClick={toggleCamera}
+            aria-label={isCamOn ? "Couper la caméra" : "Réactiver la caméra"}
+          >
+            <Icon name={isCamOn ? "videoOn" : "videoOff"} />
+          </button>
           <button
             className="vc-round-btn vc-btn-hangup"
             onClick={handleHangup}
@@ -391,9 +372,7 @@ export default function VideoCallOverlay({
 
         {mode === "callee" && !accepted && (
           <div className="vc-incoming-overlay">
-            <div className="vc-incoming-text">
-              {callType === "audio" ? "Appel audio" : "Appel vidéo"}
-            </div>
+            <div className="vc-incoming-text">Appel vidéo</div>
             <div className="vc-incoming-actions">
               <button
                 className="vc-round-btn vc-btn-hangup"

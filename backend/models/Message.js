@@ -26,15 +26,7 @@ const messageSchema = new mongoose.Schema(
     // Type de message (texte, système, appel vidéo, fichier…)
     type: {
       type: String,
-      enum: [
-        "text",
-        "system",
-        "video",
-        "file",
-        "videoCall",
-        "audio",
-        "image",
-      ],
+      enum: ["text", "system", "video", "file", "videoCall", "image"],
       default: "text",
     },
 
@@ -58,12 +50,6 @@ const messageSchema = new mongoose.Schema(
     },
 
     mimeType: {
-      type: String,
-      default: null,
-    },
-
-    // URL d'un audio (si type = audio)
-    audioUrl: {
       type: String,
       default: null,
     },

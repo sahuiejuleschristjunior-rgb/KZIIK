@@ -18,7 +18,7 @@ const reactionSchema = new mongoose.Schema(
 const mediaSubSchema = new mongoose.Schema(
   {
     url: { type: String, required: true },
-    type: { type: String, enum: ["image", "video", "audio"], required: true },
+    type: { type: String, enum: ["image", "video"], required: true },
   },
   { _id: false }
 );
