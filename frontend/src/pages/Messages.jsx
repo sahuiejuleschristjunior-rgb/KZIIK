@@ -2121,6 +2121,37 @@ const resolveUrl = (url) => {
     return "webm";
   };
 
+  const getMimeTypeFromUrl = (url) => {
+    if (!url || typeof url !== "string") return null;
+    const lower = url.toLowerCase();
+    if (lower.includes(".mp3")) return "audio/mpeg";
+    if (lower.includes(".m4a") || lower.includes(".mp4") || lower.includes(".aac"))
+      return "audio/mp4";
+    if (lower.includes(".ogg") || lower.includes(".oga")) return "audio/ogg";
+    if (lower.includes(".webm")) return "audio/webm";
+    if (lower.includes(".wav")) return "audio/wav";
+    return null;
+  };
+
+  const pickPlayableMimeType = (url, mimeType) => {
+    const candidates = [];
+    if (mimeType) candidates.push(mimeType);
+
+    const inferredType = getMimeTypeFromUrl(url);
+    if (inferredType && inferredType !== mimeType) candidates.push(inferredType);
+
+    const testAudio = typeof document !== "undefined" ? document.createElement("audio") : null;
+    if (!testAudio) return candidates[0] || null;
+
+    for (const type of candidates) {
+      if (!type) continue;
+      const support = testAudio.canPlayType(type);
+      if (support === "probably" || support === "maybe") return type;
+    }
+
+    return null;
+  };
+
   const stopRecordVisualization = () => {
     if (recordVizFrame.current) {
       cancelAnimationFrame(recordVizFrame.current);
@@ -2855,7 +2886,7 @@ const resolveUrl = (url) => {
       ? Math.min((status.currentTime / status.duration) * 100, 100)
       : 0;
     const url = resolveUrl(safeAudioUrl);
-    const mimeType = msg.mimeType;
+    const mimeType = pickPlayableMimeType(url, msg.mimeType);
 
     const handleAudioError = () => {
       setAudioStatus((prev) => ({
