@@ -561,8 +561,15 @@ export default function Messages() {
     };
   }, [activeChat, isMobileView]);
 
+const sanitizeAudioUrl = (url) => {
+  if (typeof url !== "string") return null;
+  const trimmed = url.trim();
+  if (!trimmed || !trimmed.startsWith("/uploads/audio/")) return null;
+  return trimmed;
+};
+
 const resolveUrl = (url) => {
-  if (!url) return "";
+  if (!url || typeof url !== "string") return "";
   if (url.startsWith("blob:")) return url;
   if (url.startsWith("http")) return url;
 
@@ -629,8 +636,11 @@ const resolveUrl = (url) => {
       normalized.mimeType = msg.media.mimetype || msg.media.mimeType;
     }
 
-    if (!normalized.audioUrl && msg?.audio?.url) {
-      normalized.audioUrl = msg.audio.url;
+    const audioUrl = sanitizeAudioUrl(normalized.audioUrl || msg?.audio?.url);
+    if (audioUrl) {
+      normalized.audioUrl = audioUrl;
+    } else {
+      delete normalized.audioUrl;
     }
 
     return normalized;
@@ -2032,7 +2042,7 @@ const resolveUrl = (url) => {
   const getMessageShareText = (msg) => {
     if (!msg) return "";
     if (msg.type === "audio") {
-      const url = resolveUrl(msg.audioUrl);
+      const url = sanitizeAudioUrl(msg.audioUrl) ? resolveUrl(msg.audioUrl) : "";
       const preview = getAudioPreviewText(msg);
       return url ? `${preview}\n${url}` : preview;
     }
@@ -2057,7 +2067,7 @@ const resolveUrl = (url) => {
   const shareMessage = async (msg) => {
     if (!msg) return;
     const text = getMessageShareText(msg);
-    const url = msg.type === "audio" ? resolveUrl(msg.audioUrl) : undefined;
+    const url = msg.type === "audio" && sanitizeAudioUrl(msg.audioUrl) ? resolveUrl(msg.audioUrl) : undefined;
     const title = msg.type === "audio" ? "Message vocal" : "Message";
 
     if (navigator?.share) {
@@ -2791,7 +2801,9 @@ const resolveUrl = (url) => {
   };
 
   const renderAudioBubble = (msg) => {
-    if (!msg.audioUrl || !msg.audioUrl.endsWith(".mp3")) {
+    const safeAudioUrl = sanitizeAudioUrl(msg?.audioUrl);
+
+    if (msg.type !== "audio" || !safeAudioUrl) {
       return (
         <div className="audio-bubble audio-pending">
           🎙️ Audio en cours de traitement…
@@ -2804,7 +2816,19 @@ const resolveUrl = (url) => {
     const progress = status.duration
       ? Math.min((status.currentTime / status.duration) * 100, 100)
       : 0;
-    const url = resolveUrl(msg.audioUrl);
+    const url = resolveUrl(safeAudioUrl);
+
+    const handleAudioError = () => {
+      setAudioStatus((prev) => ({
+        ...prev,
+        [audioKey]: {
+          ...(prev[audioKey] || {}),
+          playing: false,
+          error: true,
+        },
+      }));
+      setInfoBanner("Note vocale indisponible ou supprimée");
+    };
 
     return (
       <div className="audio-bubble">
@@ -2824,13 +2848,14 @@ const resolveUrl = (url) => {
         </div>
 
         <audio
-          key={msg.audioUrl}
+          key={safeAudioUrl}
           ref={(node) => bindAudioRef(msg, node)}
           src={url}
           controls
           preload="metadata"
           playsInline
           webkit-playsinline="true"
+          onError={handleAudioError}
         />
       </div>
     );
