@@ -1,6 +1,7 @@
 // src/context/SocketContext.jsx
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import { useAuth } from "./AuthContext";
 import { API_URL } from "../api/config";
 
 const SocketContext = createContext(null);
@@ -8,10 +9,19 @@ const SocketContext = createContext(null);
 export function SocketProvider({ children }) {
   const socketRef = useRef(null);
   const [socket, setSocket] = useState(null);
+  const { token } = useAuth() || {};
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return undefined;
+    const existingSocket = socketRef.current;
+
+    if (!token) {
+      if (existingSocket) {
+        existingSocket.disconnect();
+      }
+      socketRef.current = null;
+      setSocket(null);
+      return undefined;
+    }
 
     const SOCKET_URL =
       (import.meta.env.VITE_SOCKET_URL || API_URL || "")
@@ -44,10 +54,12 @@ export function SocketProvider({ children }) {
       socket.off("connect", handleConnect);
       socket.off("connect_error", handleError);
       socket.disconnect();
-      socketRef.current = null;
-      setSocket(null);
+      if (socketRef.current === socket) {
+        socketRef.current = null;
+        setSocket(null);
+      }
     };
-  }, []);
+  }, [token]);
 
   return (
     <SocketContext.Provider value={socket}>
