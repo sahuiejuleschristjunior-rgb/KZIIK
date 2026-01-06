@@ -283,38 +283,29 @@ export default function JobConversationPage() {
   const handleSend = async (content) => {
     if (!otherParticipant) return;
 
-    const payload = {
-      sender: user?._id,
-      receiver: getId(otherParticipant),
-      conversationId,
-      jobId,
-      content,
-      createdAt: new Date().toISOString(),
-    };
-
-    setMessages((prev) => [...prev, payload]);
-
     try {
       const { ok, data } = await sendMessagePayload({
-        receiver: payload.receiver,
-        content: payload.content,
-        jobId: payload.jobId,
-        conversationId: payload.conversationId,
+        receiver: getId(otherParticipant),
+        content,
+        jobId,
+        conversationId,
       });
 
       if (ok && data?.data) {
         const message = data.data;
         if (message?._id && !messageIdsRef.current.has(message._id)) {
           messageIdsRef.current.add(message._id);
-          setMessages((prev) => [...prev.filter((msg) => msg !== payload), message]);
+          setMessages((prev) => [...prev, message]);
         }
       }
 
-      socket?.emit("message:send", payload);
-      socket?.emit("send_message", {
-        receiver: payload.receiver,
-        content: payload.content,
-      });
+      if (socket) {
+        socket.emit("message:send", data?.data || null);
+        socket.emit("send_message", {
+          receiver: getId(otherParticipant),
+          content,
+        });
+      }
     } catch (err) {
       setError(err.message || "Impossible d'envoyer le message.");
     }

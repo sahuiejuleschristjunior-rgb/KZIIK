@@ -63,55 +63,22 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 ============================================================ */
 // Serve uploaded files under both /uploads and /api/uploads for backward compatibility
 const uploadsPath = path.join(__dirname, "uploads");
-app.use((req, res, next) => {
-  if (req.url.endsWith(".mp3")) {
+const audioPath = path.join(uploadsPath, "audio");
+
+// 🔊 Audio : une seule façon de servir les MP3, avec des headers explicites
+app.use(
+  "/uploads/audio",
+  (req, res, next) => {
     res.setHeader("Content-Type", "audio/mpeg");
     res.setHeader("Accept-Ranges", "bytes");
-  }
-  next();
-});
-
-app.get("/uploads/audio/:file", (req, res) => {
-  const fs = require("fs");
-  const path = require("path");
-  const filePath = path.join(__dirname, "uploads/audio", req.params.file);
-  if (!fs.existsSync(filePath)) return res.sendStatus(404);
-  const stat = fs.statSync(filePath);
-  const range = req.headers.range;
-  if (!range) {
-    res.writeHead(200, {
-      "Content-Type": "audio/mpeg",
-      "Content-Length": stat.size
-    });
-    fs.createReadStream(filePath).pipe(res);
-    return;
-  }
-  const parts = range.replace(/bytes=/, "").split("-");
-  const start = parseInt(parts[0], 10);
-  const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
-  const chunkSize = end - start + 1;
-  const stream = fs.createReadStream(filePath, { start, end });
-  res.writeHead(206, {
-    "Content-Range": `bytes ${start}-${end}/${stat.size}`,
-    "Accept-Ranges": "bytes",
-    "Content-Length": chunkSize,
-    "Content-Type": "audio/mpeg"
-  });
-  stream.pipe(res);
-});
-
-app.use("/uploads/audio", express.static(path.join(__dirname, "uploads/audio")));
+    next();
+  },
+  express.static(audioPath)
+);
 
 // JWT volontairement désactivé pour la lecture audio
 app.use("/uploads", express.static(uploadsPath));
 app.use("/api/uploads", express.static(uploadsPath));
-app.use((req, res, next) => {
-  if (req.url.endsWith(".mp3")) {
-    res.setHeader("Content-Type", "audio/mpeg");
-    res.setHeader("Accept-Ranges", "bytes");
-  }
-  next();
-});
 
 
 /* ============================================================
