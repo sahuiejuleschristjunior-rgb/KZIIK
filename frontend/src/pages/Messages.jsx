@@ -2849,7 +2849,6 @@ const resolveUrl = (url) => {
           controls
           preload="metadata"
           playsInline
-          webkit-playsinline="true"
           onError={handleAudioError}
         />
       </div>

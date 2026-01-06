@@ -42,8 +42,8 @@ function initSocket(server) {
       credentials: true,
     },
 
-    // 🔥 ROUTE EXPLICITE POUR MATCHER AVEC NGINX
-    path: "/socket.io/",
+    // 🔥 Route explicite (compatible NGINX : wss://domain/socket.io)
+    path: "/socket.io",
 
     // important : accepter polling puis websocket (upgrade)
     transports: ["polling", "websocket"],

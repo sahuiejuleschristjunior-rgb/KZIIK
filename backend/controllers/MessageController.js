@@ -7,13 +7,10 @@ const { getIO } = require("../socket");
 const Notification = require("../models/Notification");
 const path = require("path");
 const fs = require("fs");
-const { execFile } = require("child_process");
-const { promisify } = require("util");
 const { validateAudioStrict } = require("../utils/audioValidator");
 const { convertWebmToMp3 } = require("../utils/audioConverter");
 
 const typingState = new Map();
-const execFileAsync = promisify(execFile);
 const TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
 const REQUEST_MESSAGE_MAX = 500;
 const REQUEST_COOLDOWN_MS = 15 * 60 * 1000;
@@ -918,10 +915,6 @@ function ensureAudioDir() {
   return uploadDir;
 }
 
-function isFfmpegAvailable() {
-  return Boolean(ffmpegPath && fs.existsSync(ffmpegPath));
-}
-
 function deleteFileQuietly(filePath) {
   if (!filePath) return;
   try {
@@ -930,46 +923,6 @@ function deleteFileQuietly(filePath) {
     }
   } catch (error) {
     console.warn("⚠ Impossible de supprimer le fichier", { filePath, error: error.message });
-  }
-}
-
-async function enhanceAudioQuality(filePath) {
-  if (!isFfmpegAvailable()) {
-    console.warn("⚠ FFmpeg skipped — binary not found or not installed.");
-    return { skipped: true };
-  }
-
-  const outputPath = `${filePath}.tmp.webm`;
-  const filters =
-    "loudnorm=I=-16:LRA=11:TP=-1.5,agate=threshold=-55dB:ratio=1.2:attack=5:release=100";
-
-  const args = [
-    "-i",
-    filePath,
-    "-af",
-    filters,
-    "-c:a",
-    "libopus",
-    "-b:a",
-    "32k",
-    "-ar",
-    "48000",
-    "-vn",
-    "-f",
-    "webm",
-    outputPath,
-  ];
-
-  try {
-    await execFileAsync(ffmpegPath, args);
-    fs.renameSync(outputPath, filePath);
-    return { success: true };
-  } catch (error) {
-    console.error(`❌ Audio processing failed: ${error.message}`);
-    if (fs.existsSync(outputPath)) {
-      fs.unlinkSync(outputPath);
-    }
-    return { success: false, error };
   }
 }
 
@@ -1014,6 +967,12 @@ exports.sendAudioMessage = async (req, res) => {
       return res.status(400).json({ message: "Fichier audio introuvable." });
     }
 
+    console.info("🎤 Upload audio reçu", {
+      filename: file.filename,
+      mime: file.mimetype,
+      size: file.size,
+    });
+
     try {
       await validateAudioStrict(file.path);
     } catch (validationError) {
@@ -1047,6 +1006,11 @@ exports.sendAudioMessage = async (req, res) => {
     }
 
     deleteFileQuietly(file.path);
+
+    if (!fs.existsSync(mp3Path)) {
+      console.error("❌ Fichier MP3 manquant après conversion", { mp3Path });
+      return res.status(500).json({ message: "Le fichier audio n'a pas pu être sauvegardé." });
+    }
 
     const audioUrl = `/uploads/audio/${mp3Filename}`;
     console.log("✔ Audio converti et sauvegardé", { path: mp3Path, url: audioUrl });
