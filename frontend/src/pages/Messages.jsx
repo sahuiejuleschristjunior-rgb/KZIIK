@@ -273,6 +273,7 @@ export default function Messages() {
   const recordTimerRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const recordingChunksRef = useRef([]);
+  const recordingMimeTypeRef = useRef("audio/webm");
   const audioContextRef = useRef(null);
   const audioAnalyserRef = useRef(null);
   const audioGainRef = useRef(null);
@@ -2088,6 +2089,38 @@ const resolveUrl = (url) => {
   /* =====================================================
      AUDIO
   ===================================================== */
+  const pickRecorderMimeType = () => {
+    if (
+      typeof window === "undefined" ||
+      typeof MediaRecorder === "undefined" ||
+      typeof MediaRecorder.isTypeSupported !== "function"
+    ) {
+      return null;
+    }
+
+    const preferredTypes = [
+      "audio/mp4;codecs=mp4a.40.2",
+      "audio/mp4",
+      "audio/mpeg",
+      "audio/webm;codecs=opus",
+      "audio/webm",
+      "audio/ogg;codecs=opus",
+      "audio/ogg",
+    ];
+
+    return preferredTypes.find((type) => MediaRecorder.isTypeSupported(type)) || null;
+  };
+
+  const getAudioExtensionFromMime = (mimeType) => {
+    if (!mimeType || typeof mimeType !== "string") return "webm";
+    const lower = mimeType.toLowerCase();
+    if (lower.includes("mp4") || lower.includes("aac")) return "m4a";
+    if (lower.includes("mpeg")) return "mp3";
+    if (lower.includes("ogg")) return "ogg";
+    if (lower.includes("wav")) return "wav";
+    return "webm";
+  };
+
   const stopRecordVisualization = () => {
     if (recordVizFrame.current) {
       cancelAnimationFrame(recordVizFrame.current);
@@ -2125,6 +2158,7 @@ const resolveUrl = (url) => {
     setRecordLevel(0);
     recordCanceledRef.current = false;
     recordingChunksRef.current = [];
+    recordingMimeTypeRef.current = null;
 
     recordTimerRef.current = setInterval(() => {
       setRecordTime(Date.now() - (recordStartRef.current?.at || Date.now()));
@@ -2172,7 +2206,11 @@ const resolveUrl = (url) => {
       echoReducer.connect(analyser);
       analyser.connect(destination);
 
-      const recorder = new MediaRecorder(destination.stream);
+      const mimeType = pickRecorderMimeType();
+      const recorder = mimeType
+        ? new MediaRecorder(destination.stream, { mimeType })
+        : new MediaRecorder(destination.stream);
+      recordingMimeTypeRef.current = recorder.mimeType || mimeType || "audio/webm";
       recorder.ondataavailable = (e) => {
         if (e.data && e.data.size > 0) {
           recordingChunksRef.current.push(e.data);
@@ -2191,7 +2229,8 @@ const resolveUrl = (url) => {
           setRecordLevel(0);
           return;
         }
-        const blob = new Blob(recordingChunksRef.current, { type: "audio/webm" });
+        const blobMimeType = recordingMimeTypeRef.current || recorder.mimeType || "audio/webm";
+        const blob = new Blob(recordingChunksRef.current, { type: blobMimeType });
         recordingChunksRef.current = [];
         cleanupAudioContext();
         setRecordLevel(0);
@@ -2290,7 +2329,9 @@ const resolveUrl = (url) => {
       setInfoBanner(loadErrorMessage);
       return;
     }
-    const fileName = `voice-${Date.now()}.webm`;
+    const mimeType = recordingMimeTypeRef.current || "audio/webm";
+    const extension = getAudioExtensionFromMime(mimeType);
+    const fileName = `voice-${Date.now()}.${extension}`;
 
     const { replyId, preview: replyPreview } = buildReplyData(replyTarget);
 
@@ -2302,6 +2343,7 @@ const resolveUrl = (url) => {
       receiver: receiverId,
       type: "audio",
       audioUrl: tempUrl,
+      mimeType,
       content: "",
       clientTempId,
       replyTo: replyId,
@@ -2315,6 +2357,7 @@ const resolveUrl = (url) => {
     formData.append("audio", blob, fileName);
     formData.append("receiver", receiverId);
     formData.append("clientTempId", clientTempId);
+    formData.append("mimeType", mimeType);
     if (replyId) {
       formData.append("replyTo", replyId);
     }
@@ -2812,6 +2855,7 @@ const resolveUrl = (url) => {
       ? Math.min((status.currentTime / status.duration) * 100, 100)
       : 0;
     const url = resolveUrl(safeAudioUrl);
+    const mimeType = msg.mimeType;
 
     const handleAudioError = () => {
       setAudioStatus((prev) => ({
@@ -2850,7 +2894,9 @@ const resolveUrl = (url) => {
           preload="metadata"
           playsInline
           onError={handleAudioError}
-        />
+        >
+          <source src={url} type={mimeType || undefined} />
+        </audio>
       </div>
     );
   };
