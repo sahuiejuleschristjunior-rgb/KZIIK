@@ -28,9 +28,6 @@ const allowedTypes = [
   "video/mp4",
   "video/quicktime",
   "video/webm",
-  "audio/mpeg",
-  "audio/mp3",
-  "audio/wav",
 ];
 
 const allowedExtensions = [
@@ -44,8 +41,6 @@ const allowedExtensions = [
   ".avi",
   ".webm",
   ".mpeg",
-  ".mp3",
-  ".wav",
 ];
 
 function fileFilter(req, file, cb) {

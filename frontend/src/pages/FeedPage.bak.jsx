@@ -256,15 +256,9 @@ export default function FeedPage() {
 
 
       const allFiles = [
-
-        ...payload.images,
-
-        ...payload.videos,
-
-        ...payload.audios,
-
-        ...payload.pdfs,
-
+        ...(payload.images || []),
+        ...(payload.videos || []),
+        ...(payload.pdfs || []),
       ];
 
 
