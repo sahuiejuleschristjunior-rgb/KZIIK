@@ -572,13 +572,8 @@ const resolveUrl = (url) => {
   if (!url || typeof url !== "string") return "";
   if (url.startsWith("blob:")) return url;
   if (url.startsWith("http")) return url;
-
-  // Always use the API origin for media assets to avoid hard-coding the
-  // production domain. This keeps voice notes and attachments readable in
-  // staging/preview environments where uploads are hosted on the API host.
-  const base = API_ORIGIN || window.location.origin;
-  if (url.startsWith("/uploads/")) return `${base}${url}`;
-  return `${base}/${url.replace(/^\/+/, "")}`;
+  if (url.startsWith("/uploads/")) return "https://kaziik.com" + url;
+  return "https://kaziik.com/" + url.replace(/^\/+/, "");
 };
 
   const copyToClipboard = async (text) => {
